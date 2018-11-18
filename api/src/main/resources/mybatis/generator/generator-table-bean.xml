@@ -11,14 +11,12 @@
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
             <property name="suppressAllComments" value="true"/>
         </commentGenerator>
-
         <!--数据库链接URL，用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/bill"
                         userId="root"
                         password="123456">
         </jdbcConnection>
-
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
@@ -29,18 +27,31 @@
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
-        <!-- 生成映射文件的包名和位置-->
-        <sqlMapGenerator targetPackage="mappers" targetProject=".">
-            <property name="enableSubPackages" value="true"/>
-        </sqlMapGenerator>
-
-        <!-- 生成DAO的包名和位置-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.joey.mysite.jdbc.mapper" targetProject=".">
-            <property name="enableSubPackages" value="true"/>
-        </javaClientGenerator>
-
-        <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
         <table tableName="bc_user"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="bc_bill_type"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="bc_card"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="bc_card_type"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="bd_bill"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
