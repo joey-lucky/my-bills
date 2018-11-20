@@ -1,5 +1,7 @@
 package com.joey.mysite.jdbc.bean;
 
+import java.util.Date;
+
 public class BdBill {
     private String id;
 
@@ -11,7 +13,11 @@ public class BdBill {
 
     private String money;
 
-    private String desc;
+    private String billDesc;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     public String getId() {
         return id;
@@ -53,11 +59,27 @@ public class BdBill {
         this.money = money == null ? null : money.trim();
     }
 
-    public String getDesc() {
-        return desc;
+    public String getBillDesc() {
+        return billDesc;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc == null ? null : desc.trim();
+    public void setBillDesc(String billDesc) {
+        this.billDesc = billDesc == null ? null : billDesc.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

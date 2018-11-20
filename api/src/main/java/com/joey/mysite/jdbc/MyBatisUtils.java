@@ -19,7 +19,7 @@ public class MyBatisUtils {
 
     private static void initSqlSessionFactory() {
         try {
-            String resource = "spring-mybatis.xml";
+            String resource = "mybatis/mybatis-config.xml";
             InputStream inputStream = Resources.getResourceAsStream(resource);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         } catch (Exception e) {

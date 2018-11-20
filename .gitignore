@@ -1,7 +1,13 @@
+# idea开发工具
 *.iml
-*/.idea
-*/.mvn
-*/target
-*/*.iml
-/.idea
+**/.idea
+
+# spring-boot
+**/target
+**/.mvn
 */mvnw
+
+# React
+**/node_modules
+**/build
+*.lock

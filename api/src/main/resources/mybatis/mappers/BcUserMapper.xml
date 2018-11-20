@@ -45,7 +45,7 @@
             </if>
         </trim>
     </insert>
-    <select id="select" resultType="bcUser">
+    <select id="select" resultType="com.joey.mysite.jdbc.bean.BcUser">
         select *
         from bc_user
     </select>
