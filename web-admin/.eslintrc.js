@@ -566,4 +566,4 @@ const eslintrc = {
     }
 
 };
-module.exports = eslintrc;
+module.exports = {};

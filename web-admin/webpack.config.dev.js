@@ -11,7 +11,7 @@ function createConfig() {
         mode: "development",
         entry: {
             app: [
-                path.resolve(__dirname, "js/src/index.js")
+                path.resolve(__dirname, "src/index.js")
             ]
         },
         output: {
@@ -27,7 +27,7 @@ function createConfig() {
                 {
                     test: /\.(js|jsx)$/,
                     loader: "babel-loader",
-                    include: path.resolve(__dirname,"js/src"),
+                    include: path.resolve(__dirname,"src"),
                     options: {
                         //stage-1 支持成员变量
                         presets: ['es2015', 'react', "stage-1"],
