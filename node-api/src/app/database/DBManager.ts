@@ -6,6 +6,7 @@ export default class DBManager {
      * 返回的数据不会为空
      */
     static async query(sql: string, params?: object) {
+        console.log("query start",sql, params || {});
         return new Promise<any[]>(async (resolve, reject) => {
             try {
                 let connection = await DBPollManager.getInstance().getConnection();
@@ -13,7 +14,7 @@ export default class DBManager {
                     if (err) {
                         reject(err);
                     } else {
-                        console.log(sql, params || {},"result:",results.length);
+                        console.log("query start",sql, params || {},"result:",results.length);
                         resolve(results);
                     }
                 });

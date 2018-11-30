@@ -57,7 +57,7 @@ function createConfig() {
             ]
         },
         devServer: {
-            host: "192.168.2.71",
+            host: "localhost",
             hot: true,
             contentBase: path.resolve(__dirname, "dist"),
             port: 7000,

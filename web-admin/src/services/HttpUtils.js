@@ -1,7 +1,7 @@
 const headers = new Headers();
-headers.append("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+headers.append("Content-Type", "application/json;charset=utf-8");
 // headers.append("Content-Length", content.length.toString());
-headers.append("X-Custom-Header", "ProcessThisImmediately");
+// headers.append("X-Custom-Header", "ProcessThisImmediately");
 
 export default class HttpUtils {
     static async httpGet(url, params) {
@@ -18,8 +18,7 @@ export default class HttpUtils {
                 return Promise.resolve(data);
             } else {
                 let message = data.message;
-                console.log(message);
-                throw new Error(message);
+                return Promise.reject(new Error(message));
             }
         }catch (e) {
             return Promise.reject(e)

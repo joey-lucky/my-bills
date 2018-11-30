@@ -13,7 +13,7 @@ export default class SafeController extends Controller {
         let params = RequestUtils.getBodyParams(ctx);
         let loginName = params["LOGIN_NAME"];
         let password = params["LOGIN_PASSWORD"];
-        let sql = "select t.login_name,t.login_password from bc_user t where t.login_name = ?";
+        let sql = "select t.* from bc_user t where t.login_name = ?";
         let rows = await DBManager.query(sql, [loginName]);
         assert.ok(rows.length > 0,"用户不存在");
         let row = rows[0];

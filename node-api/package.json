@@ -37,6 +37,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
     "babel-runtime": "^6.26.0",
+    "babel-register": "latest",
     "start-server-webpack-plugin": "latest",
     "supervisor": "^0.12.0",
     "ts-node": "^7.0.1",

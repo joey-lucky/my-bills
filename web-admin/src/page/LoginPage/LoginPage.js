@@ -29,7 +29,7 @@ export default class LoginPage extends React.Component {
         e.preventDefault();
         this.props.form.validateFields(async (err, values) => {
             try {
-                let data = this._appState.asyncLogin(values);
+                let data = await this._appState.asyncLogin(values);
                 Modal.success({
                     title: "提示",
                     content: "登录成功",

@@ -4,13 +4,15 @@ import * as Router from "koa-router";
 import * as logger from "koa-log";
 // @ts-ignore
 import * as koaBody from "koa-body";
+// @ts-ignore
+import * as bodyParser from "koa-bodyparser";
 
 import initRouter from "./router";
 
 let app = new Koa();
 let router = new Router();
 // app.use(bodyParser());
-app.use(koaBody());
+app.use(bodyParser());
 app.use(logger());
 initRouter(router);
 app.use(router.routes());
