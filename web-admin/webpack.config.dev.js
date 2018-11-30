@@ -34,6 +34,7 @@ function createConfig() {
                         plugins: [
                             //装饰器支持
                             "transform-decorators-legacy",
+                            "transform-runtime"
                         ]
                     }
                 },
@@ -68,7 +69,19 @@ function createConfig() {
             open: true,
             openPage: publicPath.substr(1),
             //跨域？不能存在的。
-            allowedHosts: ["localhost:8080"],
+            allowedHosts: ["http://localhost:3000"],
+            proxy: {
+                "/api": {
+                    target: "http://localhost:3000",
+                    // 因为使用的是https，会有安全校验，所以设置secure为false
+                    secure: false,
+                    // port: 80,
+                    // ingorePath 默认即为 false, 注释掉也可以
+                    // ingorePath: false,
+                    // changeOrigin是关键，如果不加这个就无法跳转请求
+                    changeOrigin: true,
+                }
+            },
             index: "/index.html",
         },
         optimization: {

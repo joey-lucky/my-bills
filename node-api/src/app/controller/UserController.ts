@@ -9,10 +9,10 @@ export default class UserController extends Controller {
 
     list = async (ctx: Router.IRouterContext, next: any) => {
         let data = await DBManager.query("select * from bc_user");
-        ctx.body = JSON.stringify(data);
+        return Promise.resolve(data);
     };
 
     data = async (ctx: Router.IRouterContext, next: any) => {
-        ctx.body = ["xxx"]
+        return Promise.resolve(["xxx"]);
     }
 }

@@ -1,17 +1,19 @@
-import * as mysql from "mysql";
 import DBPollManager from "./DBPollManager";
-import {MysqlError} from "mysql";
-import {FieldInfo} from "mysql";
 
 export default class DBManager {
+
+    /**
+     * 返回的数据不会为空
+     */
     static async query(sql: string, params?: object) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise<any[]>(async (resolve, reject) => {
             try {
                 let connection = await DBPollManager.getInstance().getConnection();
-                connection.query(sql, params, (err, results, fields) => {
+                connection.query(sql, params, (err, results = [], fields) => {
                     if (err) {
                         reject(err);
                     } else {
+                        console.log(sql, params || {},"result:",results.length);
                         resolve(results);
                     }
                 });

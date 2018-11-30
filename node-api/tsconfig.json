@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2018",
     "module": "commonjs",
+    "noImplicitAny": true,
     "sourceMap": true,
-    "outDir":"./",
-    "rootDir":"./src",
-    "strict": false,
-    "allowJs": true,
-    "noImplicitAny": true
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "target": "es5",
+    "strictNullChecks": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "inlineSources": false,
+    "lib": ["es2018"]
   },
   "include": [
     "./src/**/*"
