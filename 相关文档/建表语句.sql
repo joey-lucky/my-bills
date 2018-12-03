@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for bc_bill_type
 -- ----------------------------
-DROP TABLE IF EXISTS `bc_bill_type`;
+DROP TABLE IF EXISTS BC_BILL_TYPE;
 CREATE TABLE `bc_bill_type`  (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE `bc_bill_type`  (
 -- ----------------------------
 -- Table structure for bc_card
 -- ----------------------------
-DROP TABLE IF EXISTS `bc_card`;
+DROP TABLE IF EXISTS BC_CARD;
 CREATE TABLE `bc_card`  (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE `bc_card`  (
 -- ----------------------------
 -- Table structure for bc_card_type
 -- ----------------------------
-DROP TABLE IF EXISTS `bc_card_type`;
+DROP TABLE IF EXISTS BC_CARD_TYPE;
 CREATE TABLE `bc_card_type`  (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `bc_card_type`  (
 -- ----------------------------
 -- Table structure for bc_user
 -- ----------------------------
-DROP TABLE IF EXISTS `bc_user`;
+DROP TABLE IF EXISTS BC_USER;
 CREATE TABLE `bc_user`  (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `bc_user`  (
 -- ----------------------------
 -- Table structure for bd_bill
 -- ----------------------------
-DROP TABLE IF EXISTS `bd_bill`;
+DROP TABLE IF EXISTS BD_BILL;
 CREATE TABLE `bd_bill`  (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `card_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,

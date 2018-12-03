@@ -8,7 +8,7 @@ export default class UserController extends Controller {
     }
 
     list = async (ctx: Router.IRouterContext, next: any) => {
-        let data = await DBManager.query("select * from bc_user");
+        let data = await DBManager.query("select * from BC_USER");
         return Promise.resolve(data);
     };
 

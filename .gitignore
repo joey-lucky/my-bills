@@ -12,3 +12,6 @@
 **/build
 *.lock
 */package-lock.json
+
+# common
+*.log

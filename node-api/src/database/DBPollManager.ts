@@ -1,6 +1,6 @@
 import * as mysql from "mysql";
 import {Pool} from "mysql";
-import config from "../../config/config.mysql.bill";
+import config from "../config/config.mysql.bill";
 import {PoolConnection} from "mysql";
 
 export default class DBPollManager {
