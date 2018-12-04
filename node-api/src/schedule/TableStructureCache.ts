@@ -5,6 +5,7 @@ import Log from "../utils/Log";
 interface Table {
     tableName: string;
     primaryKeyAliasName?: string;
+    primaryNameAliasName?: string;
     fields: Field[];
     foreignKeys: string[];
 }
@@ -17,49 +18,74 @@ interface Field {
 export default class TableStructureCache implements Schedule {
     static _instance = new TableStructureCache();
 
-    static getInstance() {
+    public static getInstance() {
         return this._instance;
     }
 
-    _tableStructureCache: Map<string, Table> = new Map();
+    public static hasTable(tableName: string = ""): boolean {
+        return TableStructureCache.getInstance()._tableStructureCache.has(tableName.toLowerCase());
+    }
 
+    public static translateTableRow(data: any[]): any[] {
+        return TableStructureCache.getInstance()._translateTableRow(data)
+    }
+
+    //表名-表结构
+    _tableStructureCache: Map<string, Table> = new Map();
+    //表主键别名-表名
     _foreignKeyAliasCache: Map<string, string> = new Map();
+    //表数据
+    _tableEntriesCache: Map<string, any[]> = new Map();
+    //<表名，<主键key，主键name>>
+    _tablePrimaryKeyNameCache: Map<string, Map<string, string>> = new Map();
 
     public run = async () => {
         Log.info("表结构缓存初始化...");
         let start = Date.now();
         await this._generateTableStructure();
+        await this._generateTableEntries();
         let end = Date.now();
         Log.info("表结构缓存初始化完成", "耗时:" + (end - start) + "ms")
     };
 
-    public hasTable(tableName: string = ""): boolean {
-        return this._tableStructureCache.has(tableName.toLowerCase());
-    }
-
-    public hasForeignKey(foreignKey: string = ""): boolean {
-        return this._foreignKeyAliasCache.has(foreignKey.toLowerCase());
-    }
-
-    public getTableStructure(tableName: string=""): Table | undefined {
-        return this._tableStructureCache.get(tableName.toLowerCase());
-    }
-
-    public getFields(tableName: string=""): Field[] {
-        let table = this.getTableStructure(tableName.toLowerCase());
-        if (table) {
-            return table.fields || [];
-        } else {
-            return [];
+    private _translateTableRow(data: any[]) {
+        if (data.length > 0) {
+            let firstRow = data[0];
+            //需要翻译的字段列表
+            let foreignKeys = Object.keys(firstRow)
+                .filter((item) => this._foreignKeyAliasCache.has(item));
+            //获取需要翻译的数据列表
+            foreignKeys.forEach((foreignKey) => {
+                let tableName = this._foreignKeyAliasCache.get(foreignKey);
+                let tableStructure = this._tableStructureCache.get(tableName);
+                let {primaryNameAliasName} = tableStructure;
+                let primaryKeyNames: Map<string, string> = this._tablePrimaryKeyNameCache.get(tableName);
+                data.forEach((item) => {
+                    let id = item[foreignKey];
+                    item[primaryNameAliasName] = primaryKeyNames.get(id);
+                })
+            });
         }
-    }
-
-    public getTableNameByForeignKey(foreignKey: string=""): string {
-        return this._foreignKeyAliasCache.get(foreignKey.toLowerCase()) || undefined;
+        return data;
     }
 
     private async _generateTableStructure() {
-        let sql = "select t.table_name,t.column_name,t.column_key from information_schema.columns t where table_schema = 'bill'";
+        //获取纯净的表名，去除BC或者BD等字样
+        function getPureTableName(tableName: string) {
+            let lowerCaseTableName = tableName.toLowerCase();
+            if (lowerCaseTableName.startsWith("bc_") || lowerCaseTableName.startsWith("bd_")) {
+                //删除开头bc_
+                return tableName.substr(3);
+            }
+            throw new Error("表名异常");
+        }
+
+        // language=MySQL
+        let sql = "select t.table_name,\n" +
+            "       t.column_name,\n" +
+            "       t.column_key\n" +
+            "from information_schema.columns t\n" +
+            "where table_schema = 'bill'";
         let data = await DBManager.query(sql, []);
         let tableStructureMap: Map<string, Table> = new Map();
         let primaryKeyAliasMap: Map<string, string> = new Map();
@@ -68,7 +94,9 @@ export default class TableStructureCache implements Schedule {
             let tableName = item["table_name"];
             let columnName = item["column_name"];
             let columnKey = item["column_key"];
-            let isPrimary = columnKey === "PRI";
+            // 默认ID为主键
+            // let isPrimary = columnKey === "PRI";
+            let isPrimary = columnName === "id";
             if (!tableStructureMap.has(tableName)) {
                 tableStructureMap.set(tableName, {
                     tableName: tableName,
@@ -80,20 +108,19 @@ export default class TableStructureCache implements Schedule {
             let {fields} = table;
             let field: Field = {
                 name: columnName,
-                isPrimary: isPrimary
+                isPrimary:isPrimary
             };
             fields.push(field);
             if (isPrimary) {
-                table.primaryKeyAliasName = this.getPrimaryKeyAliasName(tableName, columnName);
+                table.primaryKeyAliasName = getPureTableName(tableName)+"_id";
+                table.primaryNameAliasName = getPureTableName(tableName)+"_name";
             }
         });
-        Object.values(tableStructureMap)
-            .forEach((item: Table) => {
-                if (item.primaryKeyAliasName) {
-                    primaryKeyAliasMap.set(item.primaryKeyAliasName, item.tableName);
-                }
-            });
-
+        for (let table of tableStructureMap.values()) {
+            if (table.primaryKeyAliasName) {
+                primaryKeyAliasMap.set(table.primaryKeyAliasName, table.tableName);
+            }
+        }
         for (let table of tableStructureMap.values()) {
             let foreignKeys = [];
             table.fields.forEach((field) => {
@@ -107,14 +134,31 @@ export default class TableStructureCache implements Schedule {
         this._foreignKeyAliasCache = primaryKeyAliasMap;
     }
 
-    private getPrimaryKeyAliasName(tableName: string, primaryKey: string) {
-        let upperCaseTableName = tableName.toLowerCase();
-        if (upperCaseTableName.startsWith("bc_") || upperCaseTableName.startsWith("bd_")) {
-            //删除开头bc_
-            let needTableName = tableName.substr(4);
-            //再将_去掉，并且首字母大写
-            return needTableName + "_" + primaryKey;
+    private async _generateTableEntries() {
+        // language=MySQL
+        let sql = 'select t.table_name\n' +
+            "from information_schema.tables t\n" +
+            "where t.table_schema = 'bill'\n" +
+            "  and t.table_name like 'bc_%'";
+        let tableNameList = await DBManager.query(sql, null);
+        let tableEntriesCache: Map<string, any[]> = new Map();
+        for(let item of tableNameList){
+            let tableName = item["table_name"];
+            // language=MySQL
+            let sql = `select t.* from ${tableName} t`;
+            let tableNameList = await DBManager.query(sql);
+            tableEntriesCache.set(tableName, tableNameList || []);
         }
-        return primaryKey;
+        let tablePrimaryKeyNameCache: Map<string, Map<string, string>> = new Map();
+        for (let tableName of tableEntriesCache.keys()) {
+            let map = new Map<string, string>();
+            let tables: any = tableEntriesCache.get(tableName);
+            for (let table of tables) {
+                map.set(table.id, table.name);
+            }
+            tablePrimaryKeyNameCache.set(tableName, map);
+        }
+        this._tablePrimaryKeyNameCache = tablePrimaryKeyNameCache;
+        this._tableEntriesCache = tableEntriesCache;
     }
 }

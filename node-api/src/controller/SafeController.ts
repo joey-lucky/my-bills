@@ -1,14 +1,9 @@
-import Controller from "./Controller";
 import * as Router from "koa-router";
 import DBManager from "../database/DBManager";
 import * as assert from "assert";
 import RequestUtils from "../utils/RequestUtils";
 
-export default class SafeController extends Controller {
-    constructor() {
-        super("/safe");
-    }
-
+export default class SafeController{
     login = async (ctx: Router.IRouterContext, next: any) => {
         let params = RequestUtils.getBodyParams(ctx);
         let loginName = params["LOGIN_NAME"];
