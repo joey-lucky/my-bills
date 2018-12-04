@@ -13,5 +13,8 @@
 *.lock
 */package-lock.json
 
+# node
+**/dist
+
 # common
 *.log
