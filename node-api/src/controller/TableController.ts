@@ -18,7 +18,19 @@ export default class TableController  {
                 sql += `  and ${key} = ? `;
                 queryParams.push(params[key]);
             });
-        let data = await DBManager.query(sql,queryParams);
-        return TableStructureCache.translateTableRow(data);
+        let rows:any[] = await DBManager.query(sql,queryParams);
+        rows = TableStructureCache.translateTableRows(rows);
+        return TableStructureCache.translateTablePrimaryAliasName(rows,tableName);
+    };
+
+    delete = async (ctx: Router.IRouterContext, next: any) => {
+        console.log(JSON.stringify(ctx.request));
+        let bodyParams = RequestUtils.getBodyParams(ctx);
+        let tableName = bodyParams["table_name"];
+        let id = bodyParams["id"];
+        assert.ok(TableStructureCache.hasTable(tableName), "表不存在");
+        assert.ok(id, "主键不存在");
+        await DBManager.delete(tableName, id);
+        return [];
     };
 }

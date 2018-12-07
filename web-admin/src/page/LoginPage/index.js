@@ -1,9 +1,10 @@
 import React from "react";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
-import * as styles from "./LoginPage.css";
+import * as styles from "./index.css";
 import {Button, Form, Icon, Input, Row, Modal} from "antd";
-import HttpUtils from "../../services/HttpUtils";
+import Ajax from "../../services/Ajax";
+import {browserHistory} from "../../global";
 
 const FormItem = Form.Item;
 
@@ -11,7 +12,7 @@ class AppState {
     @observable data = [];
 
     asyncLogin(params) {
-        return HttpUtils.httpGet("/safe/login", params);
+        return Ajax.httpGet("/safe/login", params);
     }
 }
 
@@ -35,6 +36,7 @@ export default class LoginPage extends React.Component {
                     content: "登录成功",
                     okText: "确定"
                 });
+                browserHistory.push("/home");
             } catch (e) {
                 console.log(e);
                 Modal.error({

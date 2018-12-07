@@ -6,7 +6,7 @@ export default class Schedules {
     static init() {
         setTimeout( async () => {
             await TableStructureCache.getInstance().run();
-            schedule.scheduleJob('5 * * * * *',async ()=>{
+            schedule.scheduleJob('* 20 * * * *',async ()=>{
                 await TableStructureCache.getInstance().run();
             });
         }, 1000);

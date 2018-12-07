@@ -1,5 +1,6 @@
 import DBPollManager from "./DBPollManager";
 import Log from '../utils/log';
+import {PoolConnection} from "mysql";
 
 export default class DBManager {
     /**
@@ -41,9 +42,26 @@ export default class DBManager {
         });
     }
 
-    static async delete(tableName: string, data: object) {
-        return new Promise((resolve, reject) => {
-
-        });
+    static async delete(tableName: string = "", id: string = "") {
+        Log.info("table name", tableName, "id", id);
+        let sql = `delete from ${tableName} where id = ? `;
+        Log.info(sql);
+        Log.info("SQL delete...");
+        let start = Date.now();
+        try {
+            let connection:PoolConnection = await DBPollManager.getInstance().getConnection();
+            connection.query(sql, [id], (err, results = [], fields) => {
+                connection.release();
+                if (err) {
+                    Log.info("SQL query失败", err.message);
+                    return err;
+                } else {
+                    Log.info("SQL query完成", "共" + results.length + "条", (Date.now() - start) + "ms");
+                    return results;
+                }
+            });
+        } catch (e) {
+            return e;
+        }
     }
 }

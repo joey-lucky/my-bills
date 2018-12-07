@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const publicPath = "/react/demo";
+const publicPath = "/web/admin";
 
 //路径配置
 function createConfig() {

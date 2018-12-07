@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.dev.js",
+    "web-admin-start": "webpack-dev-server --config webpack.config.dev.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
@@ -26,7 +26,6 @@
     "@types/node": "^10.5.1",
     "@types/prop-types": "^15.5.3",
     "@types/react": "^16.4.6",
-    "@types/react-dom": "^16.0.6",
     "@types/react-router-dom": "^4.3.1",
     "@types/webpack": "^4.4.4",
     "babel-core": "^6.26.3",

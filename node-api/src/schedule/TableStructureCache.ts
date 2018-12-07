@@ -26,8 +26,20 @@ export default class TableStructureCache implements Schedule {
         return TableStructureCache.getInstance()._tableStructureCache.has(tableName.toLowerCase());
     }
 
-    public static translateTableRow(data: any[]): any[] {
-        return TableStructureCache.getInstance()._translateTableRow(data)
+    public static translateTableRows(data: any[]): any[] {
+        return TableStructureCache.getInstance()._translateTableRows(data)
+    }
+
+    public static translateTablePrimaryAliasName(rows:any[],tableName:string=""){
+        if (tableName.startsWith("bc_") || tableName.startsWith("bd_")) {
+            let  nameKey = tableName.substr(3)+"_name";
+            let idKey = tableName.substr(3)+"_id";
+            for (let row of rows) {
+                row[nameKey] = row["name"];
+                row[idKey] = row["id"];
+            }
+        }
+        return rows;
     }
 
     //表名-表结构
@@ -48,7 +60,7 @@ export default class TableStructureCache implements Schedule {
         Log.info("表结构缓存初始化完成", "耗时:" + (end - start) + "ms")
     };
 
-    private _translateTableRow(data: any[]) {
+    private _translateTableRows(data: any[]) {
         if (data.length > 0) {
             let firstRow = data[0];
             //需要翻译的字段列表
