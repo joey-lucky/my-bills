@@ -1,0 +1,10 @@
+{
+  "table_name": "bc_user",
+  "data": [
+    {
+      "name": "pengzhilan",
+      "login_name": "pengzhilan",
+      "login_password": "pengzhilan"
+    }
+  ]
+}

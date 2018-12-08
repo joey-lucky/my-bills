@@ -6,7 +6,7 @@ import RouteUtils from "../../component/RouteUtils";
 const {Content, Sider} = Layout;
 
 @withRouter
-export default class SystemSetting extends React.Component {
+export default class extends React.Component {
     render() {
         return (
             <Layout className="fill-parent" >

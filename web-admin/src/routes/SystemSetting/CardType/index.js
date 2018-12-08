@@ -13,14 +13,14 @@ class AppState {
     detailState = DetailDialog.newState();
 
     asyncLoadData = () => {
-        Ajax.apiPost("/table/list", {"table_name": "bc_user"})
+        Ajax.apiPost("/table/list", {"table_name": "bc_card_type"})
             .then((d) => {
                 this.data = d.data || [];
             });
     };
 
     asyncDelete = (data) => {
-        return Ajax.apiPost("/table/delete", {"table_name": "bc_user", "id": data.id})
+        return Ajax.apiPost("/table/delete", {"table_name": "bc_card_type", "id": data.id})
     };
 }
 
@@ -29,14 +29,9 @@ export default class extends React.Component {
     _appState = new AppState();
     _columns = [
         {
-            title: "用户名",
-            dataIndex: "user_name",
-            key: "user_name"
-        },
-        {
-            title: "登录账号",
-            dataIndex: "login_name",
-            key: "login_name"
+            title: "类型",
+            dataIndex: "card_type_name",
+            key: "card_type_name"
         },
         {
             title: "操作",

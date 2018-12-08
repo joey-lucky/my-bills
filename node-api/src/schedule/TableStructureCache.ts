@@ -1,19 +1,7 @@
 import Schedule from "./Schedule";
 import DBManager from "../database/DBManager";
 import Log from "../utils/Log";
-
-interface Table {
-    tableName: string;
-    primaryKeyAliasName?: string;
-    primaryNameAliasName?: string;
-    fields: Field[];
-    foreignKeys: string[];
-}
-
-interface Field {
-    name: string;
-    isPrimary: boolean;
-}
+import Table, {Field} from "../database/Table";
 
 export default class TableStructureCache implements Schedule {
     static _instance = new TableStructureCache();
@@ -24,6 +12,11 @@ export default class TableStructureCache implements Schedule {
 
     public static hasTable(tableName: string = ""): boolean {
         return TableStructureCache.getInstance()._tableStructureCache.has(tableName.toLowerCase());
+    }
+
+    public static getTableStructure(tableName: string = ""): Table {
+        return this.getInstance()._tableStructureCache.get(tableName);
+
     }
 
     public static translateTableRows(data: any[]): any[] {
@@ -95,7 +88,8 @@ export default class TableStructureCache implements Schedule {
         // language=MySQL
         let sql = "select t.table_name,\n" +
             "       t.column_name,\n" +
-            "       t.column_key\n" +
+            "       t.column_key,\n" +
+            "       t.data_type\n" +
             "from information_schema.columns t\n" +
             "where table_schema = 'bill'";
         let data = await DBManager.query(sql, []);
@@ -106,6 +100,7 @@ export default class TableStructureCache implements Schedule {
             let tableName = item["table_name"];
             let columnName = item["column_name"];
             let columnKey = item["column_key"];
+            let dataType = item["data_type"];
             // 默认ID为主键
             // let isPrimary = columnKey === "PRI";
             let isPrimary = columnName === "id";
@@ -120,7 +115,8 @@ export default class TableStructureCache implements Schedule {
             let {fields} = table;
             let field: Field = {
                 name: columnName,
-                isPrimary:isPrimary
+                isPrimary:isPrimary,
+                dataType:dataType,
             };
             fields.push(field);
             if (isPrimary) {

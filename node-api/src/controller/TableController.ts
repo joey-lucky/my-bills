@@ -1,8 +1,8 @@
 import * as Router from "koa-router";
 import DBManager from "../database/DBManager";
-import * as assert from "assert";
 import RequestUtils from "../utils/RequestUtils";
 import TableStructureCache from "../schedule/TableStructureCache";
+import Assert from "../utils/Assert";
 
 export default class TableController  {
     list = async (ctx: Router.IRouterContext, next: any) => {
@@ -10,7 +10,7 @@ export default class TableController  {
         let bodyParams = RequestUtils.getBodyParams(ctx);
         let tableName = bodyParams["table_name"];
         let params = JSON.parse(bodyParams["params"]||"{}");
-        assert.ok(TableStructureCache.hasTable(tableName), "表不存在");
+        Assert.isTrue(TableStructureCache.hasTable(tableName), "表不存在");
         let sql = `select t.* from ${tableName} t where 1=1`;
         let queryParams = [];
         Object.keys(params)
@@ -28,9 +28,29 @@ export default class TableController  {
         let bodyParams = RequestUtils.getBodyParams(ctx);
         let tableName = bodyParams["table_name"];
         let id = bodyParams["id"];
-        assert.ok(TableStructureCache.hasTable(tableName), "表不存在");
-        assert.ok(id, "主键不存在");
+        Assert.isTrue(TableStructureCache.hasTable(tableName), "表不存在");
+        Assert.hasText(id, "主键不存在");
         await DBManager.delete(tableName, id);
+        return [];
+    };
+
+    create = async (ctx: Router.IRouterContext, next: any) => {
+        console.log(JSON.stringify(ctx.request));
+        let bodyParams = RequestUtils.getBodyParams(ctx);
+        let tableName = bodyParams["table_name"];
+        let data = bodyParams["data"]||[];
+        Assert.isTrue(TableStructureCache.hasTable(tableName), "表不存在");
+        await DBManager.insert(tableName, data);
+        return [];
+    };
+
+    update = async (ctx: Router.IRouterContext, next: any) => {
+        console.log(JSON.stringify(ctx.request));
+        let bodyParams = RequestUtils.getBodyParams(ctx);
+        let tableName = bodyParams["table_name"];
+        let data = bodyParams["data"]||[];
+        Assert.isTrue(TableStructureCache.hasTable(tableName), "表不存在");
+        await DBManager.update(tableName, data);
         return [];
     };
 }

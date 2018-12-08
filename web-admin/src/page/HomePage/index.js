@@ -24,14 +24,6 @@ export default class HomePage extends React.Component {
         this.state = {
             userName:""
         };
-        Ajax.httpGet("/safe/get-userinfo").then((d) => {
-            // if (d.data && d.data[0]) {
-            //     routeState.filterRoute(d.data);
-            //     this.setState({
-            //         userName: d.data[0].USER_NAME
-            //     });
-            // }
-        });
     }
 
     onLoginOutClick = () => {

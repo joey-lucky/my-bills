@@ -44,7 +44,8 @@ export default class Controllers {
                         code: "0",
                         message: e.message,
                         data: []
-                    }
+                    };
+                    throw e;
                 }
             })
         });

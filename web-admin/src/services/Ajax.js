@@ -1,12 +1,13 @@
 const headers = new Headers();
 headers.append("Content-Type", "application/json;charset=utf-8");
+// headers.append("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 // headers.append("Content-Length", content.length.toString());
 // headers.append("X-Custom-Header", "ProcessThisImmediately");
 
 export default class Ajax {
     static async httpGet(url, params) {
-        try{
-            let completeUrl = "/api"+url;
+        try {
+            let completeUrl = "/api" + url;
             let response = await fetch(completeUrl, {
                 method: 'GET',
                 headers: headers,
@@ -21,14 +22,14 @@ export default class Ajax {
                 let message = data.message;
                 return new Error(message);
             }
-        }catch (e) {
+        } catch (e) {
             return e;
         }
     }
 
     static async apiPost(url, params) {
-        try{
-            let completeUrl = "/api"+url;
+        try {
+            let completeUrl = "/api" + url;
             let response = await fetch(completeUrl, {
                 method: 'POST',
                 headers: headers,
@@ -43,7 +44,7 @@ export default class Ajax {
                 let message = data.message;
                 return new Error(message);
             }
-        }catch (e) {
+        } catch (e) {
             return e;
         }
     }
