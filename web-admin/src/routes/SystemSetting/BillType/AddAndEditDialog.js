@@ -105,7 +105,7 @@ export default class AddAndEditDialog extends React.Component {
                             <Form.Item
                                 {...layout}
                                 label="登录账号">
-                                {this.getFieldDecorator("login_name")(
+                                {this.getFieldDecorator("name")(
                                     <Input/>
                                 )}
                             </Form.Item>

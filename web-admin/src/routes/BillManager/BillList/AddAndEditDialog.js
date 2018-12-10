@@ -10,10 +10,11 @@ import TableSelect from "../../../component/TableSelect";
 class AppState {
     @observable siteList = [];
     @observable data = {
-        "name": "",
-        "user_name": "",
-        "card_type_name": "",
-        "balance": "",
+        "card_id": "",
+        "user_id": "",
+        "bill_type_id": "",
+        "money": "",
+        "bill_desc": "",
     };
     dialogState = FormDialog.newState();
 
@@ -76,7 +77,7 @@ export default class AddAndEditDialog extends React.Component {
                 onSubmitError && onSubmitError(err);
             } else {
                 let data = [{...this.props.state.data, ...values}];
-                Ajax.apiPost(url, {"table_name": "bc_card", data: data})
+                Ajax.apiPost(url, {"table_name": "bd_bill", data: data})
                     .then(
                         (d) => {
                             state.hide();
@@ -108,8 +109,8 @@ export default class AddAndEditDialog extends React.Component {
                         <Col span={11}>
                             <Form.Item
                                 {...layout}
-                                label="名称">
-                                {this.getFieldDecorator("name")(
+                                label="详情">
+                                {this.getFieldDecorator("bill_desc")(
                                     <Input/>
                                 )}
                             </Form.Item>
@@ -118,7 +119,7 @@ export default class AddAndEditDialog extends React.Component {
                             <Form.Item
                                 {...layout}
                                 label="金额">
-                                {this.getFieldDecorator("balance")(
+                                {this.getFieldDecorator("money")(
                                     <Input type={"number"}/>
                                 )}
                             </Form.Item>
@@ -128,7 +129,20 @@ export default class AddAndEditDialog extends React.Component {
                         <Col span={11}>
                             <Form.Item
                                 {...layout}
-                                label="归属">
+                                label="银行卡">
+                                {this.getFieldDecorator("card_id")(
+                                    <TableSelect
+                                        style={{width: "100%"}}
+                                        url={"/table/list"}
+                                        parse={{id:"id",name:"name"}}
+                                        params={{"table_name": "bc_card"}}/>
+                                )}
+                            </Form.Item>
+                        </Col>
+                        <Col span={11} offset={2}>
+                            <Form.Item
+                                {...layout}
+                                label="用户">
                                 {this.getFieldDecorator("user_id")(
                                     <TableSelect
                                         style={{width: "100%"}}
@@ -138,16 +152,19 @@ export default class AddAndEditDialog extends React.Component {
                                 )}
                             </Form.Item>
                         </Col>
-                        <Col span={11} offset={2}>
+                    </Row>
+
+                    <Row>
+                        <Col span={11}>
                             <Form.Item
                                 {...layout}
-                                label="类型">
-                                {this.getFieldDecorator("card_type_id")(
+                                label="银行卡">
+                                {this.getFieldDecorator("bill_type_id")(
                                     <TableSelect
                                         style={{width: "100%"}}
                                         url={"/table/list"}
                                         parse={{id:"id",name:"name"}}
-                                        params={{"table_name": "bc_card_type"}}/>
+                                        params={{"table_name": "bc_bill_type"}}/>
                                 )}
                             </Form.Item>
                         </Col>

@@ -57,10 +57,10 @@ function createConfig() {
             ]
         },
         devServer: {
-            host: "localhost",
+            // host: "127.0.0.1",
             hot: true,
             contentBase: path.resolve(__dirname, "dist"),
-            port: 7000,
+            port: 8080,
             publicPath: publicPath,
             historyApiFallback: {
                 rewrites: [{from: new RegExp("^" + publicPath), to: publicPath + "/index.html"}]
@@ -86,6 +86,7 @@ function createConfig() {
         },
         optimization: {
             namedModules: true,
+
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),

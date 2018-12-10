@@ -30,8 +30,8 @@ export default class extends React.Component {
     _columns = [
         {
             title: "类型",
-            dataIndex: "card_type_name",
-            key: "card_type_name"
+            dataIndex: "name",
+            key: "name"
         },
         {
             title: "操作",

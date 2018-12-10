@@ -13,25 +13,45 @@ class AppState {
     detailState = DetailDialog.newState();
 
     asyncLoadData = () => {
-        Ajax.apiPost("/table/list", {"table_name": "bc_bill_type"})
+        Ajax.apiPost("/table/list", {"table_name": "bd_bill"})
             .then((d) => {
                 this.data = d.data || [];
             });
     };
 
     asyncDelete = (data) => {
-        return Ajax.apiPost("/table/delete", {"table_name": "bc_bill_type", "id": data.id})
+        return Ajax.apiPost("/table/delete", {"table_name": "bd_bill", "id": data.id})
     };
 }
 
 @observer
-export default class  BillType extends React.Component {
+export default class extends React.Component {
     _appState = new AppState();
     _columns = [
         {
-            title: "类型",
-            dataIndex: "name",
-            key: "name"
+            title: "银行卡",
+            dataIndex: "card_name",
+            key: "card_name"
+        },
+        {
+            title: "用户",
+            dataIndex: "user_name",
+            key: "user_name"
+        },
+        {
+            title: "账单类型",
+            dataIndex: "bill_type_name",
+            key: "bill_type_name"
+        },
+        {
+            title: "金额",
+            dataIndex: "money",
+            key: "money"
+        },
+        {
+            title: "账单详情",
+            dataIndex: "bill_desc",
+            key: "bill_desc"
         },
         {
             title: "操作",

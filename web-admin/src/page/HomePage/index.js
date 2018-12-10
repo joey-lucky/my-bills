@@ -1,21 +1,15 @@
 import {Divider, Modal} from "antd";
-import {createBrowserHistory} from "history";
 import {observer} from "mobx-react";
 import * as React from "react";
-import {NavLink, Router} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import * as styles from "./index.css";
 import RouteUtils from "../../component/RouteUtils";
-import ScreenState from "../../component/ScreenState";
 import PreviewPhotoDialog from "../../component/PreviewPhotoDialog";
 import Ajax from "../../services/Ajax";
 import routes from "../../routes";
+import {previewPhotoState} from "../../global";
 
 const confirm = Modal.confirm;
-
-export const globalHistory = createBrowserHistory({basename: "/op/front"});
-
-export const screenState = new ScreenState();
-export const previewPhotoState = PreviewPhotoDialog.newState();
 
 @observer
 export default class HomePage extends React.Component {
@@ -48,14 +42,14 @@ export default class HomePage extends React.Component {
             <div className={styles.container}>
                 <PreviewPhotoDialog state={previewPhotoState}/>
                 <div className={styles.header}>
-                    <div className={styles.icon}>浩瑞泰运营平台</div>
+                    <div className={styles.icon}>账单管理系统</div>
                     <div className={styles.tab}>
                         {
                             routes.map((item, index) =>
                                 <NavLink
-                                    key={item.path}
+                                    key={match.path+item.path}
                                     activeClassName={styles.selected}
-                                    to={item.path}
+                                    to={match.path+item.path}
                                 >{item.name}</NavLink>,
                             )
                         }

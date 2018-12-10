@@ -1,8 +1,7 @@
 import {createBrowserHistory} from "history";
+import PreviewPhotoDialog from "./component/PreviewPhotoDialog";
 
-const browserHistory = createBrowserHistory({basename: "/web/admin"});
-
-
-export {
-    browserHistory
-}
+export const browserHistory = createBrowserHistory(
+    // {basename: "/web/admin"}
+);
+export const previewPhotoState = PreviewPhotoDialog.newState();

@@ -52,6 +52,9 @@ export default class LoginPage extends React.Component {
         const {getFieldDecorator} = this.props.form;
         return (
             <div className={styles.container}>
+                <div>
+                    <h1>账单管理系统</h1>
+                </div>
                 <Form onSubmit={this.handleSubmit} className={styles.form}>
                     <FormItem>
                         {getFieldDecorator('LOGIN_NAME', {

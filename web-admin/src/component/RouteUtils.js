@@ -50,6 +50,8 @@ export default class RouteUtils {
         if (childRouteData && childRouteData.length > 0) {
             let parentPath = match.path;
             let redirectPath = parentPath + childRouteData[defaultRouteIndex].path;
+            console.log("redirectPath", redirectPath);
+            console.log("parentPath", parentPath);
             return (
                 <Switch>
                     {

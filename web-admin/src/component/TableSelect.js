@@ -59,25 +59,26 @@ export default class TableSelect extends React.Component {
 
     componentWillUnmount() {
         if (this._loadDataPromise) {
-            this._loadDataPromise.cancel("组件卸载");
+            this._loadDataPromise.cancel("请求中断");
         }
     }
 
     loadData = (props) => {
         const {url, parse, params} = props;
-        this._loadDataPromise = Ajax.apiPost(url, params)
-            .then((d) => {
-                const {id, name} = parse;
-                let data = d.data || [];
-                let parseData = data.map(item => ({
-                    id: item[id],
-                    name: item[name]
-                }));
-                this.setState({
-                    data: parseData
-                });
+        this._loadDataPromise = Ajax.apiPost(url, params);
+        this._loadDataPromise.then((d) => {
+            const {id, name} = parse;
+            let data = d.data || [];
+            let parseData = data.map(item => ({
+                id: item[id],
+                name: item[name]
+            }));
+            this.setState({
+                data: parseData
             });
+        });
     };
+
 
     parseExtraOptions = (extraOptions) => {
         if (!extraOptions) {

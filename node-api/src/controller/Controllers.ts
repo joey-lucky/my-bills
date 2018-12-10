@@ -45,7 +45,7 @@ export default class Controllers {
                         message: e.message,
                         data: []
                     };
-                    throw e;
+                    new Error();
                 }
             })
         });
