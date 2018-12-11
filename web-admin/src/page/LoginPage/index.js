@@ -49,6 +49,7 @@ export default class LoginPage extends React.Component {
     };
 
     render() {
+        console.log(this.constructor.name, "render");
         const {getFieldDecorator} = this.props.form;
         return (
             <div className={styles.container}>

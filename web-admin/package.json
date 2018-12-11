@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "web-admin-start": "webpack-dev-server --config webpack.config.dev.js",
-    "web-admin-build": "webpack --config webpack.config.prod.js",
-    "web-admin-dll": "webpack --config webpack.config.vendor.js",
+    "web-admin-start": "webpack-dev-server --config config/webpack.config.dev.js",
+    "web-admin-build": "webpack --config config/webpack.config.prod.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
@@ -31,6 +30,7 @@
     "babel-core": "^6.26.3",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^7.1.4",
+    "babel-plugin-import": "^1.11.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
@@ -61,5 +61,7 @@
   },
   "engines": {
     "node": ">=8.9.4"
-  }
+  },
+  "homepage": "http://localhost:8080/web/admin",
+  "apiUrl": "http://localhost:3000"
 }

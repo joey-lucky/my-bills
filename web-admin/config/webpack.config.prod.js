@@ -1,38 +1,28 @@
-const path = require("path");
+const paths = require("./paths");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-let publicPath = "/web/admin";
-publicPath = "";
-process.env.PUBLIC_URL = publicPath;
+const publicPath = paths.publicPath;
+
 module.exports = {
+    // devtool: "source-map",
     devtool: false,
     mode: "production",
-    entry:path.resolve(__dirname, "src/index.js"),
-    // entry: {
-    //     app: [
-    //         path.resolve(__dirname, "src/index.js")
-    //     ],
-    //     vendor: [
-    //         "react", "react-dom","antd","history"
-    //         ,"mobx","mobx-react","moment","prop-types","react-router-dom"
-    //     ]
-    // },
+    entry: paths.resolveApp("src/index.js"),
+
     output: {
-        path: path.join(__dirname, "build"),
+        path: paths.resolveApp("build"),
         publicPath: publicPath,
-        filename: "static/js/bundle.[name].[hash].js"
+        filename: "js/bundle.[name].[hash].js"
     },
+
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json']
     },
-    // externals: [
-    //     "react", "react-dom","antd","history"
-    //     ,"mobx","mobx-react","moment","prop-types","react-router-dom"
-    // ],
+
     module: {
         rules: [
             {
@@ -45,7 +35,12 @@ module.exports = {
                     plugins: [
                         //装饰器支持
                         "transform-decorators-legacy",
-                        "transform-runtime"
+                        "transform-runtime",
+                        ["import", {
+                            "libraryName": "antd",
+                            "libraryDirectory": "es",
+                            "style": "css"
+                        }]
                     ]
                 }
             },
@@ -65,32 +60,36 @@ module.exports = {
                 loader: "file-loader",
                 options: {
                     publicPath: publicPath,
-                    name: "static/image/[hash].[ext]"
+                    name: "image/[hash].[ext]"
                 },
             }
         ]
     },
+
     optimization: {
         namedModules: true,
         minimize: true,
-        mergeDuplicateChunks: true
+        mergeDuplicateChunks: true,
     },
+
     plugins: [
         new CleanWebpackPlugin(["build"]),
-        new CopyWebpackPlugin([{from: 'dist', to: "", ignore: "dll/"}]),
+        new CopyWebpackPlugin([{from: 'public', to: "view", ignore: "*.html"}]),
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.DllReferencePlugin({
-            context: __dirname,
-            manifest: require('./dist/dll/manifest.json'),
-        }),
         new MiniCssExtractPlugin({
-            filename: "static/css/bundle.[name].[hash].css",
-            chunkFilename: "static/css/bundle.[id].[hash].css",
+            filename: "css/bundle.[name].[hash].css",
+            chunkFilename: "css/bundle.[id].[hash].css",
+        }),
+        new webpack.DefinePlugin({//全局变量
+            'process.env': {
+                NODE_ENV: JSON.stringify('production'),
+                PUBLIC_PATH: JSON.stringify(publicPath)
+            }
         }),
         new HtmlWebpackPlugin({
             PUBLIC_PATH: publicPath,
-            filename: "index.html",
-            template: path.resolve(__dirname, "dist/index.html")
+            filename: "view/index.html",
+            template: paths.resolveApp("public/index.html")
         }),
     ]
 };
