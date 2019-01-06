@@ -1,0 +1,35 @@
+.day{
+	border: 1px solid #dadada;
+    height: 100px;
+    text-align: center;
+}
+
+.today{
+	background-color: lightblue;
+}
+
+.week{
+	
+}
+
+.month{
+	
+}
+
+.data{
+	cursor: pointer;
+}
+
+.data:HOVER{
+	background-color: #0099cc;
+	color:white;
+}
+
+.title{
+	background-color: #0099cc;
+    color: white;
+    font-weight: bold;
+    border: 1px solid;
+    text-align: center;
+    height:30px
+}

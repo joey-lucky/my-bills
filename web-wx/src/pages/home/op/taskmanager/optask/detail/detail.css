@@ -1,0 +1,17 @@
+.tableTitle{
+    display: flex;
+    width: 100%;
+    font-weight: bold;
+    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+}
+
+.table{
+    width: 80%;
+}
+
+.errorValue{
+    color: #db3434;
+    font-weight: bold;
+}
