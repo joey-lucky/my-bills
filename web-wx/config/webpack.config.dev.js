@@ -10,7 +10,7 @@ module.exports = {
     // devtool: false,
     mode: "development",
     entry: {
-        home: paths.resolveApp("src/pages/home/index.js"),
+        content: paths.resolveApp("src/pages/content/index.js"),
         login: paths.resolveApp("src/pages/login/index.js")
     },
     output: {
@@ -49,7 +49,10 @@ module.exports = {
             },
             {
                 test: /\.(less)$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', {loader: 'less-loader', options: {javascriptEnabled: true}}]
+                use: [MiniCssExtractPlugin.loader, 'css-loader', {
+                    loader: 'less-loader',
+                    options: {javascriptEnabled: true}
+                }]
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
@@ -70,15 +73,15 @@ module.exports = {
         historyApiFallback: {
             rewrites: [
                 {
-                    from: new RegExp("^" + publicPath+"/login"),
+                    from: new RegExp("^" + publicPath + "/login"),
                     to: publicPath + "/login.html"
                 },
                 {
-                    from: new RegExp("^" + publicPath+"/home"),
-                    to: publicPath + "/home.html"
+                    from: new RegExp("^" + publicPath + "/content"),
+                    to: publicPath + "/content.html"
                 },
                 {
-                    from: new RegExp("^"+publicPath),
+                    from: new RegExp("^" + publicPath),
                     to: publicPath + "/login.html"
                 },
             ]
@@ -121,8 +124,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             PUBLIC_PATH: publicPath,
             TITLE: "综合平台",
-            chunks: ["home"],
-            filename: "home.html",
+            chunks: ["content"],
+            filename: "content.html",
             template: paths.resolveApp("public/index.html")
         }),
         new HtmlWebpackPlugin({

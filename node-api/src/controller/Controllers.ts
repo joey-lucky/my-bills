@@ -5,12 +5,14 @@ import TableController from "./TableController";
 import * as Koa from "koa";
 import Log from "../utils/Log";
 
+const publicPath = "/bill/api";
+
 export default class Controllers {
     public static generateControllers() {
         let controllers = new Controllers(new Router());
-        controllers._registerRouter("/api/safe", new SafeController());
-        controllers._registerRouter("/api/user", new UserController());
-        controllers._registerRouter("/api/table", new TableController());
+        controllers._registerRouter("/safe", new SafeController());
+        controllers._registerRouter("/user", new UserController());
+        controllers._registerRouter("/table", new TableController());
         return controllers;
     }
 
@@ -18,6 +20,7 @@ export default class Controllers {
 
     constructor(router: Router) {
         this._router = router;
+        this._router.prefix(publicPath)
     }
 
     public routes(): Koa.Middleware {
@@ -29,7 +32,7 @@ export default class Controllers {
         methodNames.forEach((value, index, array) => {
             let urlName = value.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase());
             let completeUrl = path + "/" + urlName;
-            Log.info("register", completeUrl);
+            Log.info("register", publicPath+completeUrl);
             this._router.all(completeUrl, async (ctx: Router.IRouterContext, next: any) => {
                 let method = controller[value];
                 try {

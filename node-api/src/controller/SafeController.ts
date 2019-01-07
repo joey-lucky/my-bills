@@ -6,8 +6,8 @@ import Assert from "../utils/Assert";
 export default class SafeController {
     login = async (ctx: Router.IRouterContext, next: any) => {
         let params = RequestUtils.getBodyParams(ctx);
-        let loginName = params["LOGIN_NAME"];
-        let password = params["LOGIN_PASSWORD"];
+        let loginName = params["userName"];
+        let password = params["password"];
         let sql = "select t.* from BC_USER t where t.login_name = ?";
         let rows = await DBManager.query(sql, [loginName]);
         Assert.notEmpty(rows, "用户不存在");

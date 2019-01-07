@@ -1,5 +1,5 @@
 {
-  "name": "op",
+  "name": "web-wx",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.config.dev.js",
-    "build": "webpack --config config/webpack.config.login.prod.js && webpack --config config/webpack.config.home.prod.js" ,
+    "build": "webpack --config config/webpack.config.login.prod.js && webpack --config config/webpack.config.home.prod.js",
     "eslint": "eslint --quiet -f visualstudio --fix js/src/pswp/",
     "build-dll": "webpack --config webpack.dll.config.js"
   },
@@ -17,8 +17,8 @@
     "@types/prop-types": "^15.5.3",
     "@types/react": "^16.4.6",
     "@types/react-router-dom": "^4.3.1",
-    "@types/webpack-dev-server": "^3.1.1",
     "@types/webpack": "^4.4.4",
+    "@types/webpack-dev-server": "^3.1.1",
     "autoprefixer": "^8.3.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^6.1.2",
@@ -56,7 +56,7 @@
   "dependencies": {
     "@antv/data-set": "^0.9.0",
     "antd": "^3.4.3",
-    "antd-mobile": "^2.2.6",
+    "antd-mobile": "^2.2.8",
     "history": "^4.6.2",
     "jquery": "^3.3.1",
     "mobx": "^4.2.0",
@@ -71,6 +71,6 @@
   },
   "author": "",
   "license": "ISC",
-  "allowedHost": "http://localhost:8088/om/api",
-  "homepage": "http://localhost:8080/om/front"
+  "allowedHost": "http://localhost:3000/bill/api",
+  "homepage": "http://localhost:8080/bill/wxapp"
 }
