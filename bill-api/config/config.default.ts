@@ -1,5 +1,6 @@
 import {EggAppConfig, EggAppInfo, PowerPartial} from 'egg';
-export const mysql = {
+
+const mysql = {
     // 单数据库信息配置
     client: {
         // host
@@ -29,6 +30,7 @@ export default (appInfo: EggAppInfo) => {
 
     const bizConfig = {
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
+        mysql:mysql
     };
 
     // the return config will combines to EggAppConfig
