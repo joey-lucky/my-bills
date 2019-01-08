@@ -1,98 +1,76 @@
-import $ from "jquery";
+import {apiPath} from "@global";
 
-class Ajax {
-    static errorHandle;
+const headers = new Headers();
+headers.append("Content-Type", "application/json;charset=utf-8");
+// headers.append("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+// headers.append("Content-Length", content.length.toString());
+// headers.append("X-Custom-Header", "ProcessThisImmediately");
 
-    static apiPost(url, data, isasync, dataType) {
-        let completeUrl = window.getBasePath() + url;
-        return this._post(completeUrl, data, isasync, dataType);
+export default class Ajax {
+    static httpGet(url, params) {
+        let promise = new Promise(async (resolve, reject) => {
+            try {
+                let completeUrl = apiPath + url;
+                let response = await fetch(completeUrl, {
+                    method: 'GET',
+                    headers: headers,
+                    // mode: 'cors',
+                    // cache: 'default',
+                    body: JSON.stringify(params)
+                });
+                let data = await response.json();
+                if (data.code === "1") {
+                    resolve(data);
+                } else {
+                    throw new Error(data.message || "");
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
+        return this.wrapPromise(promise);
     }
 
-    static apiGet(url, data, isasync, dataType) {
-        let completeUrl = window.getBasePath() + "/api" + url;
-        return this._get(completeUrl, data, isasync, dataType);
+    static apiPost(url, params) {
+        let promise = new Promise(async (resolve, reject) => {
+            try {
+                let completeUrl = apiPath + url;
+                let response = await fetch(completeUrl, {
+                    method: 'POST',
+                    headers: headers,
+                    // mode: 'cors',
+                    // cache: 'default',
+                    body: JSON.stringify(params)
+                });
+                let data = await response.json();
+                if (data.code === "1") {
+                    resolve(data);
+                } else {
+                    throw new Error(data.message || "");
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
+        return this.wrapPromise(promise);
     }
 
-    static _post(url, data, isasync, dataType) {
-
-        return this._ajax(url, data, "POST", isasync, dataType);
-    }
-
-    static _get(url, data, isasync, dataType) {
-
-        return this._ajax(url, data, "GET", isasync, dataType);
-    }
-
-    static _ajax(url, data, method = "GET", isasync, dataType) {
-        let _isasync = isasync || "true";
-        let myDataType = dataType || "json";
-
-        /**
-         * 提供取消渠道
-         */
-        let doCancel;
-
-        let cancelPromise = new Promise((resolve, reject) => {
-            doCancel = (reason) => {
-                reject("用户取消,原因：" + reason);
+    static wrapPromise(promise, timeout = 10000) {
+        let timeoutFn = null;
+        let cancelFn = null;
+        let timeoutPromise = new Promise((resolve, reject) => {
+            timeoutFn = () => {
+                reject("请求超时");
             };
         });
-
-        let promise = new Promise(function (resolve, reject) {
-            $.ajax({
-                url: url,
-                type: method,
-                data: data,
-                timeout: 35000,
-                dataType: myDataType,
-                async: _isasync,
-                beforeSend: function (request) {
-                    request.setRequestHeader("TOKEN", "crsfToken");
-                },
-                success: function (d) {
-
-                    if (!d.platform) {
-                        resolve(d);
-                        return;
-                    }
-
-                    if (d.result_flag === "SUCCESS") {
-                        resolve(d);
-                    } else {
-                        console.log("接口返回错误信息");
-                        reject(d.result_flag_dsc);
-                    }
-
-                },
-                error: function (xmlHttpRequest, textStatus, errorThrown) {
-                    if (Ajax.errorHandle) {
-                        Ajax.errorHandle(xmlHttpRequest, textStatus, errorThrown);
-                    }
-                }
-            });
+        let cancelPromise = new Promise((resolve, reject) => {
+            cancelFn = (message) => {
+                reject("请求中止 " + message);
+            }
         });
-
-        let allPromise = Promise.race([promise, cancelPromise]);
-        let then = allPromise.then;
-
-        allPromise.then = (fun) => {
-            let promise = then.call(allPromise, fun);
-            promise.cancel = doCancel;
-            return promise;
-        };
-
-        allPromise.cancel = doCancel;
-
+        let allPromise = Promise.race([promise, timeoutPromise, cancelPromise]);
+        setTimeout(timeoutFn, timeout);
+        allPromise.cancel = cancelFn;
         return allPromise;
     }
 }
-
-class MockAjax {
-
-    static apiPost(url, data, isasync, dataType) {
-        return Ajax._get("http://localhost:8080/mock" + url + ".js", data, isasync, dataType);
-    }
-
-}
-
-export {Ajax, MockAjax};
