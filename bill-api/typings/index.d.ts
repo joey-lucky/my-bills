@@ -2,9 +2,10 @@ import 'egg';
 
 declare module 'egg' {
     interface Application {
-        mysql: MySql & MySqlExecutor;
-        cache:{
+        mysql:MySql;
+        cache: {
             bcTableCache: TableCache
+            tableForeignKeyMap: Map<string, string>
         }
     }
 }
@@ -23,13 +24,12 @@ interface MySqlExecutor {
     update(tableName: String, values?: {}): Promise<any>
 }
 
-interface MySql {
+export interface MySql extends MySqlExecutor{
     beginTransaction(): MySqlExecutor & Transaction
 }
 
-interface Transaction {
+export interface Transaction extends MySqlExecutor{
     commit(): Promise<void>;
-
     rollback(): Promise<void>;
 }
 

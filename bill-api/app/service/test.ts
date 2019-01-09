@@ -3,7 +3,7 @@ import { Service } from 'egg';
 /**
  * Test Service
  */
-export default class Test extends Service {
+export default class extends Service {
 
   /**
    * sayHi to you

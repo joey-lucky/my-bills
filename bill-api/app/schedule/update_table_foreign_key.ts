@@ -1,9 +1,6 @@
 import {Subscription} from 'egg';
-import {TableCache} from "../../typings";
-import Table from "../../../node-api/src/database/Table";
 
 export default class extends Subscription {
-    // 通过 schedule 属性来设置定时任务的执行间隔等配置
     static get schedule() {
         return {
             interval: '1m', // 1 分钟间隔
@@ -12,23 +9,14 @@ export default class extends Subscription {
         };
     }
 
-    // subscribe 是真正定时任务执行时被运行的函数
     async subscribe() {
-        await this.updateBcTableCache();
-    }
-
-    private async updateBcTableCache() {
-        let bcTableCache: TableCache = {};
         let tableNames = await this.getAllTableNames();
+        let tableForeignKeyMap = new Map();
         for (let tableName of tableNames) {
-            let keyTable: { [key: string]: Table } = {};
-            let rows = await this.app.mysql.select(tableName);
-            for (let row of rows) {
-                keyTable[row["id"]] = row;
-            }
-            bcTableCache[tableName] = keyTable;
+            let removeBcName = tableName.substr(3);
+            tableForeignKeyMap.set(removeBcName + "_id", removeBcName + "_name");
         }
-        this.app.cache.bcTableCache = bcTableCache;
+        this.app.cache.tableForeignKeyMap = tableForeignKeyMap;
     }
 
     async getAllTableNames() {
@@ -39,4 +27,3 @@ export default class extends Subscription {
         return data.map((row) => row["table_name"]);
     }
 }
-
