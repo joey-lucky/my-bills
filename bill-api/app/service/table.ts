@@ -1,19 +1,24 @@
 import {Service} from 'egg';
 
 export default class extends Service {
-    public async list() {
+    public async list(params) {
+        const {app,ctx} = this;
+        let tableName = params["tableName"];
+        let rows = await app.mysql.select(tableName);
+        rows = await ctx.service.translateTable.translate(rows);
+        return rows;
+    }
+
+
+    public async create(params) {
 
     }
 
-    public async create() {
+    public async update(params) {
 
     }
 
-    public async update() {
-
-    }
-
-    public async delete() {
+    public async delete(params) {
 
     }
 }

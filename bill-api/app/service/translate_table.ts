@@ -14,24 +14,27 @@ class TableTranslator {
         });
     }
 
-    public translate(rows: any[]):void{
-        rows.forEach((row) => {
+    public translate(rows: any[]):any[]{
+        return rows.map((row) => {
             let id = row[this.foreignId];
             if (id) {
                 row[this.foreignName] = this.tableCache[id];
             }
+            return rows;
         })
     }
 }
 
 export default class extends Service {
-    public async translate(rows: any[] = [], foreignKeys: string[]) {
+    public async translate(rows: any[] = []):Promise<any[]> {
+        let newRows = rows;
         if (rows.length !== 0) {
             let translators = await this.getTableTranslators(rows[0]);
             for(let translator of translators){
-                translator.translate(rows);
+                newRows = translator.translate(rows);
             }
         }
+        return newRows;
     }
 
     private async getTableTranslators(row):Promise<TableTranslator[]> {

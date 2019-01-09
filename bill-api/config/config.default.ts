@@ -25,12 +25,16 @@ export default (appInfo: EggAppInfo) => {
     // use for cookie sign key, should change to your own and keep security
     config.keys = appInfo.name + '_18576651723';
     // add your egg config in here
-    config.middleware = [];
+    config.middleware = ["parseRequestBody", "parseResponseBody"];
     // add your special config in here
 
     const bizConfig = {
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
-        mysql:mysql
+        mysql: mysql,
+        logger: {
+            level: 'DEBUG',
+            consoleLevel: 'DEBUG',
+        }
     };
 
     // the return config will combines to EggAppConfig
