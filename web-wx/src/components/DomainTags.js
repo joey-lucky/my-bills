@@ -6,7 +6,7 @@ import * as PropTypes from "prop-types";
 import {Tag} from "antd";
 import {autorun, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
-import {Ajax} from "@utils/ajax";
+import {Request} from "@utils/ajax";
 
 const CheckableTag = Tag.CheckableTag;
 

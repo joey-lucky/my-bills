@@ -1,37 +1,35 @@
 const paths = require("./paths");
 const webpack = require("webpack");
-
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-let {apiPath, publicPath,loginPageVersion} = paths;
+let {publicPath, pageVersion, pages,apiPath, resolveApp} = paths;
 
-module.exports = {
-    // devtool: "source-map",
-    devtool: false,
+let config = {
+    devtool: "source-map",
     mode: "production",
-    entry: {
-        login: paths.resolveApp("src/pages/login/index.js")
-    },
-
+    entry: pages.reduce((previousValue, pageName) => {
+        previousValue[pageName] = resolveApp("src/pages/" + pageName + "/index.js");
+        return previousValue;
+    }, {}),
     output: {
         path: paths.resolveApp("build"),
         publicPath: publicPath,
-        filename: "js/bundle.[name]." + loginPageVersion + ".js",
+        filename: (chunkData) => {
+            return "js/bundle.[name]." + pageVersion[chunkData.chunk.name] + ".js"
+        },
     },
-
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
         alias: {
             "@global": paths.resolveApp("src/global.js"),
             "@utils": paths.resolveApp("src/utils"),
-            "@asserts": paths.resolveApp("src/asserts"),
+            "@layouts": paths.resolveApp("src/layouts"),
             "@components": paths.resolveApp("src/components"),
+            "@services": paths.resolveApp("src/services"),
         }
     },
-
     module: {
         rules: [
             {
@@ -83,11 +81,14 @@ module.exports = {
 
     plugins: [
         new CleanWebpackPlugin([paths.resolveApp("build")], {root: paths.resolveApp(".")}),
-        new CopyWebpackPlugin([{from: 'public', to: "view", ignore: "*.html"}]),
         new webpack.HotModuleReplacementPlugin(),
         new MiniCssExtractPlugin({
-            filename: "css/bundle.[name]."+loginPageVersion+".css",
-            chunkFilename: "css/bundle.[id]."+loginPageVersion+".css",
+            chunkFilename: (chunkData) => {
+                return "css/bundle.[id]." + pageVersion[chunkData.chunk.name] + ".css";
+            },
+            filename: (chunkData) => {
+                return "css/bundle.[id]." + pageVersion[chunkData.chunk.name] + ".css";
+            },
         }),
         new webpack.DefinePlugin({//全局变量
             'process.env': {
@@ -96,13 +97,15 @@ module.exports = {
                 API_PATH: JSON.stringify(apiPath),
             }
         }),
-        new HtmlWebpackPlugin({
-            PUBLIC_PATH: publicPath,
-            title:"登录",
-            inject:true,
-            chunks: ["login"],
-            filename: "view/login.html",
-            template: paths.resolveApp("public/index.html")
-        }),
+        ...pages.map(pageName => {
+            return new HtmlWebpackPlugin({
+                PUBLIC_PATH: publicPath,
+                chunks: [pageName],
+                inject: true,
+                filename: "view/" + pageName + ".html",
+                template: paths.resolveApp("src/pages/" + pageName + "/index.html")
+            })
+        })
     ]
 };
+module.exports = config;

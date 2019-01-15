@@ -5,6 +5,16 @@ const moment = require("moment");
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const packageJson = require(resolveApp('package.json'));
+const {
+    homePage="http://localhost:8080/bill/front",
+    apiHost="http://localhost:3000/bill/api"
+} = packageJson;
+const pages = fs.readdirSync(resolveApp("src/pages"))||[];
+const version = "v"+moment().format("YYYYMMDDHHmmss");
+const pageVersion = pages.reduce((pre, pageName) => {
+    pre[pageName] = version;
+    return pre;
+}, {});
 
 //url地址 http://localhost:8080/om/front -> 8080
 function getPort(url) {
@@ -22,11 +32,11 @@ function getHost(url) {
 }
 
 module.exports = {
-    resolveApp: resolveApp,
-    publicPath: getPath(packageJson.homepage),
-    port: getPort(packageJson.homepage),
-    homePageVersion:moment().format("YYYYMMDDHHmmss"),
-    loginPageVersion:"20181217",
-    allowedHost: getHost(packageJson.allowedHost),
-    apiPath: getPath(packageJson.allowedHost)
+    resolveApp,
+    pages,
+    pageVersion,
+    publicPath: getPath(homePage),
+    port: getPort(homePage),
+    allowedHost: getHost(apiHost),
+    apiPath: getPath(apiHost),
 };

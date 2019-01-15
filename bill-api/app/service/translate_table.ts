@@ -20,7 +20,7 @@ class TableTranslator {
             if (id) {
                 row[this.foreignName] = this.tableCache[id];
             }
-            return rows;
+            return row;
         })
     }
 }

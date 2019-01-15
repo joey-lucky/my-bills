@@ -19,7 +19,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import {Select} from "antd";
 import {observer} from "mobx-react";
-import {Ajax} from "@utils/ajax";
+import {Request} from "@utils/ajax";
 
 const NULL = "DOMAIN_SELECT_NULL";
 

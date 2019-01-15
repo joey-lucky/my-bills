@@ -3,7 +3,7 @@ import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
 import {Table} from "antd";
-import {Ajax} from "@utils/ajax";
+import {Request} from "@utils/ajax";
 
 class AppState {
 

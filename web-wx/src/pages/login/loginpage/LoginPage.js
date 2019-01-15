@@ -1,11 +1,11 @@
 import * as React from "react";
 import {publicPath} from "@global";
-import Ajax from "@utils/Ajax";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import OptimizeUtils from "../../../utils/OptimizeUtils";
 import {Button, Card, Flex, InputItem, List} from "antd-mobile";
 import {createForm} from 'rc-form';
+import {queryLogin} from "@services/api";
 
 class AppState {
     @observable userName = "";
@@ -13,10 +13,9 @@ class AppState {
     defNextUrl = publicPath + "/content/";
 
     asyncLogin(params) {
-        return Ajax.apiPost("/safe/login", params)
-            .then((data)=>{
-                window.location.href = this.defNextUrl;
-            });
+        return queryLogin(params).then(() => {
+            window.location.href = this.defNextUrl;
+        });
     }
 }
 

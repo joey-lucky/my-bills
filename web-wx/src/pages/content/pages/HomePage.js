@@ -1,8 +1,9 @@
 import * as React from "react";
-import Ajax from "@utils/Ajax";
 import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
+import {queryTableData} from "@services/api";
+import * as PropTypes from "prop-types";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -11,10 +12,9 @@ class AppState {
 
     asyncLoadData() {
         this.listViewDataSource = this.listViewDataSource.cloneWithRows([{},{},{}]);
-        Ajax.apiPost("/table/list", {tableName: "bd_bill"})
-            .then((data) => {
+        queryTableData("bd_bill").then((d) => {
 
-            });
+        });
     }
 }
 
@@ -27,7 +27,7 @@ export default class HomePage extends React.Component {
     }
 
     onAddClick=()=>{
-
+        this.props.history.push("/content/add-bill");
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
@@ -57,7 +57,7 @@ export default class HomePage extends React.Component {
                 <NavBar
                     style={{width: "100%"}}
                     mode="light"
-                    icon={<Icon type="left"/>}
+                    icon={<Icon type="left" onClick={()=>this.props.history.goBack()}/>}
                     onLeftClick={() => this.props.history.goBack()}
                     rightContent={<span onClick={this.onAddClick}>新增</span>}
                 >账单管理</NavBar>

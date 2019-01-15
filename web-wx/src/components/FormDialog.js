@@ -3,7 +3,7 @@ import {observable, toJS} from "mobx";
 import * as PropTypes from "prop-types";
 import {observer} from "mobx-react";
 import {Modal} from "antd";
-import {Ajax} from "@utils/ajax";
+import {Request} from "@utils/ajax";
 import Dialog from "./Dialog";
 
 

@@ -1,54 +1,53 @@
 import * as React from "react";
-import Ajax from "@utils/Ajax";
-import {observable, toJS} from "mobx";
+import {observable} from "mobx";
 import {observer} from "mobx-react";
-import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
+import {Button, Flex, Icon, InputItem, List, ListView, NavBar} from "antd-mobile";
+import {createForm} from 'rc-form';
+import InputItemSelect from "@components/InputItemSelect";
+import {addTableData} from "@services/api";
+import {TestContext} from "../index";
+import * as PropTypes from "prop-types";
 
 class AppState {
+    @observable initData = {
+
+    };
+
+
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
     });
 
     asyncLoadData() {
-        this.listViewDataSource = this.listViewDataSource.cloneWithRows([{},{},{}]);
-        Ajax.apiPost("/table/list", {tableName: "bd_bill"})
-            .then((data) => {
 
-            });
+    }
+
+    asyncSaveData(values) {
+        return addTableData("bd_bill", values);
     }
 }
 
+@createForm()
 @observer
 export default class AddBillPage extends React.Component {
+
+
     _appState = new AppState();
-
-    componentDidMount() {
-        this._appState.asyncLoadData();
+    constructor(props,context){
+        super(props,context);
     }
-
-    onAddClick=()=>{
-
-    };
-
-    renderItem = (rowData, sectionID, rowID, highlightRow) => {
-        return (
-            <List.Item
-                arrow="horizontal"
-                multipleLine
-                onClick={() => {
-                }}
-            >
-                {/*{rowData["bill_type_name"] + " " + rowData["money"]}*/}
-                特殊账单
-                <List.Item.Brief>
-                    {rowData["card_name"] + " " + rowData["user_name"]}<br/>
-                    {rowData["bill_desc"]}<br/>
-                </List.Item.Brief>
-            </List.Item>
-        );
+    onSaveClick = () => {
+        const {form} = this.props;
+        let values = form.getFieldsValue();
+        this._appState.asyncSaveData(values)
+            .then((d) => {
+                this.props.history.push("/home");
+            });
     };
 
     render() {
+        console.log(this.context.propA);
+        const {form} = this.props;
         return (
             <Flex
                 style={{height: "100%", backgroundColor: "rgba(0,0,0,0.1)"}}
@@ -60,24 +59,41 @@ export default class AddBillPage extends React.Component {
                     icon={<Icon type="left"/>}
                     onLeftClick={() => this.props.history.goBack()}
                     rightContent={<span onClick={this.onAddClick}>新增</span>}
-                >账单管理</NavBar>
+                >新增账单</NavBar>
 
-                <ListView
-                    style={{width: "100%", flex: 1}}
-                    dataSource={toJS(this._appState.listViewDataSource)}
-                    renderRow={this.renderItem}
-                    renderSeparator={(sectionID, rowID) => (
-                        <div
-                            key={rowID}
-                            style={{
-                                backgroundColor: "#F5F5F9",
-                                height: 8,
-                                borderTop: "1px solid #ECECED",
-                                borderBottom: "1px solid #ECECED"
-                            }}
-                        />
-                    )}
-                />
+                <List style={{width: "100%"}}>
+                    <InputItemSelect
+                        {...form.getFieldProps("card_id")}
+                        url={"/table/list"}
+                        params={{tableName: "bc_card"}}
+                        parse={{CODE: "id", VALUE: "name"}}>
+                        卡片类型
+                    </InputItemSelect>
+
+                    <InputItemSelect
+                        {...form.getFieldProps("bill_type_id")}
+                        url={"/table/list"}
+                        params={{tableName: "bc_bill_type"}}
+                        parse={{CODE: "id", VALUE: "name"}}>
+                        账单类型
+                    </InputItemSelect>
+
+                    <InputItem
+                        {...form.getFieldProps("money")}
+                        type={"number"}
+                        clear={true}
+                        extra="¥"
+                    >金额</InputItem>
+
+                    <InputItem
+                        {...form.getFieldProps("bill_desc")}
+                        type={"text"}
+                        multiple={true}
+                        clear={true}
+                    >详情</InputItem>
+
+                    <Button type={"primary"} onClick={this.onSaveClick}>保存</Button>
+                </List>
             </Flex>
         )
     }

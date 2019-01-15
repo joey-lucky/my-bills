@@ -10,7 +10,6 @@ export default class extends Subscription {
     }
 
     async subscribe() {
-       console.log("subscribe")
     }
 
 }

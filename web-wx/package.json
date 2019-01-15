@@ -1,5 +1,5 @@
 {
-  "name": "web-wx",
+  "name": "op",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,16 @@
   },
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.config.dev.js",
-    "build": "webpack --config config/webpack.config.login.prod.js && webpack --config config/webpack.config.home.prod.js",
+    "build": "webpack --config config/webpack.config.prod.js",
+    "test": "webpack --config config/webpack.config.dll.js ",
     "eslint": "eslint --quiet -f visualstudio --fix js/src/pswp/",
     "build-dll": "webpack --config webpack.dll.config.js"
   },
   "devDependencies": {
     "@types/node": "^10.5.1",
     "@types/prop-types": "^15.5.3",
-    "@types/react": "^16.4.6",
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
     "@types/react-router-dom": "^4.3.1",
     "@types/webpack": "^4.4.4",
     "@types/webpack-dev-server": "^3.1.1",
@@ -63,14 +65,14 @@
     "mobx-react": "^5.0.0",
     "moment": "^2.22.1",
     "prop-types": "^15.6.2",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
     "react-router-dom": "^4.2.2",
     "react-sticky": "^6.0.3",
     "viser-react": "^2.3.0"
   },
   "author": "",
   "license": "ISC",
-  "allowedHost": "http://localhost:3000/bill/api",
-  "homepage": "http://localhost:8080/bill/wxapp"
+  "apiHost": "http://localhost:3000/bill/api",
+  "homePage": "http://localhost:8080/bill/front"
 }

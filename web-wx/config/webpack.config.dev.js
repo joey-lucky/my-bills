@@ -1,32 +1,34 @@
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const paths = require("./paths");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-let {apiPath, allowedHost, port, publicPath} = paths;
+let {pages,pageVersion,apiPath, allowedHost, port, publicPath,resolveApp} = paths;
 
 module.exports = {
-    devtool: "source-map",
-    // devtool: false,
+    devtool: "cheap-module-eval-source-map",
     mode: "development",
-    entry: {
-        content: paths.resolveApp("src/pages/content/index.js"),
-        login: paths.resolveApp("src/pages/login/index.js")
-    },
+    entry: pages.reduce((previousValue, pageName) => {
+        previousValue[pageName] = resolveApp("src/pages/" + pageName + "/index.js");
+        return previousValue;
+    }, {}),
     output: {
         path: paths.resolveApp("build"),
         publicPath: publicPath,
-        filename: "static/js/bundle.[name].[hash].js"
+        filename: (chunkData) => {
+            return "js/bundle.[name]." + pageVersion[chunkData.chunk.name] + ".js"
+        },
     },
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
         alias: {
-            "@global": paths.resolveApp("src/global.js"),
-            "@utils": paths.resolveApp("src/utils"),
-            "@asserts": paths.resolveApp("src/asserts"),
-            "@components": paths.resolveApp("src/components"),
+            "@global": resolveApp("src/global.js"),
+            "@utils": resolveApp("src/utils"),
+            "@layouts": resolveApp("src/layouts"),
+            "@components": resolveApp("src/components"),
+            "@services": resolveApp("src/services"),
         }
     },
+    // externals: dllConfig.entry.vendors,
     module: {
         rules: [
             {
@@ -45,14 +47,11 @@ module.exports = {
             },
             {
                 test: /\.(css)$/,
-                use: [MiniCssExtractPlugin.loader, {loader: 'css-loader', options: {modules: true}}]
+                use: ["style-loader", {loader: 'css-loader', options: {modules: true}}]
             },
             {
                 test: /\.(less)$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', {
-                    loader: 'less-loader',
-                    options: {javascriptEnabled: true}
-                }]
+                use: ["style-loader",'css-loader', {loader: 'less-loader', options: {javascriptEnabled: true}}]
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
@@ -67,22 +66,18 @@ module.exports = {
     devServer: {
         // host: "127.0.0.1",
         hot: true,
-        contentBase: paths.resolveApp("build"),
+        contentBase: resolveApp("build"),
         port: port,
         publicPath: publicPath,
         historyApiFallback: {
             rewrites: [
+                ...pages.map((pageName)=>({
+                    from: new RegExp("^" + publicPath+"/"+pageName),
+                    to: publicPath + "/view/"+pageName+".html"
+                })),
                 {
-                    from: new RegExp("^" + publicPath + "/login"),
-                    to: publicPath + "/login.html"
-                },
-                {
-                    from: new RegExp("^" + publicPath + "/content"),
-                    to: publicPath + "/content.html"
-                },
-                {
-                    from: new RegExp("^" + publicPath),
-                    to: publicPath + "/login.html"
+                    from: new RegExp("^"+publicPath+"/"),
+                    to: publicPath + "/view/login.html"
                 },
             ]
         },
@@ -103,10 +98,12 @@ module.exports = {
                 changeOrigin: true,
             }
         },
+        // useLocalIp: true,
         index: "/index.html",
     },
     optimization: {
         namedModules: true,
+        minimize: false,
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
@@ -117,24 +114,15 @@ module.exports = {
                 API_PATH: JSON.stringify(apiPath),
             }
         }),
-        new MiniCssExtractPlugin({
-            filename: "css/bundle.[name].[hash].css",
-            chunkFilename: "css/bundle.[id].[hash].css",
-        }),
-        new HtmlWebpackPlugin({
-            PUBLIC_PATH: publicPath,
-            TITLE: "综合平台",
-            chunks: ["content"],
-            filename: "content.html",
-            template: paths.resolveApp("public/index.html")
-        }),
-        new HtmlWebpackPlugin({
-            PUBLIC_PATH: publicPath,
-            TITLE: "登录",
-            chunks: ["login"],
-            filename: "login.html",
-            template: paths.resolveApp("public/index.html")
-        }),
+        ...pages.map(pageName => {
+            return new HtmlWebpackPlugin({
+                PUBLIC_PATH: publicPath,
+                chunks: [pageName],
+                inject: true,
+                filename: "view/" + pageName + ".html",
+                template: paths.resolveApp("src/pages/" + pageName + "/index.html")
+            })
+        })
     ]
 };
 

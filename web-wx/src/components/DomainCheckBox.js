@@ -2,7 +2,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import {Checkbox, Row} from "antd";
 import {observer} from "mobx-react";
-import {Ajax} from "@utils/ajax";
+import {Request} from "@utils/ajax";
 
 @observer
 export default class DomainCheckBox extends React.Component {
