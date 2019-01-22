@@ -5,8 +5,6 @@ import {Button, Flex, Icon, InputItem, List, ListView, NavBar} from "antd-mobile
 import {createForm} from 'rc-form';
 import InputItemSelect from "@components/InputItemSelect";
 import {addTableData} from "@services/api";
-import {TestContext} from "../index";
-import * as PropTypes from "prop-types";
 
 class AppState {
     @observable initData = {
@@ -30,12 +28,12 @@ class AppState {
 @createForm()
 @observer
 export default class AddBillPage extends React.Component {
-
-
     _appState = new AppState();
+
     constructor(props,context){
         super(props,context);
     }
+
     onSaveClick = () => {
         const {form} = this.props;
         let values = form.getFieldsValue();
@@ -46,7 +44,6 @@ export default class AddBillPage extends React.Component {
     };
 
     render() {
-        console.log(this.context.propA);
         const {form} = this.props;
         return (
             <Flex

@@ -17,7 +17,7 @@ const mysql = {
     app: true,
     agent: false,
 };
-
+const middleware = ["errorHandler", "requestLogger","paramParser","tokenVerify","resultParser"];
 export default (appInfo: EggAppInfo) => {
     const config = {} as PowerPartial<EggAppConfig>;
 
@@ -25,7 +25,7 @@ export default (appInfo: EggAppInfo) => {
     // use for cookie sign key, should change to your own and keep security
     config.keys = appInfo.name + '_18576651723';
     // add your egg config in here
-    config.middleware = ["requestLogger", "requestParser"];
+    config.middleware =middleware;
     // add your special config in here
 
     const bizConfig = {

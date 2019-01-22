@@ -2,12 +2,18 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
-import ExportRequestLogger from '../../../app/middleware/request_logger';
-import ExportRequestParser from '../../../app/middleware/request_parser';
+import ExportErrorHandler from '../../../app/middleware/errorHandler';
+import ExportParamParser from '../../../app/middleware/paramParser';
+import ExportRequestLogger from '../../../app/middleware/requestLogger';
+import ExportResultParser from '../../../app/middleware/resultParser';
+import ExportTokenVerify from '../../../app/middleware/tokenVerify';
 
 declare module 'egg' {
   interface IMiddleware {
+    errorHandler: typeof ExportErrorHandler;
+    paramParser: typeof ExportParamParser;
     requestLogger: typeof ExportRequestLogger;
-    requestParser: typeof ExportRequestParser;
+    resultParser: typeof ExportResultParser;
+    tokenVerify: typeof ExportTokenVerify;
   }
 }

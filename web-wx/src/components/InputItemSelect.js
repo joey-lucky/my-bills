@@ -1,44 +1,12 @@
 import * as React from "react";
-import {useContext} from "react";
 import * as PropTypes from "prop-types";
-import {observer} from "mobx-react";
 import request from "@utils/request";
 import {ActionSheet, InputItem} from "antd-mobile";
-import {observable, runInAction, toJS} from "mobx";
 
-const NULL = "DOMAIN_SELECT_NULL";
-
-@observer
 export default class InputItemSelect extends React.Component {
-    @observable appState = {
-        ids: [],
-        names: [],
-        value: ""
-    };
-
     static contextTypes = {
         request: PropTypes.any
     };
-
-    static getDerivedStateFromProps(nextProps, prevState) {
-        console.log("InputItemSelect", "getDerivedStateFromProps");
-
-        if (nextProps.type !== prevState.type) {
-            return {
-                type: nextProps.type,
-            };
-        }
-        return null;
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {value:preValue} = prevProps;
-        const {value} = this.props;
-
-
-    }
-
-
 
     static propTypes = {
         extraOptions: PropTypes.any,
@@ -47,22 +15,29 @@ export default class InputItemSelect extends React.Component {
         params: PropTypes.any,
     };
 
-    _component;
-    _data = [];
+    static getDerivedStateFromProps(nextProps, prevState) {
+        console.log("InputItemSelect","getDerivedStateFromProps");
+        const {value = ""} = nextProps;
+        let id = prevState.ids[prevState.selectIndex]||"";
+        if (value !== id) {
+            console.log("value !== id");
+            let index = prevState.ids.indexOf(value);
+            return {
+                selectIndex: index
+            }
+        }
+        return null;
+    }
 
     constructor(props, ctx) {
         super(props);
-        console.log(ctx);
-        this.appState.value = props.value || "";
-    }
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.value !== this.props.value) {
-
-
+        this.loadData(props);
+        this.state = {
+            ids: [],
+            names: [],
+            selectIndex: -1
         }
     }
-
 
     loadData(props) {
         const {url, parse, params, extraOptions} = props;
@@ -90,22 +65,21 @@ export default class InputItemSelect extends React.Component {
                 ids.push(item.id);
                 names.push(item.name);
             });
-            runInAction(() => {
-                this.appState.ids = ids;
-                this.appState.names = names;
-            });
+            this.setState({ids, names});
         });
     }
 
     onClick = (e) => {
-        let buttons = toJS(this.appState.names);
+        let {names,ids} = this.state;
         ActionSheet.showActionSheetWithOptions({
-                options: buttons,
+                options: names,
             },
             (buttonIndex) => {
                 ActionSheet.close();
-                console.log(this._component);
-                this._component.value = buttons[buttonIndex];
+                this.setState({
+                    selectIndex:buttonIndex,
+                });
+                this.props.onChange && this.props.onChange(ids[buttonIndex]);
             });
     };
 
@@ -114,27 +88,41 @@ export default class InputItemSelect extends React.Component {
             editable, children, onClick,
             ...props
         } = this.props;
+        let value = this.state.names[this.state.selectIndex]|| "";
         return (
             <InputItem
                 {...props}
+                value={value}
                 onClick={this.onClick}
                 ref={(c) => this._component = c}
                 editable={false}>
                 {children}
-                <Test/>
             </InputItem>
         );
     }
-}
 
-function Test() {
-    console.log(Object.keys(React))
+    //无视props
+    shouldComponentUpdate(nextProps,nextState,nextContext){
+        if (JSON.stringify(nextState) !== JSON.stringify(this.state)) {
+            return true;
+        }
+        let {value:nextValue,...props1} = nextProps;
+        let {value,...props2} = this.props;
+        if (JSON.stringify(props1) !== JSON.stringify(props2)) {
+            return true;
+        }
+        return false;
+    }
 
-    ;
-    const ctx = useContext({
-        request: PropTypes.any
-    });
-
-    console.log(ctx);
-    return null;
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {url = "", parse = {}, params = {}} = this.props;
+        const {url: preUrl = "", parse: preParse = {}, params: preParams = {}} = prevProps;
+        console.log(this.constructor.name,"componentDidUpdate");
+        if (url !== preUrl
+            || JSON.stringify(parse) !== JSON.stringify(preParse)
+            || JSON.stringify(params) !== JSON.stringify(preParams)
+        ) {
+            this.loadData(this.props);
+        }
+    }
 }

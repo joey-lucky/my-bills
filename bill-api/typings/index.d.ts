@@ -1,8 +1,13 @@
 import 'egg';
+import TokenCrypto from "../app/extend/token/TokenCrypto";
 
 declare module 'egg' {
+    import SqlExecutor from "../app/extend/database/SqlExecutor";
+
     interface Application {
         mysql:MySql;
+        sqlExecutor:SqlExecutor,
+        tokenCrypto:TokenCrypto
         cache: {
             bcTableCache: TableCache
             tableForeignKeyMap: Map<string, string>
@@ -24,13 +29,13 @@ interface MySqlExecutor {
     update(tableName: String, values?: {}): Promise<any>
 }
 
-export interface MySql extends MySqlExecutor{
-    beginTransaction(): MySqlExecutor & Transaction
-}
-
 export interface Transaction extends MySqlExecutor{
     commit(): Promise<void>;
     rollback(): Promise<void>;
+}
+
+export interface MySql extends MySqlExecutor{
+    beginTransaction(): MySqlExecutor & Transaction
 }
 
 interface TableCache {
