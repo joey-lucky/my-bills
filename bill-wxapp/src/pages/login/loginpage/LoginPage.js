@@ -13,9 +13,11 @@ class AppState {
     defNextUrl = publicPath + "/content/";
 
     asyncLogin(params) {
-        return queryLogin(params).then(() => {
-            window.location.href = this.defNextUrl;
-        });
+        return queryLogin(params)
+            .then((d) => {
+                window.localStorage.setItem(publicPath+"_token", d.data[0].token);
+                window.location.href = this.defNextUrl;
+            });
     }
 }
 
@@ -38,12 +40,12 @@ export default class LoginPage extends React.Component {
         const {form} = this.props;
         return (
             <Flex
-                style={{height: "100%",backgroundColor:"rgba(0,0,0,0.1)"}}
+                style={{height: "100%", backgroundColor: "rgba(0,0,0,0.1)"}}
                 direction={"column"}
                 justify={"center"}
                 align={"center"}>
 
-                <Card full={false} style={{width:"90%"}}>
+                <Card full={false} style={{width: "90%"}}>
                     <Card.Header title={"账单管理"}/>
                     <Card.Body>
                         <List>

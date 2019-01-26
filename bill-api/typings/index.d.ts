@@ -2,16 +2,22 @@ import 'egg';
 import TokenCrypto from "../app/extend/token/TokenCrypto";
 
 declare module 'egg' {
-    import SqlExecutor from "../app/extend/database/SqlExecutor";
+    import {SqlExecutor} from "../app/extend/database/SqlExecutor";
+    import {TableRowUtils} from "../app/extend/database/TableRowUtils";
 
     interface Application {
         mysql:MySql;
         sqlExecutor:SqlExecutor,
+        tableRowUtils:TableRowUtils,
         tokenCrypto:TokenCrypto
         cache: {
             bcTableCache: TableCache
             tableForeignKeyMap: Map<string, string>
         }
+    }
+
+    interface Context {
+        userInfo:{[key: string]: any}
     }
 }
 

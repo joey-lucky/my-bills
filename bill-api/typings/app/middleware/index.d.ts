@@ -7,6 +7,7 @@ import ExportParamParser from '../../../app/middleware/paramParser';
 import ExportRequestLogger from '../../../app/middleware/requestLogger';
 import ExportResultParser from '../../../app/middleware/resultParser';
 import ExportTokenVerify from '../../../app/middleware/tokenVerify';
+import ExportErrorTokenError from '../../../app/middleware/error/TokenError';
 
 declare module 'egg' {
   interface IMiddleware {
@@ -15,5 +16,8 @@ declare module 'egg' {
     requestLogger: typeof ExportRequestLogger;
     resultParser: typeof ExportResultParser;
     tokenVerify: typeof ExportTokenVerify;
+    error: {
+      tokenError: typeof ExportErrorTokenError;
+    }
   }
 }

@@ -1,20 +1,29 @@
-import SqlExecutor from "./database/SqlExecutor";
-import TokenCrypto from "./token/TokenCrypto";
+import TokenCrypto from "./TokenCrypto";
+import {SqlExecutor} from "./database/SqlExecutor";
+import {TableRowUtils} from "./database/TableRowUtils";
 
 let app: any = {
-    get sqlExecutor():SqlExecutor{
-        if (!this["SQLEXECUTOR"]) {
-            this["SQLEXECUTOR"] = new SqlExecutor(this.mysql);
-        }
-        return this["SQLEXECUTOR"];
-    },
     get tokenCrypto():TokenCrypto{
-        if (!this["TOKENCRYPTO"]) {
-            this["TOKENCRYPTO"] = new TokenCrypto("joey huang");
+        let cache = "token_crypto";
+        if (!this[cache]) {
+            this[cache] = new TokenCrypto("joey huang");
         }
-        return this["TOKENCRYPTO"];
+        return this[cache];
+    },
+    get sqlExecutor():SqlExecutor{
+        let cache = "sql_executor";
+        if (!this[cache]) {
+            this[cache] = new SqlExecutor(this);
+        }
+        return this[cache];
+    },
+    get tableRowUtils():SqlExecutor{
+        let cache = "table_row_utils";
+        if (!this[cache]) {
+            this[cache] = new TableRowUtils();
+        }
+        return this[cache];
     }
-
 };
 
 module.exports = app;

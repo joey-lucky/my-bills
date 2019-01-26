@@ -1,12 +1,11 @@
-import {Transaction} from "../../../typings";
-import TableComplete from "./TableComplete";
 import * as assert from "assert";
+import {Transaction} from "../../../typings";
 
-export default class TransactionExecutor  {
-    readonly tableComplete = new TableComplete();
+
+export class TransactionExecutor  {
     readonly transaction:Transaction;
 
-    constructor(transaction: Transaction) {
+    constructor(transaction:Transaction) {
         this.transaction = transaction;
     }
 
@@ -28,14 +27,12 @@ export default class TransactionExecutor  {
 
     insert(tableName: String, values?: {}): Promise<any>{
         assert.ok(values, "insert values is null");
-        let data: any = this.tableComplete.completeInsertTableData(values || {});
-        return this.transaction.insert(tableName, data);
+        return this.transaction.insert(tableName, values);
     }
 
     update(tableName: String, values?: {}): Promise<any>{
         assert.ok(values, "insert values is null");
-        let data: any = this.tableComplete.completeUpdateTableData(values || {});
-        return this.transaction.update(tableName, data);
+        return this.transaction.update(tableName, values);
     }
 
     commit(): Promise<void>{
@@ -46,4 +43,3 @@ export default class TransactionExecutor  {
         return this.transaction.rollback();
     }
 }
-

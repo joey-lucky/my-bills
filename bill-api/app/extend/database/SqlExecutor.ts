@@ -1,14 +1,13 @@
-import {MySql} from "../../../typings";
-import TableComplete from "./TableComplete";
 import * as assert from "assert";
-import TransactionExecutor from "./TransactionExecutor";
+import {Context,Application} from "egg";
+import {MySql, Transaction} from "../../../typings";
+import {TransactionExecutor} from "./TransactionExecutor";
 
-export default class SqlExecutor {
-    readonly tableComplete = new TableComplete();
+export class SqlExecutor {
     readonly mysql: MySql;
 
-    constructor(mysql: MySql) {
-        this.mysql = mysql;
+    constructor(app:Application) {
+        this.mysql = app.mysql;
     }
 
     query(sql: String, values?: any[]): Promise<any> {
@@ -29,14 +28,12 @@ export default class SqlExecutor {
 
     insert(tableName: String, values?: {}): Promise<any> {
         assert.ok(values, "insert values is null");
-        let data: any = this.tableComplete.completeInsertTableData(values || {});
-        return this.mysql.insert(tableName, data);
+        return this.mysql.insert(tableName, values);
     }
 
     update(tableName: String, values?: {}): Promise<any> {
         assert.ok(values, "insert values is null");
-        let data: any = this.tableComplete.completeUpdateTableData(values || {});
-        return this.mysql.update(tableName, data);
+        return this.mysql.update(tableName, values);
     }
 
     async beginTransaction(): Promise<TransactionExecutor> {
@@ -44,4 +41,3 @@ export default class SqlExecutor {
         return new TransactionExecutor(transaction);
     }
 }
-

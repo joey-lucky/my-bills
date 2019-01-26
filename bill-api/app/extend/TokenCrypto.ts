@@ -15,11 +15,15 @@ export default class TokenCrypto {
 
     createToken(userId): string {
         let str = JSON.stringify([userId,Date.now()+this.expires]);
-        return this.cipher.update(str, 'utf8', 'hex');//编码方式从utf-8转为hex;
+        let  token = this.cipher.update(str, 'utf8', 'hex');
+        token +=  this.cipher.final('hex');
+        return token;//编码方式从utf-8转为hex;
     }
 
     parseToken(token):[string,number]{
+        console.log(token);
         let result = this.decipher.update(token, 'hex', 'utf8');
+        result +=  this.decipher.final('utf8');
         return  JSON.parse(result);
     }
 }
