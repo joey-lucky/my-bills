@@ -2,8 +2,7 @@ import * as React from "react";
 import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
-import {queryTableData} from "@services/api";
-import * as PropTypes from "prop-types";
+import {billList} from "@services/api";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -11,15 +10,15 @@ class AppState {
     });
 
     asyncLoadData() {
-        this.listViewDataSource = this.listViewDataSource.cloneWithRows([{},{},{}]);
-        queryTableData("bd_bill").then((d) => {
-
+        this.listViewDataSource = this.listViewDataSource.cloneWithRows([]);
+        billList.list().then((d) => {
+            this.listViewDataSource = this.listViewDataSource.cloneWithRows(d.data);
         });
     }
 }
 
 @observer
-export default class HomePage extends React.Component {
+export default class BillList extends React.Component {
     _appState = new AppState();
 
     componentDidMount() {
@@ -38,8 +37,7 @@ export default class HomePage extends React.Component {
                 onClick={() => {
                 }}
             >
-                {/*{rowData["bill_type_name"] + " " + rowData["money"]}*/}
-                特殊账单
+                {rowData["bill_type_name"] + "  ¥" + rowData["money"]}
                 <List.Item.Brief>
                     {rowData["card_name"] + " " + rowData["user_name"]}<br/>
                     {rowData["bill_desc"]}<br/>
@@ -60,7 +58,7 @@ export default class HomePage extends React.Component {
                     icon={<Icon type="left" onClick={()=>this.props.history.goBack()}/>}
                     onLeftClick={() => this.props.history.goBack()}
                     rightContent={<span onClick={this.onAddClick}>新增</span>}
-                >账单管理</NavBar>
+                >账单列表</NavBar>
 
                 <ListView
                     style={{width: "100%", flex: 1}}
@@ -71,7 +69,7 @@ export default class HomePage extends React.Component {
                             key={rowID}
                             style={{
                                 backgroundColor: "#F5F5F9",
-                                height: 8,
+                                height: 1,
                                 borderTop: "1px solid #ECECED",
                                 borderBottom: "1px solid #ECECED"
                             }}

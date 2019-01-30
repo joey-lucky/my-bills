@@ -6,7 +6,7 @@ let app: any = {
     get tokenCrypto():TokenCrypto{
         let cache = "token_crypto";
         if (!this[cache]) {
-            this[cache] = new TokenCrypto("joey huang");
+            this[cache] = new TokenCrypto("joey");
         }
         return this[cache];
     },

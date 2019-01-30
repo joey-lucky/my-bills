@@ -6,6 +6,7 @@ import OptimizeUtils from "../../../utils/OptimizeUtils";
 import {Button, Card, Flex, InputItem, List} from "antd-mobile";
 import {createForm} from 'rc-form';
 import {queryLogin} from "@services/api";
+import {setToken} from "@utils/request";
 
 class AppState {
     @observable userName = "";
@@ -15,7 +16,7 @@ class AppState {
     asyncLogin(params) {
         return queryLogin(params)
             .then((d) => {
-                window.localStorage.setItem(publicPath+"_token", d.data[0].token);
+                setToken(d.data[0].token);
                 window.location.href = this.defNextUrl;
             });
     }

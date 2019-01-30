@@ -1,5 +1,5 @@
 import 'egg';
-import TokenCrypto from "../app/extend/token/TokenCrypto";
+import TokenCrypto from "../app/extend/TokenCrypto";
 
 declare module 'egg' {
     import {SqlExecutor} from "../app/extend/database/SqlExecutor";

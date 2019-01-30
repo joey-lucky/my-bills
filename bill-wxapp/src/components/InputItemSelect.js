@@ -1,13 +1,9 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import request from "@utils/request";
+import {request} from "@utils/request";
 import {ActionSheet, InputItem} from "antd-mobile";
 
 export default class InputItemSelect extends React.Component {
-    static contextTypes = {
-        request: PropTypes.any
-    };
-
     static propTypes = {
         extraOptions: PropTypes.any,
         url: PropTypes.any,
@@ -16,11 +12,9 @@ export default class InputItemSelect extends React.Component {
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        console.log("InputItemSelect","getDerivedStateFromProps");
         const {value = ""} = nextProps;
         let id = prevState.ids[prevState.selectIndex]||"";
         if (value !== id) {
-            console.log("value !== id");
             let index = prevState.ids.indexOf(value);
             return {
                 selectIndex: index
@@ -117,7 +111,6 @@ export default class InputItemSelect extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {url = "", parse = {}, params = {}} = this.props;
         const {url: preUrl = "", parse: preParse = {}, params: preParams = {}} = prevProps;
-        console.log(this.constructor.name,"componentDidUpdate");
         if (url !== preUrl
             || JSON.stringify(parse) !== JSON.stringify(preParse)
             || JSON.stringify(params) !== JSON.stringify(preParams)

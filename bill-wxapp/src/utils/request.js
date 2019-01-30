@@ -1,4 +1,4 @@
-import {apiPath} from "@global";
+import {apiPath, publicPath} from "@global";
 
 const headers = new Headers();
 headers.append("Content-Type", "application/json;charset=utf-8");
@@ -26,7 +26,11 @@ function wrapPromise(promise, timeout = 10000) {
     return allPromise;
 }
 
-export default async function request(url,params) {
+const getToken = () => window.localStorage.getItem(publicPath + "_token");
+export const setToken = (token) => window.localStorage.setItem(publicPath + "_token",token);
+
+export async function request(url,params={}) {
+    params["_token"] = getToken()||"";
     let promise = new Promise(async (resolve, reject) => {
         try {
             let completeUrl = apiPath + url;

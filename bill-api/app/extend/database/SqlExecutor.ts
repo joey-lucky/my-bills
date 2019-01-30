@@ -1,6 +1,6 @@
 import * as assert from "assert";
-import {Context,Application} from "egg";
-import {MySql, Transaction} from "../../../typings";
+import {Application} from "egg";
+import {MySql} from "../../../typings";
 import {TransactionExecutor} from "./TransactionExecutor";
 
 export class SqlExecutor {

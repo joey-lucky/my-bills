@@ -1,15 +1,17 @@
-import HomePage from "./pages/HomePage";
-import AddBillPage from "./pages/AddBillPage";
+import AddBill from "./bill/AddBill";
+import BillList from "./bill/BillList";
 
-export default [
+let data = [
     {
-        path: "/home",
-        component: HomePage,
+        path: "/bill-list",
+        component: BillList,
         name: "运维管理",
     },
     {
         path: "/add-bill",
-        component: AddBillPage,
+        component: AddBill,
         name: "车辆管理",
     },
-]
+];
+
+export default [data]
