@@ -4,6 +4,6 @@ export default function(options) {
         await next();
         let delay = Date.now() - startTime;
         let {body} = ctx;
-        ctx.logger.info("(" + delay + "ms)", "length=" + body.data.length);
+        ctx.app.mLoggers.request.info(ctx.originalUrl, "result-size=" + body.data.length,"(" + delay + "ms)");
     };
 };

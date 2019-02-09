@@ -27,10 +27,10 @@ function wrapPromise(promise, timeout = 10000) {
 }
 
 const getToken = () => window.localStorage.getItem(publicPath + "_token");
-export const setToken = (token) => window.localStorage.setItem(publicPath + "_token",token);
+export const setToken = (token) => window.localStorage.setItem(publicPath + "_token", token);
 
-export async function request(url,params={}) {
-    params["_token"] = getToken()||"";
+export async function request(url, params = {}) {
+    params = {_token: getToken(), ...params};
     let promise = new Promise(async (resolve, reject) => {
         try {
             let completeUrl = apiPath + url;

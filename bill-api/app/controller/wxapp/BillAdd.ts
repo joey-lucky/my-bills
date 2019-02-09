@@ -5,14 +5,14 @@ export default class extends Controller {
     //添加账单
     public async create() {
         const {app, ctx} = this;
-        const {sqlExecutor,tableRowUtils} = app;
+        const {sqlExecutor,tableRowHelper} = app;
         const params = ctx.query;
 
         assert.ok(params["data"], "数据不能为空");
         let data = JSON.parse(params["data"] || "{}");
         data["user_id"] = ctx.userInfo["id"];
         try {
-            await tableRowUtils.completeInsertTableRow(data, ctx);
+            await tableRowHelper.completeInsertTableRow(data, ctx);
             await sqlExecutor.insert("bd_bill", data);
             ctx.body = "保存成功";
         } catch (e) {

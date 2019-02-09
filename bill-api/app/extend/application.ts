@@ -1,29 +1,44 @@
 import TokenCrypto from "./TokenCrypto";
 import {SqlExecutor} from "./database/SqlExecutor";
-import {TableRowUtils} from "./database/TableRowUtils";
+import Loggers from "./Loggers";
+import TableRowHelper from "./database/TableRowHelper";
 
 let app: any = {
     get tokenCrypto():TokenCrypto{
-        let cache = "token_crypto";
+        let cache = "TOKEN_CRYPTO";
         if (!this[cache]) {
             this[cache] = new TokenCrypto("joey");
         }
         return this[cache];
     },
     get sqlExecutor():SqlExecutor{
-        let cache = "sql_executor";
+        let cache = "SQL_EXECUTOR";
         if (!this[cache]) {
             this[cache] = new SqlExecutor(this);
         }
         return this[cache];
     },
-    get tableRowUtils():SqlExecutor{
-        let cache = "table_row_utils";
+    get tableRowHelper():TableRowHelper{
+        let cache = "TABLEROWHELPER";
         if (!this[cache]) {
-            this[cache] = new TableRowUtils();
+            this[cache] = new TableRowHelper(this);
         }
         return this[cache];
-    }
+    },
+    get mLoggers():Loggers{
+        let cache = "LOGGERS";
+        if (!this[cache]) {
+            this[cache] = new Loggers();
+        }
+        return this[cache];
+    },
+    get mCache():Map<string,any>{
+        let cache = "CACHE";
+        if (!this[cache]) {
+            this[cache] = new Map();
+        }
+        return this[cache];
+    },
 };
 
 module.exports = app;

@@ -25,23 +25,29 @@ export default class BillList extends React.Component {
         this._appState.asyncLoadData();
     }
 
-    onAddClick=()=>{
-        this.props.history.push("/content/add-bill");
+    onAddClick = () => {
+        let {match} = this.props;
+        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/bill-add');
+        this.props.history.push(path);
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
+        let isConsume = rowData["money"] > 0;
+        let money = isConsume ? " - " + rowData["money"] : " + " + Math.abs(rowData["money"]);
+        let layout = isConsume ? {color:"black"} : {color: "red"};
         return (
             <List.Item
-                arrow="horizontal"
-                multipleLine
                 onClick={() => {
                 }}
+                thumb="http://www.hjoey.com/file/huangqiuyu.jpg"
+                extra={<h3 style={layout}>{money}</h3>}
+                wrap={true}
             >
-                {rowData["bill_type_name"] + "  ¥" + rowData["money"]}
-                <List.Item.Brief>
-                    {rowData["card_name"] + " " + rowData["user_name"]}<br/>
-                    {rowData["bill_desc"]}<br/>
-                </List.Item.Brief>
+                {
+                    rowData["bill_type_name"] + "  ¥"
+                }
+                <List.Item.Brief>{rowData["date_time"]}</List.Item.Brief>
+
             </List.Item>
         );
     };
@@ -55,7 +61,7 @@ export default class BillList extends React.Component {
                 <NavBar
                     style={{width: "100%"}}
                     mode="light"
-                    icon={<Icon type="left" onClick={()=>this.props.history.goBack()}/>}
+                    icon={<Icon type="left" onClick={() => this.props.history.goBack()}/>}
                     onLeftClick={() => this.props.history.goBack()}
                     rightContent={<span onClick={this.onAddClick}>新增</span>}
                 >账单列表</NavBar>

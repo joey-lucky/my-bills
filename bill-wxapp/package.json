@@ -75,5 +75,5 @@
   "author": "",
   "license": "ISC",
   "apiHost": "http://localhost:3000/bill/api",
-  "homePage": "http://localhost:8080/bill/front"
+  "homePage": "http://localhost:8080/bill/wxapp"
 }

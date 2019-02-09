@@ -12,15 +12,17 @@ export const billList={
     }
 };
 
-export async function queryTableData(tableName, values = {}) {
-    return request('/table/list', {tableName: "bd_bill", data: JSON.stringify(values)});
-}
+export const loginController = {
+    login: (params) => {
+        return request('/safe/login', params);
+    },
+};
 
-export async function addTableData(tableName, values = {}) {
-    return request('/table/create', {tableName: tableName, data: JSON.stringify(values)});
-}
-
-export async function queryLogin(params) {
-    return request('/safe/login', params);
-}
-
+export const tableController = {
+    list: (tableName,values = {}) => {
+        return request('/wxapp/table/list',  {tableName: tableName, data: JSON.stringify(values)});
+    },
+    add: (tableName,values = {}) => {
+        return request('/wxapp/table/create',  {tableName: tableName, data: JSON.stringify(values)});
+    }
+};

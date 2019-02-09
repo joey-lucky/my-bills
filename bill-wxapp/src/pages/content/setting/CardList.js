@@ -2,8 +2,7 @@ import * as React from "react";
 import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
-import {queryTableData} from "@services/api";
-import * as PropTypes from "prop-types";
+import {tableController} from "@services/api";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -11,39 +10,37 @@ class AppState {
     });
 
     asyncLoadData() {
-        this.listViewDataSource = this.listViewDataSource.cloneWithRows([{},{},{}]);
-        queryTableData("bd_bill").then((d) => {
-
+        this.listViewDataSource = this.listViewDataSource.cloneWithRows([]);
+        tableController.list("bc_card").then((d) => {
+            let data = d.data || [];
+            data.sort((a, b) => a.user_name.localeCompare(b.user_name));
+            this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
         });
     }
 }
 
 @observer
-export default class HomePage extends React.Component {
+export default class CardList extends React.Component {
     _appState = new AppState();
 
     componentDidMount() {
         this._appState.asyncLoadData();
     }
 
-    onAddClick=()=>{
-        this.props.history.push("/content/add-bill");
+    onAddClick = () => {
+        let {match} = this.props;
+        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/card-add');
+        this.props.history.push(path);
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         return (
             <List.Item
                 arrow="horizontal"
-                multipleLine
-                onClick={() => {
-                }}
+                multipleLine={false}
+                extra={rowData["user_name"]}
             >
-                {/*{rowData["bill_type_name"] + " " + rowData["money"]}*/}
-                特殊账单
-                <List.Item.Brief>
-                    {rowData["card_name"] + " " + rowData["user_name"]}<br/>
-                    {rowData["bill_desc"]}<br/>
-                </List.Item.Brief>
+                {rowData["name"] }
             </List.Item>
         );
     };
@@ -57,10 +54,9 @@ export default class HomePage extends React.Component {
                 <NavBar
                     style={{width: "100%"}}
                     mode="light"
-                    icon={<Icon type="left" onClick={()=>this.props.history.goBack()}/>}
-                    onLeftClick={() => this.props.history.goBack()}
+                    icon={<Icon type="left" onClick={() => this.props.history.goBack()}/>}
                     rightContent={<span onClick={this.onAddClick}>新增</span>}
-                >账单管理</NavBar>
+                >{"银行卡"}</NavBar>
 
                 <ListView
                     style={{width: "100%", flex: 1}}
@@ -71,7 +67,7 @@ export default class HomePage extends React.Component {
                             key={rowID}
                             style={{
                                 backgroundColor: "#F5F5F9",
-                                height: 8,
+                                height: 1,
                                 borderTop: "1px solid #ECECED",
                                 borderBottom: "1px solid #ECECED"
                             }}

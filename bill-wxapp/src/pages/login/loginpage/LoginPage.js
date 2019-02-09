@@ -5,7 +5,7 @@ import {observer} from "mobx-react";
 import OptimizeUtils from "../../../utils/OptimizeUtils";
 import {Button, Card, Flex, InputItem, List} from "antd-mobile";
 import {createForm} from 'rc-form';
-import {queryLogin} from "@services/api";
+import {loginController} from "@services/api";
 import {setToken} from "@utils/request";
 
 class AppState {
@@ -14,7 +14,7 @@ class AppState {
     defNextUrl = publicPath + "/content/";
 
     asyncLogin(params) {
-        return queryLogin(params)
+        return loginController.login(params)
             .then((d) => {
                 setToken(d.data[0].token);
                 window.location.href = this.defNextUrl;

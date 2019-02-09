@@ -26,12 +26,13 @@ function getAllRouters(controller, fatherPath): ControllerRouter[] {
 
 export default (app: Application) => {
     const {controller, router} = app;
-    const logger = new EggLogger({file:"bill-api/logs/register-router.log",level:"ALL",consoleLevel:"ALL"});
     const allRoutes = getAllRouters(controller, "");
 
     router.prefix("/bill/api");
     for (let route of allRoutes) {
         router.all(route.path, route.func);
-        logger.info("[register-router]",route.path);
+        if (app.mLoggers && app.mLoggers.initialize) {
+            app.mLoggers.initialize.info("[register-router]",route.path);
+        }
     }
 };

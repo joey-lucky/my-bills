@@ -1,19 +1,19 @@
 import 'egg';
 import TokenCrypto from "../app/extend/TokenCrypto";
+import TableRowHelper from "../app/extend/database/TableRowHelper";
 
 declare module 'egg' {
     import {SqlExecutor} from "../app/extend/database/SqlExecutor";
     import {TableRowUtils} from "../app/extend/database/TableRowUtils";
+    import Loggers from "../app/extend/Loggers";
 
     interface Application {
         mysql:MySql;
         sqlExecutor:SqlExecutor,
-        tableRowUtils:TableRowUtils,
+        tableRowHelper:TableRowHelper,
         tokenCrypto:TokenCrypto
-        cache: {
-            bcTableCache: TableCache
-            tableForeignKeyMap: Map<string, string>
-        }
+        mLoggers:Loggers
+        mCache: Map<("bcTableCache"|"bcForeignKey"|"tableStructure"),any>
     }
 
     interface Context {

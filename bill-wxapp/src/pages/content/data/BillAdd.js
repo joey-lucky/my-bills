@@ -1,23 +1,16 @@
 import * as React from "react";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
-import {Button, Flex, Icon, InputItem, List, ListView, NavBar, TextareaItem} from "antd-mobile";
+import {Button, DatePicker, Flex, Icon, InputItem, List, NavBar, TextareaItem, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
 import {billAdd} from "@services/api";
 import PickerItem from "@components/PickerItem";
-import {Toast}  from "antd-mobile";
+import * as moment from "moment";
 
 class AppState {
-    @observable initData = {};
-
-
-    @observable listViewDataSource = new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
-    });
-
-    asyncLoadData() {
-
-    }
+    @observable initData = {
+        date_time: new Date(),
+    };
 
     asyncSaveData(values) {
         return billAdd.create(values);
@@ -26,7 +19,7 @@ class AppState {
 
 @createForm()
 @observer
-export default class AddBill extends React.Component {
+export default class BillAdd extends React.Component {
     _appState = new AppState();
 
     constructor(props) {
@@ -36,16 +29,16 @@ export default class AddBill extends React.Component {
     onSaveClick = () => {
         this.props.form.validateFields((error, values) => {
             if (error) {
-              Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
+                Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
                 console.log(values);
+                values["date_time"] = moment(values["date_time"]).format("YYYY-MM-DD HH:mm:ss");
                 this._appState.asyncSaveData(values)
                     .then((d) => {
                         this.props.history.goBack();
                     });
             }
         });
-
     };
 
     render() {
@@ -64,25 +57,43 @@ export default class AddBill extends React.Component {
 
                 <List style={{width: "100%"}}>
                     <PickerItem
-                        {...form.getFieldProps("card_id",{rules: [{required: true,message:"请选择卡片类型"}]})}
+                        {...form.getFieldProps("card_id", {rules: [{required: true, message: "请选择卡片类型"}]})}
                         params={{tableName: "bc_card"}}
                         parse={{id: "id", name: "name"}}
                         label={"卡片类型"}
                         url={"/wxapp/table/list"}/>
                     <PickerItem
-                        {...form.getFieldProps("bill_type_id",{rules: [{required: true,message:"请选择账单类型"}]})}
+                        {...form.getFieldProps("bill_type_id", {
+                            rules: [{required: true, message: "请选择账单类型"}],
+                        })}
                         label={"账单类型"}
                         url={"/wxapp/table/list"}
                         params={{tableName: "bc_bill_type"}}
                         parse={{id: "id", name: "name"}}/>
                     <InputItem
-                        {...form.getFieldProps("money",{rules: [{required: true,message:"请输入金额"}]})}
+                        {...form.getFieldProps("money", {rules: [{required: true, message: "请输入金额"}]})}
                         type={"money"}
                         clear={true}
                         extra="¥"
                     >金额</InputItem>
+                    <DatePicker
+                        {...form.getFieldProps("date_time", {
+                            initialValue: new Date(),
+                            rules: [{required: true, message: "请选择时间"}]
+                        })}
+                        mode={"datetime"}
+                    >
+                        <List.Item
+                            arrow="horizontal"
+                            wrap={true}
+                        >
+                            日期时间
+                        </List.Item>
+                    </DatePicker>
                     <TextareaItem
-                        {...form.getFieldProps("bill_desc")}
+                        {...form.getFieldProps("bill_desc",{
+                            rules: [{required: true, message: "请输入具体明细"}]
+                        })}
                         title="明细"
                         autoHeight={true}
                     />

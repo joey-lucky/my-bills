@@ -1,38 +1,57 @@
 import * as assert from "assert";
 import {Transaction} from "../../../typings";
+import TableRowHelper from "./TableRowHelper";
 
 
 export class TransactionExecutor  {
     readonly transaction:Transaction;
+    readonly tableRowHelper:TableRowHelper;
 
-    constructor(transaction:Transaction) {
+    constructor(transaction:Transaction,TableRowHelper) {
         this.transaction = transaction;
+        this.tableRowHelper = TableRowHelper;
     }
 
-    query(sql: String, values?: any[]): Promise<any>{
-        return this.transaction.query(sql,values)
+    async query(sql: string, values?: any[]): Promise<any[]> {
+        let rows = (await this.transaction.query(sql, values)) || [];
+        return rows;
     }
 
-    get(tableName: String, find?: {}): Promise<any>{
-        return this.transaction.get(tableName, find);
+    async get(tableName: string, find?: {}): Promise<any> {
+        assert.ok(tableName, "tableName is null");
+        let row = (await this.transaction.get(tableName, find)) || [];
+        await this.tableRowHelper.translateId(row);
+        await this.tableRowHelper.translateDateTime(tableName,row);
+        return row;
     }
 
-    select(tableName: String, find?: {}): Promise<any[]>{
-        return this.transaction.select(tableName, find);
+    async select(tableName: string, find?: {}): Promise<any[]> {
+        assert.ok(tableName, "tableName is null");
+        let rows = (await this.transaction.select(tableName, find)) || [];
+        for (let row of rows) {
+            await this.tableRowHelper.translateId(row);
+            await this.tableRowHelper.translateDateTime(tableName,row);
+        }
+        return rows;
     }
 
-    delete(tableName: String, find?: {}): Promise<any>{
-        return this.transaction.delete(tableName, find);
+    async delete(tableName: string, find?: {}): Promise<any> {
+        assert.ok(tableName, "tableName is null");
+        return await this.transaction.delete(tableName, find);
     }
 
-    insert(tableName: String, values?: {}): Promise<any>{
+    async insert(tableName: string, values?: {}): Promise<any> {
+        assert.ok(tableName, "tableName is null");
         assert.ok(values, "insert values is null");
-        return this.transaction.insert(tableName, values);
+        await this.tableRowHelper.translateDateTime(tableName,values);
+        return await this.transaction.insert(tableName, values);
     }
 
-    update(tableName: String, values?: {}): Promise<any>{
+    async update(tableName: string, values?: {}): Promise<any> {
+        assert.ok(tableName, "tableName is null");
         assert.ok(values, "insert values is null");
-        return this.transaction.update(tableName, values);
+        await this.tableRowHelper.translateDateTime(tableName,values);
+        return await this.transaction.update(tableName, values);
     }
 
     commit(): Promise<void>{

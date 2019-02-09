@@ -16,29 +16,10 @@ export default class PickerItem extends React.Component {
         params: PropTypes.any
     };
 
-    static getDomainProps = (dictTypeCode, params) => {
-        if (!params) {
-            params = {};
-        }
-        params["DICT_TYPE_CODE"] = dictTypeCode;
-        return {
-            url: "/systemmanager/systemsetting/dict/data/get-dict-child-list",
-            params: params,
-            parse: {id: "CODE", name: "VALUE"}
-        };
-    };
-
     static isEqual(props, nextProps, key) {
-        let propsValue = props[key];
-        let nextPropsValue = nextProps[key];
-        if (propsValue !== null &&
-            nextPropsValue !== null &&
-            typeof propsValue === "object" &&
-            typeof nextPropsValue === "object") {
-            return JSON.stringify(propsValue) === JSON.stringify(nextPropsValue);
-        } else {
-            return propsValue === nextPropsValue;
-        }
+        let propsValue = props[key]||"";
+        let nextPropsValue = nextProps[key]||"";
+        return JSON.stringify(propsValue) === JSON.stringify(nextPropsValue);
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -85,7 +66,7 @@ export default class PickerItem extends React.Component {
         const {url, parse, params} = props;
         return request(url, params)
             .then((d) => {
-                const {id = "ID", name = "NAME"} = parse;
+                const {id = "id", name = "name"} = parse;
                 let data = d.data || [];
                 return data.map(item => ({
                     value: item[id],
@@ -133,6 +114,8 @@ export default class PickerItem extends React.Component {
         if (!PickerItem.isEqual(this.props, prevProps, "url") ||
             !PickerItem.isEqual(this.props, prevProps, "parse") ||
             !PickerItem.isEqual(this.props, prevProps, "params")) {
+            console.log("this.props",this.props);
+            console.log("prevProps",prevProps);
             this.asyncLoadData(this.props).then((data = []) => {
                 let {value} = this.props;
                 //获取数据，初始化为默认值
