@@ -1,19 +1,18 @@
-import {Application} from 'egg';
-import {EggLogger} from 'egg-logger';
+import {Application} from "egg";
 
 interface ControllerRouter {
-    path:string,
-    func(),
+    path:string;
+    func();
 }
 
 function getAllRouters(controller, fatherPath): ControllerRouter[] {
     let routers: ControllerRouter[] = [];
     for (let key of Object.keys(controller)) {
         let value = controller[key];
-        let path = fatherPath + "/" + key.replace(/[A-Z]/g,(value)=>"-"+value.toLowerCase());;
+        let path = fatherPath + "/" + key.replace(/[A-Z]/g,(item)=>"-"+item.toLowerCase());
         if (typeof value === "function") {
             routers.push({
-                path:path,
+                path,
                 func:value
             })
         } else if (typeof value === "object") {
@@ -22,7 +21,6 @@ function getAllRouters(controller, fatherPath): ControllerRouter[] {
     }
     return routers;
 }
-
 
 export default (app: Application) => {
     const {controller, router} = app;

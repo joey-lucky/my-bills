@@ -44,6 +44,19 @@ export default class TableRowHelper {
         }
     }
 
+    public async deleteUselessFields(tableName: string, row: any): Promise<void> {
+        const tableStructureCache: Map<string, any> = this.app.mCache.get("tableStructure");
+        let tableStructure = tableStructureCache.get(tableName);
+        let columns = tableStructure.columns;
+        let columnsSet = new Set(columns.map((item)=>item["column_name"]));
+        let keys:string[] = Object.keys(row);
+        for (let key of keys) {
+            if (!columnsSet.has(key)) {
+                delete row[key];
+            }
+        }
+    }
+
     public async translateToDate(tableName: string, row: any): Promise<void> {
         const tableStructureCache: Map<string, any> = this.app.mCache.get("tableStructure");
         let tableStructure = tableStructureCache.get(tableName);

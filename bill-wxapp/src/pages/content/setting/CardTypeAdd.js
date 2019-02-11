@@ -3,7 +3,7 @@ import {observable} from "mobx";
 import {observer} from "mobx-react";
 import {Button, Flex, Icon, InputItem, List, ListView, NavBar, TextareaItem} from "antd-mobile";
 import {createForm} from 'rc-form';
-import {billAdd, tableController} from "@services/api";
+import {billApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import {Toast}  from "antd-mobile";
 
@@ -51,7 +51,7 @@ export default class BillTypeAdd extends React.Component {
         const {form} = this.props;
         return (
             <Flex
-                style={{height: "100%", backgroundColor: "rgba(0,0,0,0.1)"}}
+                style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
                 <NavBar

@@ -32,7 +32,7 @@ interface MySqlExecutor {
 
     insert(tableName: String, values?: {}): Promise<any>
 
-    update(tableName: String, values?: {}): Promise<any>
+    update(tableName: String, values?: {},options?:{}): Promise<any>
 }
 
 export interface Transaction extends MySqlExecutor{

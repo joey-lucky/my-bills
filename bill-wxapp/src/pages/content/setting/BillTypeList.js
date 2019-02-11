@@ -47,7 +47,7 @@ export default class BillTypeList extends React.Component {
     render() {
         return (
             <Flex
-                style={{height: "100%", backgroundColor: "rgba(0,0,0,0.1)"}}
+                style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
                 <NavBar
@@ -61,6 +61,7 @@ export default class BillTypeList extends React.Component {
                     style={{width: "100%", flex: 1}}
                     dataSource={toJS(this._appState.listViewDataSource)}
                     renderRow={this.renderItem}
+                    initialListSize={20}
                     renderSeparator={(sectionID, rowID) => (
                         <div
                             key={rowID}

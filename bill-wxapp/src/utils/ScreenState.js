@@ -18,7 +18,6 @@ export default class ScreenState {
         let docEl = document.documentElement;
         this.clientWidth = docEl.clientWidth;
         this.clientHeight = docEl.clientHeight;
-        console.log("clientWidth",docEl.clientWidth,"clientHeight", docEl.clientHeight);
     };
 }
 

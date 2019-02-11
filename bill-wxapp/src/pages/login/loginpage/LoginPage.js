@@ -54,15 +54,13 @@ export default class LoginPage extends React.Component {
                                 {...form.getFieldProps("userName")}
                                 type={"text"}
                                 defaultValue={""}
-                                placeholder="start from left"
-                                moneyKeyboardAlign="left"
+                                placeholder="请输入账号"
                             >账号</InputItem>
                             <InputItem
                                 {...form.getFieldProps("password")}
                                 type={"password"}
                                 defaultValue={""}
-                                placeholder="start from left"
-                                moneyKeyboardAlign="left"
+                                placeholder="请输入密码"
                             >密码</InputItem>
                             <Button
                                 onClick={this.onLoginClick}

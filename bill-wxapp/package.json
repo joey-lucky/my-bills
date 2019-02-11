@@ -16,8 +16,8 @@
   "devDependencies": {
     "@types/node": "^10.5.1",
     "@types/prop-types": "^15.5.3",
-    "@types/react": "^16.7.18",
-    "@types/react-dom": "^16.0.11",
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
     "@types/react-router-dom": "^4.3.1",
     "@types/webpack": "^4.4.4",
     "@types/webpack-dev-server": "^3.1.1",
@@ -66,8 +66,8 @@
     "moment": "^2.22.1",
     "prop-types": "^15.6.2",
     "rc-form": "^2.4.1",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
     "react-router-dom": "^4.2.2",
     "react-sticky": "^6.0.3",
     "viser-react": "^2.3.0"

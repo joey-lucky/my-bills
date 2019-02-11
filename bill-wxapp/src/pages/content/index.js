@@ -7,10 +7,14 @@ import {LocaleProvider} from "antd-mobile";
 import App from "./App";
 import "./theme.less";
 const zhCN = require("antd/lib/locale-provider/zh_CN");
+let browserHistory = createBrowserHistory({
+    forceRefresh:false,
+    basename: publicPath
+});
 
 ReactDOM.render(
     <LocaleProvider locale={zhCN}>
-        <Router history={createBrowserHistory({basename: publicPath})}>
+        <Router history={browserHistory}>
             <Switch>
                 <Route
                     path={"/content"}

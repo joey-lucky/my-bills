@@ -4,8 +4,10 @@
 import 'egg';
 import ExportSafe from '../../../app/controller/safe';
 import ExportTable from '../../../app/controller/table';
-import ExportWxappBillAdd from '../../../app/controller/wxapp/BillAdd';
-import ExportWxappBillList from '../../../app/controller/wxapp/BillList';
+import ExportWxappAsset from '../../../app/controller/wxapp/Asset';
+import ExportWxappBill from '../../../app/controller/wxapp/Bill';
+import ExportWxappCard from '../../../app/controller/wxapp/Card';
+import ExportWxappCardType from '../../../app/controller/wxapp/CardType';
 import ExportWxappTable from '../../../app/controller/wxapp/Table';
 
 declare module 'egg' {
@@ -13,8 +15,10 @@ declare module 'egg' {
     safe: ExportSafe;
     table: ExportTable;
     wxapp: {
-      billAdd: ExportWxappBillAdd;
-      billList: ExportWxappBillList;
+      asset: ExportWxappAsset;
+      bill: ExportWxappBill;
+      card: ExportWxappCard;
+      cardType: ExportWxappCardType;
       table: ExportWxappTable;
     }
   }

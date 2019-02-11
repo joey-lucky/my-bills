@@ -3,7 +3,7 @@
 
 import 'egg';
 import ExportSafe from '../../../app/service/safe';
-import ExportTable from '../../../app/service/table';
+import ExportTable from '../../../app/service/Table';
 
 declare module 'egg' {
   interface IService {

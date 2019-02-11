@@ -7,28 +7,44 @@ import CardTypeList from "./setting/CardTypeList";
 import CardTypeAdd from "./setting/CardTypeAdd";
 import BillTypeAdd from "./setting/BillTypeAdd";
 import CardAdd from "./setting/CardAdd";
+import CommonLayout from "@layouts/CommonLayout";
+import CardAsset from "./asset/CardAsset";
 
 let routes = [
     {
         path: "/data",
-        name:"账单数据",
-        children:[
+        name: "账单数据",
+        component: CommonLayout,
+        children: [
             {
                 path: "/bill-list",
                 component: BillList,
                 name: "运维管理",
             },
             {
-                path: "/bill-add",
+                path: "/bill-add/:id",
                 component: BillAdd,
                 name: "车辆管理",
             },
         ]
     },
     {
+        path: "/asset",
+        name: "资产",
+        component: CommonLayout,
+        children: [
+            {
+                path: "/card",
+                component: CardAsset,
+                name: "银行资产",
+            },
+        ]
+    },
+    {
         path: "/setting",
-        name:"设置",
-        children:[
+        name: "设置",
+        component: CommonLayout,
+        children: [
             {
                 path: "/setting-list",
                 component: SettingList,

@@ -1,26 +1,21 @@
-import {Layout} from "antd";
 import React from "react";
-import {withRouter} from "react-router-dom";
-import {RouteMenu, RouteContent} from "@components/RouteComponents";
+import {Redirect, Route, Switch, withRouter} from "react-router-dom";
 
-const {Content, Sider} = Layout;
-
-@withRouter
 export default class CommonLayout extends React.Component {
     render() {
+        const {childRouteData,match} = this.props;
         return (
-            <Layout className="fill-parent">
-                <Sider collapsible style={{width: 20, background: "white", overflow: "auto"}}>
-                    <RouteMenu childRouteData={this.props.childRouteData}/>
-                </Sider>
-                <Content className="fill-space-h">
-                    {
-                        <RouteContent
-                            childRouteData={this.props.childRouteData}
-                            defaultRouteIndex={0}/>
-                    }
-                </Content>
-            </Layout>
+            <Switch>
+                {
+                    childRouteData.map((item) =>
+                        <Route
+                            key={match.path + item.path}
+                            path={match.path + item.path}
+                            component={item.component}/>
+                    )
+                }
+                <Redirect to={match.path + childRouteData[0].path}/>
+            </Switch>
         );
     }
 }

@@ -18,7 +18,6 @@ export default class DomainCheckBox extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(JSON.stringify(props));
         this.state = {
             data: []
         };

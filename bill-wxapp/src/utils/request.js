@@ -29,7 +29,7 @@ function wrapPromise(promise, timeout = 10000) {
 const getToken = () => window.localStorage.getItem(publicPath + "_token");
 export const setToken = (token) => window.localStorage.setItem(publicPath + "_token", token);
 
-export async function request(url, params = {}) {
+export function request(url, params = {}) {
     params = {_token: getToken(), ...params};
     let promise = new Promise(async (resolve, reject) => {
         try {
@@ -43,10 +43,15 @@ export async function request(url, params = {}) {
             if (data.code === "1") {
                 resolve(data);
             } else {
-                throw new Error(data.message || "");
+                let message = data.message || "";
+                throw new Error(message);
             }
         } catch (e) {
-            reject(e);
+            if (e.message.indexOf("token")!==-1) {
+                window.location.href=publicPath+"/login/"
+            }else{
+                reject(e);
+            }
         }
     });
     return wrapPromise(promise);

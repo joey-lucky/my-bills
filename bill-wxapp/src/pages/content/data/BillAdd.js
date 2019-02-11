@@ -1,39 +1,62 @@
 import * as React from "react";
-import {observable} from "mobx";
-import {observer} from "mobx-react";
-import {Button, DatePicker, Flex, Icon, InputItem, List, NavBar, TextareaItem, Toast} from "antd-mobile";
+import {Button, DatePicker, Flex, Icon, InputItem, List, NavBar, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
-import {billAdd} from "@services/api";
+import {billApi, cardApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
-import * as moment from "moment";
-
-class AppState {
-    @observable initData = {
-        date_time: new Date(),
-    };
-
-    asyncSaveData(values) {
-        return billAdd.create(values);
-    }
-}
+import moment from "moment";
 
 @createForm()
-@observer
 export default class BillAdd extends React.Component {
-    _appState = new AppState();
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let id = nextProps.match.params.id;
+        if (id !== "undefined" && id !== prevState.id) {
+            return {
+                id, isNew: false,
+            };
+        }
+        return null;
+    }
+
+    _defData = {
+        date_time: moment().format("YYYY-MM-DD HH:mm:ss"),
+        bill_type_id: "32291f40-2cfb-11e9-b803-2fb0ad7f2291",
+        bill_type:"-1"
+    };
 
     constructor(props) {
         super(props);
+        this.state = {
+            id: "",
+            data: this._defData,
+            cardData: [],
+            isNew: true,
+        }
+    }
+
+    componentDidMount() {
+        if (!this.state.isNew) {
+            this.loadBillData(this.state.id).then(data => {
+                let money = data["money"];
+                data.money = Math.abs(money);
+                data.bill_type = money >= 0 ? "1" : "-1";
+                this.setState({data});
+
+            });
+        }
+        this.loadCardData().then(data => this.setState({cardData: data}));
     }
 
     onSaveClick = () => {
         this.props.form.validateFields((error, values) => {
             if (error) {
+                console.log(error);
                 Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
-                console.log(values);
+                if (values["bill_type"] === "-1") {
+                    values["money"] = 0 - values["money"];
+                }
                 values["date_time"] = moment(values["date_time"]).format("YYYY-MM-DD HH:mm:ss");
-                this._appState.asyncSaveData(values)
+                this.saveData(values)
                     .then((d) => {
                         this.props.history.goBack();
                     });
@@ -41,11 +64,21 @@ export default class BillAdd extends React.Component {
         });
     };
 
-    render() {
+    getFieldProps = (id, opt = {}) => {
         const {form} = this.props;
+        const {data} = this.state;
+        let value = data[id];
+        if (id === "date_time") {
+            value = moment(value).toDate();
+        }
+        opt.initialValue = value;
+        return form.getFieldProps(id, opt);
+    };
+
+    render() {
         return (
             <Flex
-                style={{height: "100%", backgroundColor: "rgba(0,0,0,0.1)"}}
+                style={{height: "100%", width: "100%"}}
                 direction={"column"}
                 align={"center"}>
                 <NavBar
@@ -54,31 +87,34 @@ export default class BillAdd extends React.Component {
                     icon={<Icon type="left"/>}
                     onLeftClick={() => this.props.history.goBack()}
                 >账单新增</NavBar>
-
                 <List style={{width: "100%"}}>
                     <PickerItem
-                        {...form.getFieldProps("card_id", {rules: [{required: true, message: "请选择卡片类型"}]})}
-                        params={{tableName: "bc_card"}}
-                        parse={{id: "id", name: "name"}}
-                        label={"卡片类型"}
-                        url={"/wxapp/table/list"}/>
+                        {...this.getFieldProps("card_id", {rules: [{required: true, message: "请选择卡片类型"}]})}
+                        label={"银行卡类型"}
+                        cols={2}
+                        data={this.state.cardData}
+                    />
                     <PickerItem
-                        {...form.getFieldProps("bill_type_id", {
-                            rules: [{required: true, message: "请选择账单类型"}],
-                        })}
+                        {...this.getFieldProps("bill_type_id", {rules: [{required: true, message: "请选择账单类型"}]})}
                         label={"账单类型"}
                         url={"/wxapp/table/list"}
                         params={{tableName: "bc_bill_type"}}
-                        parse={{id: "id", name: "name"}}/>
+                        parse={{id: "id", name: "name"}}
+                    />
+                    <PickerItem
+                        {...this.getFieldProps("bill_type", {
+                            rules: [{required: true, message: "请选择账单类型"}],
+                        })}
+                        label={"类型"}
+                        data={[{value: "-1", label: "支出"}, {value: "1", label: "收入"}]}
+                    />
                     <InputItem
-                        {...form.getFieldProps("money", {rules: [{required: true, message: "请输入金额"}]})}
+                        {...this.getFieldProps("money", {rules: [{required: true, message: "请输入金额"}]})}
                         type={"money"}
-                        clear={true}
-                        extra="¥"
+                        extra={"¥"}
                     >金额</InputItem>
                     <DatePicker
-                        {...form.getFieldProps("date_time", {
-                            initialValue: new Date(),
+                        {...this.getFieldProps("date_time", {
                             rules: [{required: true, message: "请选择时间"}]
                         })}
                         mode={"datetime"}
@@ -90,16 +126,50 @@ export default class BillAdd extends React.Component {
                             日期时间
                         </List.Item>
                     </DatePicker>
-                    <TextareaItem
-                        {...form.getFieldProps("bill_desc",{
+                    <InputItem
+                        {...this.getFieldProps("bill_desc", {
                             rules: [{required: true, message: "请输入具体明细"}]
                         })}
-                        title="明细"
-                        autoHeight={true}
-                    />
+                        type={"text"}
+                        placeholder={"请输入明细"}
+                    >明细</InputItem>
                     <Button type={"primary"} onClick={this.onSaveClick}>保存</Button>
                 </List>
             </Flex>
         )
+    }
+
+    async loadCardData() {
+        function parseData(rows) {
+            return rows.map((item) => {
+                let bean = {
+                    value: item["id"],
+                    label: item["name"],
+                };
+                if (item.children) {
+                    bean.children = parseData(item.children);
+                }
+                return bean;
+            });
+        }
+
+        let d = await cardApi.listGroupByUser();
+        let data = d.data || [];
+        return parseData(data);
+    }
+
+    async loadBillData(id) {
+        let d = await tableController.list("bd_bill",{id});
+        let data = d.data || [];
+        let result = data[0] || {};
+        return {...this._defData, ...result}
+    }
+
+    async saveData(values) {
+        if (this.state.isNew) {
+            return await billApi.create(values);
+        } else {
+            return await billApi.update({...this.state.data, ...values});
+        }
     }
 }

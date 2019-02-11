@@ -1,19 +1,5 @@
 import {Subscription} from 'egg';
 
-class Table {
-    tableName: string;
-    columns: any[];
-    dateTimeColumns: string[];
-
-    constructor(tableName: string, columns: any[]) {
-        this.tableName = tableName;
-        this.columns = columns;
-        this.dateTimeColumns = columns
-            .filter((item) => item["data_type"] === "datetime" || item["data_type"] === "date")
-            .map((item) => item["column_name"]);
-    }
-}
-
 interface Table {
     tableName: string;
     columns: any[];

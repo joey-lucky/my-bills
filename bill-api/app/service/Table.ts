@@ -6,7 +6,15 @@ export default class extends Service {
         this.validTableName(params);
         const {app: {sqlExecutor}, ctx} = this;
         let tableName = params["tableName"];
-        return await sqlExecutor.select(tableName);
+        let queryParams =JSON.parse(params["data"] || "{}");
+        let data: any[] = await sqlExecutor.select(tableName,queryParams);
+        if ("bc_user" === tableName) {
+            for (let item of data) {
+                item["login_name"] = "";
+                item["login_password"] = "";
+            }
+        }
+        return data;
     }
 
     public async create(params) {

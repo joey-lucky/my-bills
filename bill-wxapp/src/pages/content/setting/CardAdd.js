@@ -50,7 +50,7 @@ export default class BillTypeAdd extends React.Component {
         const {form} = this.props;
         return (
             <Flex
-                style={{height: "100%", backgroundColor: "rgba(0,0,0,0.1)"}}
+                style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
                 <NavBar

@@ -28,7 +28,7 @@ export class SqlExecutor {
 
     async select(tableName: string, find?: {}): Promise<any[]> {
         assert.ok(tableName, "tableName is null");
-        let rows = (await this.mysql.select(tableName, find)) || [];
+        let rows = (await this.mysql.select(tableName, {where:find})) || [];
         for (let row of rows) {
             await this.tableRowHelper.translateId(row);
             await this.tableRowHelper.translateDateTime(tableName,row);
@@ -45,14 +45,16 @@ export class SqlExecutor {
         assert.ok(tableName, "tableName is null");
         assert.ok(values, "insert values is null");
         await this.tableRowHelper.translateDateTime(tableName,values);
+        await this.tableRowHelper.deleteUselessFields(tableName,values);
         return await this.mysql.insert(tableName, values);
     }
 
-    async update(tableName: string, values?: {}): Promise<any> {
+    async update(tableName: string, values?: {},options?:{}): Promise<any> {
         assert.ok(tableName, "tableName is null");
         assert.ok(values, "insert values is null");
         await this.tableRowHelper.translateDateTime(tableName,values);
-        return await this.mysql.update(tableName, values);
+        await this.tableRowHelper.deleteUselessFields(tableName,values);
+        return await this.mysql.update(tableName, values,options);
     }
 
     async beginTransaction(): Promise<TransactionExecutor> {
