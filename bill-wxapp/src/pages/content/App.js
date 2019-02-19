@@ -4,8 +4,10 @@ import {NavLink, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import routes from "./routes";
 import {Flex, WhiteSpace} from "antd-mobile";
 import {observable} from "mobx";
+import OptimizeUtils from "@utils/OptimizeUtils";
 
 export default class App extends Component {
+
     render() {
         const {match} = this.props;
         return (
@@ -47,6 +49,8 @@ export default class App extends Component {
 @observer
 class TabBar extends Component {
     @observable selectIndex = 0;
+
+
 
     render() {
         const {match} = this.props;

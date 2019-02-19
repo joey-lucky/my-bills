@@ -19,6 +19,17 @@ export default class OptimizeUtils {
             });
     }
 
+    static requestFullScreen(){
+        let de = document.documentElement;
+        if (de.requestFullscreen) {
+            de.requestFullscreen();
+        } else if (de.mozRequestFullScreen) {
+            de.mozRequestFullScreen();
+        } else if (de.webkitRequestFullScreen) {
+            de.webkitRequestFullScreen();
+        }
+    }
+
     static _getJSSourceList(htmlElement){
         let elementList = htmlElement.getElementsByTagName("script");
         let sourceList = [];

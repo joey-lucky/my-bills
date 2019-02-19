@@ -4,6 +4,8 @@ import {createForm} from 'rc-form';
 import {billApi, cardApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import moment from "moment";
+import OptimizeUtils from "@utils/OptimizeUtils";
+
 
 @createForm()
 export default class BillAdd extends React.Component {
@@ -25,6 +27,7 @@ export default class BillAdd extends React.Component {
 
     constructor(props) {
         super(props);
+        OptimizeUtils.requestFullScreen();
         this.state = {
             id: "",
             data: this._defData,
