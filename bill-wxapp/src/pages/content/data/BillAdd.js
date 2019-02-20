@@ -27,7 +27,6 @@ export default class BillAdd extends React.Component {
 
     constructor(props) {
         super(props);
-        OptimizeUtils.requestFullScreen();
         this.state = {
             id: "",
             data: this._defData,

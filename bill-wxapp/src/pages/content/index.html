@@ -22,7 +22,27 @@
     <!-- 自动识别数字电话号码 -->
     <meta content="telephone=no" name="format-detection"/>
     <meta name="theme-color" content="#000000">
+
+    <!--告知百度，页面只适合在手机端预览-->
+    <meta name="applicable-device" content="mobile">
+
     <title>主页</title>
+    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
+    <script>
+        if ('addEventListener' in document) {
+            document.addEventListener('DOMContentLoaded', function() {
+                FastClick.attach(document.body);
+            }, false);
+            document.addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+            function hideURLbar(){
+                window.scrollTo(0,1);
+            }
+        }
+        if(!window.Promise) {
+            document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"'+'>'+'<'+'/'+'script>');
+        }
+
+    </script>
     <style>
         html,body{height:100%;overflow:hidden;}
         #root {
