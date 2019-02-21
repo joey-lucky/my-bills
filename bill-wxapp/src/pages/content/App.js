@@ -2,8 +2,10 @@ import {observer} from "mobx-react";
 import React, {Component} from "react";
 import {NavLink, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import routes from "./routes";
-import {Flex, WhiteSpace} from "antd-mobile";
+import {Flex} from "antd-mobile";
 import {observable} from "mobx";
+import * as styles from "./App.css";
+import {globalStyles} from "@global";
 
 export default class App extends Component {
 
@@ -12,12 +14,10 @@ export default class App extends Component {
         const firstRoutePath = match.path + routes[0].path + routes[0].children[0].path;
         return (
             <Flex
+                style={globalStyles.container}
                 direction={"column"}
-                style={{
-                    height: "100%",
-                    width: "100%",
-                    backgroundColor: "rgba(0.0,0,0,0.02)",
-                }}>
+            >
+                <TabBar/>
                 <Flex.Item style={{width: "100%"}}>
                     <Switch>
                         {
@@ -31,12 +31,12 @@ export default class App extends Component {
                                             component={item.component}/>
                                     );
                                 });
+                                return pre;
                             }, [])
                         }
                         <Redirect to={firstRoutePath}/>
                     </Switch>
                 </Flex.Item>
-                <TabBar/>
             </Flex>
         )
     }
@@ -51,23 +51,17 @@ class TabBar extends Component {
         const {match} = this.props;
         return (
             <Flex
-                style={{width: "100%", backgroundColor: "white"}}
+                className={styles.topBar}
                 justify={"around"}
                 direction={"row"}>
                 {
                     routes.map((item) =>
                         <NavLink
+                            className={styles.tab}
                             key={match.path + item.path}
-                            style={{color: "rgba(0,0,0,0.65)", padding: "0.5rem"}}
-                            activeStyle={{color: "#1890ff", padding: "0.5rem"}}
+                            activeClassName={styles.activeTab}
                             to={match.path + item.path + item.children[0].path}>
-                            <Flex direction={"column"}>
-                                <img
-                                    style={{width: "1.5rem", height: "1.5rem"}}
-                                    src="https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg"/>
-                                <WhiteSpace size={"xs"}/>
-                                <h6>{item.name}</h6>
-                            </Flex>
+                            {item.name}
                         </NavLink>
                     )
                 }

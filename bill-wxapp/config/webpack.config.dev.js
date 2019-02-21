@@ -1,10 +1,12 @@
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const paths = require("./paths");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 
-let {pages,pageVersion,apiPath, allowedHost, port, publicPath,resolveApp} = paths;
+let {pages, pageVersion, apiPath, allowedHost, port, publicPath, resolveApp} = paths;
 
-module.exports = {
+const config = {
     devtool: "cheap-module-eval-source-map",
     mode: "development",
     entry: pages.reduce((previousValue, pageName) => {
@@ -21,93 +23,84 @@ module.exports = {
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
         alias: {
-            "@global": resolveApp("src/global.js"),
-            "@utils": resolveApp("src/utils"),
-            "@layouts": resolveApp("src/layouts"),
-            "@components": resolveApp("src/components"),
-            "@services": resolveApp("src/services"),
-        }
+            "@global": paths.resolveApp("src/global.js"),
+            "@utils": paths.resolveApp("src/utils"),
+            "@layouts": paths.resolveApp("src/layouts"),
+            "@components": paths.resolveApp("src/components"),
+            "@services": paths.resolveApp("src/services"),
+        },
     },
-    // externals: dllConfig.entry.vendors,
+
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
                 loader: "babel-loader",
-                include: paths.resolveApp("src"),
+                exclude: /node_modules/,
                 options: {
                     //stage-1 支持成员变量
                     presets: ['es2015', 'react', "stage-1"],
                     plugins: [
                         //装饰器支持
                         "transform-decorators-legacy",
-                        "transform-runtime"
+                        "transform-runtime",
+                        ["import", {
+                            "libraryName": "antd",
+                            "libraryDirectory": "es",
+                            "style": "css"
+                        }]
                     ]
                 }
             },
             {
                 test: /\.(css)$/,
-                use: ["style-loader", {loader: 'css-loader', options: {modules: true}}]
+                use: [
+                    'style-loader',
+                    {loader: 'css-loader', options: {modules: true, importLoaders: 1}},
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: 'postcss',
+                            plugins: () => [
+                                require('autoprefixer')("last 10 versions"),
+                                // require('postcss-flexbugs-fixes'),
+                                // require('postcss-preset-env')({
+                                //     autoprefixer: {
+                                //         flexbox: 'no-2009',
+                                //     },
+                                //     stage: 3,
+                                // }),
+                            ].filter(Boolean)
+                        }
+                    },
+                ]
             },
             {
                 test: /\.(less)$/,
-                use: ["style-loader",'css-loader', {loader: 'less-loader', options: {javascriptEnabled: true}}]
+                use: [
+                    "style-loader",
+                    'css-loader',
+                    {
+                        loader: 'less-loader',
+                        options: {javascriptEnabled: true}
+                    }
+                ]
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
                 loader: "file-loader",
                 options: {
                     publicPath: publicPath,
-                    name: "static/image/[hash].[ext]"
+                    name: "image/[hash].[ext]"
                 },
             }
         ]
     },
-    devServer: {
-        // host: "127.0.0.1",
-        hot: true,
-        contentBase: resolveApp("build"),
-        port: port,
-        publicPath: publicPath,
-        historyApiFallback: {
-            rewrites: [
-                ...pages.map((pageName)=>({
-                    from: new RegExp("^" + publicPath+"/"+pageName),
-                    to: publicPath + "/view/"+pageName+".html"
-                })),
-                {
-                    from: new RegExp("^"+publicPath+"/"),
-                    to: publicPath + "/view/login.html"
-                },
-            ]
-        },
-        disableHostCheck: true,
-        open: true,
-        openPage: publicPath.substr(1),
-        //跨域？不能存在的。
-        allowedHosts: [allowedHost],
-        proxy: {
-            [apiPath]: {
-                target: allowedHost,
-                // 因为使用的是https，会有安全校验，所以设置secure为false
-                secure: false,
-                // port: 80,
-                // ingorePath 默认即为 false, 注释掉也可以
-                // ingorePath: false,
-                // changeOrigin是关键，如果不加这个就无法跳转请求
-                changeOrigin: true,
-            }
-        },
-        // useLocalIp: true,
-        index: "/index.html",
-    },
-    optimization: {
-        namedModules: true,
-        minimize: false,
-    },
+
     plugins: [
+        new CleanWebpackPlugin([paths.resolveApp("build")], {root: paths.resolveApp(".")}),
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.DefinePlugin({
+        new webpack.DefinePlugin({//全局变量
             'process.env': {
                 NODE_ENV: JSON.stringify('development'),
                 PUBLIC_PATH: JSON.stringify(publicPath),
@@ -125,4 +118,45 @@ module.exports = {
         })
     ]
 };
+
+config.devServer = {
+    // host: "127.0.0.1",
+    hot: true,
+    contentBase: resolveApp("build"),
+    port: port,
+    publicPath: publicPath,
+    historyApiFallback: {
+        rewrites: [
+            ...pages.map((pageName) => ({
+                from: new RegExp("^" + publicPath + "/" + pageName),
+                to: publicPath + "/view/" + pageName + ".html"
+            })),
+            {
+                from: new RegExp("^" + publicPath + "/"),
+                to: publicPath + "/view/login.html"
+            },
+        ]
+    },
+    disableHostCheck: true,
+    open: true,
+    openPage: publicPath.substr(1),
+    //跨域？不能存在的。
+    allowedHosts: [allowedHost],
+    proxy: {
+        [apiPath]: {
+            target: allowedHost,
+            // 因为使用的是https，会有安全校验，所以设置secure为false
+            secure: false,
+            // port: 80,
+            // ingorePath 默认即为 false, 注释掉也可以
+            // ingorePath: false,
+            // changeOrigin是关键，如果不加这个就无法跳转请求
+            changeOrigin: true,
+        }
+    },
+    // useLocalIp: true,
+    index: "/index.html",
+};
+
+module.exports = config;
 

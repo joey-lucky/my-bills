@@ -5,6 +5,7 @@ import {billApi, cardApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import moment from "moment";
 import OptimizeUtils from "@utils/OptimizeUtils";
+import {globalStyles} from "@global";
 
 
 @createForm()
@@ -80,7 +81,7 @@ export default class BillAdd extends React.Component {
     render() {
         return (
             <Flex
-                style={{height: "100%", width: "100%"}}
+                style={globalStyles.container}
                 direction={"column"}
                 align={"center"}>
                 <NavBar

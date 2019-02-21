@@ -4,7 +4,7 @@ import {observer} from "mobx-react";
 import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
 import {billApi} from "@services/api";
-import {publicPath} from "@global";
+import {globalStyles, publicPath} from "@global";
 import {Link, NavLink} from "react-router-dom";
 
 class AppState {
@@ -165,7 +165,7 @@ export default class BillList extends React.Component {
         console.log(this.constructor.name, "render", toJS(this._appState.listViewDataSource));
         return (
             <Flex
-                style={{height: "100%", width: "100%"}}
+                style={globalStyles.container}
                 direction={"column"}
                 align={"center"}>
 
