@@ -1,8 +1,6 @@
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const paths = require("./paths");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 let {pages, pageVersion, apiPath, allowedHost, port, publicPath, resolveApp} = paths;
 
@@ -62,7 +60,7 @@ const config = {
                         options: {
                             ident: 'postcss',
                             plugins: () => [
-                                require('autoprefixer')("last 10 versions"),
+                                require('autoprefixer')("last 100 versions"),
                                 // require('postcss-flexbugs-fixes'),
                                 // require('postcss-preset-env')({
                                 //     autoprefixer: {
@@ -70,7 +68,7 @@ const config = {
                                 //     },
                                 //     stage: 3,
                                 // }),
-                            ].filter(Boolean)
+                            ]
                         }
                     },
                 ]
@@ -98,7 +96,6 @@ const config = {
     },
 
     plugins: [
-        new CleanWebpackPlugin([paths.resolveApp("build")], {root: paths.resolveApp(".")}),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.DefinePlugin({//全局变量
             'process.env': {

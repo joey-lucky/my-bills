@@ -53,12 +53,6 @@ export default class BillTypeAdd extends React.Component {
                 style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
-                <NavBar
-                    style={{width: "100%"}}
-                    mode="light"
-                    icon={<Icon type="left"/>}
-                >{"银行卡 - 新增"}</NavBar>
-
                 <List style={{width: "100%"}}>
                     <PickerItem
                         {...form.getFieldProps("card_type_id", {rules: [{required: true, message: "请选择卡片类型"}]})}

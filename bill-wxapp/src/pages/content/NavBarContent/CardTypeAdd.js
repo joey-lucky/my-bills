@@ -20,7 +20,7 @@ class AppState {
     }
 
     asyncSaveData(values) {
-        return tableController.add("bc_bill_type",values);
+        return tableController.add("bc_card_type",values);
     }
 }
 
@@ -54,12 +54,6 @@ export default class BillTypeAdd extends React.Component {
                 style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
-                <NavBar
-                    style={{width: "100%"}}
-                    mode="light"
-                    icon={<Icon type="left"/>}
-                >{"账单类型 - 新增"}</NavBar>
-
                 <List style={{width: "100%"}}>
                     <InputItem
                         {...form.getFieldProps("name",{rules: [{required: true,message:"名称不能为空"}]})}

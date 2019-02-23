@@ -11,14 +11,14 @@ class AppState {
 
     asyncLoadData() {
         this.listViewDataSource = this.listViewDataSource.cloneWithRows([]);
-        tableController.list("bc_card_type").then((d) => {
+        tableController.list("bc_bill_type").then((d) => {
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(d.data);
         });
     }
 }
 
 @observer
-export default class CardTypeList extends React.Component {
+export default class BillTypeList extends React.Component {
     _appState = new AppState();
 
     componentDidMount() {
@@ -27,7 +27,7 @@ export default class CardTypeList extends React.Component {
 
     onAddClick = () => {
         let {match} = this.props;
-        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/card-type-add');
+        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/bill-type-add');
         this.props.history.push(path);
     };
 
@@ -36,6 +36,8 @@ export default class CardTypeList extends React.Component {
             <List.Item
                 arrow="horizontal"
                 multipleLine={false}
+                onClick={() => {
+                }}
             >
                 {rowData["name"]}
             </List.Item>
@@ -48,13 +50,6 @@ export default class CardTypeList extends React.Component {
                 style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
-                <NavBar
-                    style={{width: "100%"}}
-                    mode="light"
-                    icon={<Icon type="left" onClick={() => this.props.history.goBack()}/>}
-                    rightContent={<span onClick={this.onAddClick}>新增</span>}
-                >{"银行卡类型"}</NavBar>
-
                 <ListView
                     style={{width: "100%", flex: 1}}
                     dataSource={toJS(this._appState.listViewDataSource)}

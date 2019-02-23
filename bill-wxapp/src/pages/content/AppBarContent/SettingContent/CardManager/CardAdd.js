@@ -1,11 +1,10 @@
 import * as React from "react";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
-import {Button, Flex, Icon, InputItem, List, ListView, NavBar, TextareaItem} from "antd-mobile";
+import {Button, Flex, Icon, InputItem, List, ListView, NavBar, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
-import {billApi, tableController} from "@services/api";
+import {tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
-import {Toast}  from "antd-mobile";
 
 class AppState {
     @observable initData = {};
@@ -20,7 +19,7 @@ class AppState {
     }
 
     asyncSaveData(values) {
-        return tableController.add("bc_card_type",values);
+        return tableController.add("bc_card", values);
     }
 }
 
@@ -36,7 +35,7 @@ export default class BillTypeAdd extends React.Component {
     onSaveClick = () => {
         this.props.form.validateFields((error, values) => {
             if (error) {
-              Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
+                Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
                 this._appState.asyncSaveData(values)
                     .then((d) => {
@@ -54,15 +53,24 @@ export default class BillTypeAdd extends React.Component {
                 style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
-                <NavBar
-                    style={{width: "100%"}}
-                    mode="light"
-                    icon={<Icon type="left"/>}
-                >{"银行卡类型 - 新增"}</NavBar>
-
                 <List style={{width: "100%"}}>
+                    <PickerItem
+                        {...form.getFieldProps("card_type_id", {rules: [{required: true, message: "请选择卡片类型"}]})}
+                        params={{tableName: "bc_card_type"}}
+                        parse={{id: "id", name: "name"}}
+                        label={"卡片类型"}
+                        url={"/wxapp/table/list"}/>
+                    <PickerItem
+                        {...form.getFieldProps("user_id", {
+                            rules: [{required: true, message: "请选择账单类型"}],
+                        })}
+                        label={"用户名"}
+                        url={"/wxapp/table/list"}
+                        parse={{id: "id", name: "name"}}
+                        params={{tableName: "bc_user"}}
+                    />
                     <InputItem
-                        {...form.getFieldProps("name",{rules: [{required: true,message:"名称不能为空"}]})}
+                        {...form.getFieldProps("name", {rules: [{required: true, message: "名称不能为空"}]})}
                         autoHeight={true}
                     >名称</InputItem>
                     <Button type={"primary"} onClick={this.onSaveClick}>保存</Button>

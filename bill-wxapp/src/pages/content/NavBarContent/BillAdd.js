@@ -4,26 +4,21 @@ import {createForm} from 'rc-form';
 import {billApi, cardApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import moment from "moment";
-import OptimizeUtils from "@utils/OptimizeUtils";
 import {globalStyles} from "@global";
-
+import screenfull from "screenfull";
+import * as PropTypes from "prop-types";
 
 @createForm()
 export default class BillAdd extends React.Component {
-    static getDerivedStateFromProps(nextProps, prevState) {
-        let id = nextProps.match.params.id;
-        if (id !== "undefined" && id !== prevState.id) {
-            return {
-                id, isNew: false,
-            };
-        }
-        return null;
-    }
+    static propTypes = {
+        onBackClick: PropTypes.any,
+        onAddSuccess:PropTypes.any,
+    };
 
     _defData = {
         date_time: moment().format("YYYY-MM-DD HH:mm:ss"),
         bill_type_id: "32291f40-2cfb-11e9-b803-2fb0ad7f2291",
-        bill_type:"-1"
+        bill_type: "-1"
     };
 
     constructor(props) {
@@ -37,8 +32,8 @@ export default class BillAdd extends React.Component {
     }
 
     componentDidMount() {
-        if (!this.state.isNew) {
-            this.loadBillData(this.state.id).then(data => {
+        if (this.props.id) {
+            this.loadBillData(this.props.id).then(data => {
                 let money = data["money"];
                 data.money = Math.abs(money);
                 data.bill_type = money >= 0 ? "1" : "-1";
@@ -47,12 +42,21 @@ export default class BillAdd extends React.Component {
             });
         }
         this.loadCardData().then(data => this.setState({cardData: data}));
+        if (screenfull.enabled && !screenfull.isFullscreen) {
+            screenfull.request();
+        }
     }
+
+    componentWillUnmount() {
+        if (screenfull.enabled) {
+            screenfull.exit();
+        }
+    }
+
 
     onSaveClick = () => {
         this.props.form.validateFields((error, values) => {
             if (error) {
-                console.log(error);
                 Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
                 if (values["bill_type"] === "-1") {
@@ -88,7 +92,7 @@ export default class BillAdd extends React.Component {
                     style={{width: "100%"}}
                     mode="light"
                     icon={<Icon type="left"/>}
-                    onLeftClick={() => this.props.history.goBack()}
+                    onLeftClick={this.props.onBackClick}
                 >账单新增</NavBar>
                 <List style={{width: "100%"}}>
                     <PickerItem
@@ -162,7 +166,7 @@ export default class BillAdd extends React.Component {
     }
 
     async loadBillData(id) {
-        let d = await tableController.list("bd_bill",{id});
+        let d = await tableController.list("bd_bill", {id});
         let data = d.data || [];
         let result = data[0] || {};
         return {...this._defData, ...result}

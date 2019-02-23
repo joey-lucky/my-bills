@@ -1,71 +1,85 @@
 import {observer} from "mobx-react";
-import React, {Component} from "react";
-import {NavLink, Redirect, Route, Switch, withRouter} from "react-router-dom";
-import routes from "./routes";
-import {Flex} from "antd-mobile";
+import React from "react";
 import {observable} from "mobx";
-import * as styles from "./App.css";
-import {globalStyles} from "@global";
+import {Redirect, Route, Switch} from "react-router";
+import AppBarContent from "./AppBarContent";
 
-export default class App extends Component {
-
-    render() {
-        const {match} = this.props;
-        const firstRoutePath = match.path + routes[0].path + routes[0].children[0].path;
-        return (
-            <Flex
-                style={globalStyles.container}
-                direction={"column"}
-            >
-                <TabBar/>
-                <Flex.Item style={{width: "100%"}}>
-                    <Switch>
-                        {
-                            routes.reduce((pre, curr) => {
-                                let parentPath = match.path + curr.path;
-                                curr.children.forEach((item) => {
-                                    pre.push(
-                                        <Route
-                                            key={parentPath + item.path}
-                                            path={parentPath + item.path}
-                                            component={item.component}/>
-                                    );
-                                });
-                                return pre;
-                            }, [])
-                        }
-                        <Redirect to={firstRoutePath}/>
-                    </Switch>
-                </Flex.Item>
-            </Flex>
-        )
-    }
-}
-
-@withRouter
 @observer
-class TabBar extends Component {
-    @observable selectIndex = 0;
+export default class App extends React.Component {
+    @observable _tabBarState = {
+        hidden: false,
+        selectedTab: "data"
+    };
 
-    render() {
-        const {match} = this.props;
+
+    onTabBarClick = (tab) => {
+        if (this._tabBarState.selectedTab !== tab) {
+            this._tabBarState.selectedTab = tab;
+        }
+    };
+
+    renderTabBarIcon(url) {
         return (
-            <Flex
-                className={styles.topBar}
-                justify={"around"}
-                direction={"row"}>
-                {
-                    routes.map((item) =>
-                        <NavLink
-                            className={styles.tab}
-                            key={match.path + item.path}
-                            activeClassName={styles.activeTab}
-                            to={match.path + item.path + item.children[0].path}>
-                            {item.name}
-                        </NavLink>
-                    )
-                }
-            </Flex>
+            <div style={{
+                width: '22px',
+                height: '22px',
+                background: `'url(${url}) center center /  21px 21px no-repeat`
+            }}/>
         );
     }
+
+    render() {
+        return (
+            <Switch>
+                <Route
+                    path={"/app-bar"}
+                    component={AppBarContent}/>
+                <Route
+                    path={"/nav-bar"}
+                    component={AppBarContent}/>
+                <Redirect to={"/app-bar"}/>
+            </Switch>
+        );
+    }
+
+
 }
+//
+// export default class App extends Component {
+//     componentDidMount() {
+//
+//     }
+//
+//     render() {
+//         const {match} = this.props;
+//         return (
+//             <Flex
+//                 className={"fill-parent"}
+//                 direction={"column"}
+//             >
+//                 <Flex.Item style={{width: "100%"}}>
+//                     <Switch>
+//                         {
+//                             routes.map((item) =>
+//                                 <Route
+//                                     key={match.path + item.path}
+//                                     path={match.path + item.path}
+//                                     component={(props) => {
+//                                         let Comp = item.component;
+//                                         return (
+//                                             <Comp
+//                                                 {...props}
+//                                                 childRouteData={item.children}
+//                                             />
+//                                         );
+//                                     }}/>
+//                             )
+//                         }
+//                         <Redirect to={match.path + routes[0].path}/>
+//                     </Switch>
+//                 </Flex.Item>
+//                 <TabBar/>
+//             </Flex>
+//         )
+//     }
+// }

@@ -1,57 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" class=" ">
+<html lang="en">
 <head>
-    <title>主页</title>
     <meta charset="utf-8">
-    <meta name="theme-color" content="#000000">
+    <link rel="shortcut icon" href="http://www.hjoey.com/file/wxapp_icon.jpg"/>
     <meta name="viewport"
-          content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,viewport-fit=cover"/>
+          content="width=device-width, initial-scale=1, shrink-to-fit=no, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,minimal-ui"/>
     <!-- 苹果手机全屏效果 -->
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <!-- uc强制竖屏 -->
-    <meta name="screen-orientation" content="portrait">
-    <!-- UC强制全屏 -->
-    <meta name="full-screen" content="yes">
-    <!-- UC应用模式 -->
-    <meta name="browsermode" content="application">
-    <!-- QQ强制竖屏 -->
-    <meta name="x5-orientation" content="portrait">
-    <!-- QQ强制全屏 -->
-    <meta name="x5-fullscreen" content="true">
-    <!-- QQ应用模式 -->
-    <meta name="x5-page-mode" content="app">
+    <!--<meta name="apple-mobile-web-app-capable" content="yes"/>-->
+    <!--<meta name="mobile-web-app-capable" content="yes">-->
+    <!--&lt;!&ndash; uc强制竖屏 &ndash;&gt;-->
+    <!--<meta name="screen-orientation" content="portrait">-->
+    <!--&lt;!&ndash; UC强制全屏 &ndash;&gt;-->
+    <!--<meta name="full-screen" content="yes">-->
+    <!--&lt;!&ndash; UC应用模式 &ndash;&gt;-->
+    <!--<meta name="browsermode" content="application">-->
+    <!--&lt;!&ndash; QQ强制竖屏 &ndash;&gt;-->
+    <!--<meta name="x5-orientation" content="portrait">-->
+    <!--&lt;!&ndash; QQ强制全屏 &ndash;&gt;-->
+    <!--<meta name="x5-fullscreen" content="true">-->
+    <!--&lt;!&ndash; QQ应用模式 &ndash;&gt;-->
+    <!--<meta name="x5-page-mode" content="app">-->
     <!-- 自动识别数字电话号码 -->
     <meta content="telephone=no" name="format-detection"/>
-    <!--告知百度，页面只适合在手机端预览-->
-    <meta name="applicable-device" content="mobile">
-    <link rel="shortcut icon" href="http://www.hjoey.com/file/wxapp_icon.jpg"/>
-
-    <link href="https://cdn.bootcss.com/antd-mobile/2.2.9/antd-mobile.min.css" rel="stylesheet"/>
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <meta name="theme-color" content="#000000">
+    <title>主页</title>
+    <script src="https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js"></script>
     <script>
         if ('addEventListener' in document) {
             document.addEventListener('DOMContentLoaded', function () {
                 FastClick.attach(document.body);
             }, false);
         }
-        if (!window.Promise) {
-            document.writeln('<script src="https://as.alipayobjects.com/g/component/es6-promise/3.2.2/es6-promise.min.js"' + '>' + '<' + '/' + 'script>');
-        }
     </script>
-    <style>
-        html, body {
-            height: 100%;
-            width: 100%;
-        }
-        * {
-            padding: 0;
-            margin: 0;
-        }
-        #root {
-            height: 100%;
-            width: 100%;
-        }
-    </style>
 <body>
 <noscript>
     You need to enable JavaScript to run this app.

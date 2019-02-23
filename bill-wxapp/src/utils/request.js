@@ -47,13 +47,12 @@ export function request(url, params = {}) {
                 throw new Error(message);
             }
         } catch (e) {
-            if (e.message.indexOf("token")!==-1) {
-                window.location.href=publicPath+"/login/"
-            }else{
-                reject(e);
-            }
+            // if (e.message.indexOf("token")!==-1) {
+            //     window.location.href=publicPath+"/login/"
+            // }else{
+            //     reject(e);
+            // }
         }
     });
     return wrapPromise(promise);
 }
-

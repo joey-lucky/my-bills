@@ -16,6 +16,7 @@ const App = observer(() => {
                     <Route
                         path={"/login"}
                         component={LoginPage}/>
+                    <Redirect to={"/login"}/>
                 </Switch>
             </div>
         </Router>

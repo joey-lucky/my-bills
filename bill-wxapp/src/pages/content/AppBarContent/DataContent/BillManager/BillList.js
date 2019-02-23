@@ -1,11 +1,14 @@
 import * as React from "react";
 import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
-import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
+import {Flex, List, ListView} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
 import {billApi} from "@services/api";
-import {globalStyles, publicPath} from "@global";
-import {Link, NavLink} from "react-router-dom";
+import {globalStyles} from "@global";
+import screenfull from "screenfull";
+import addIcon from "./add.png";
+import * as PropTypes from "prop-types";
+
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -51,27 +54,22 @@ class AppState {
 
 @observer
 export default class BillList extends React.Component {
-    _appState = new AppState();
-    editPageRoute;
+    static propTypes = {
+        onAddClick: PropTypes.any,
+        onItemClick:PropTypes.any,
+    };
 
-    constructor(props, context) {
-        super(props, context);
-        let {match} = props;
-        this.editPageRoute = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/bill-add');
-    }
+    _appState = new AppState();
 
     componentDidMount() {
         this._appState.asyncLoadData();
+        if (screenfull.enabled) {
+            screenfull.exit();
+        }
     }
 
-    onAddClick = () => {
-        this.props.history.replace(this.editPageRoute + "/" + undefined);
-    };
-
     onItemClick = (rowData) => {
-        let {match} = this.props;
-        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/bill-add/' + rowData["id"]);
-        this.props.history.push(path);
+        this.props.onItemClick && this.props.onItemClick(rowData.id);
     };
 
     onEndReached = (event) => {
@@ -86,26 +84,23 @@ export default class BillList extends React.Component {
         let showMoney = income ? " + " + money : " - " + Math.abs(money);
         let layout = income ? {color: "red"} : {color: "black"};
         return (
-            <Link to={this.editPageRoute+"/"+rowData.id}>
-                <List.Item
-                    // onClick={() => {
-                    //     this.onItemClick(rowData);
-                    // }}
-                    thumb={pic}
-                    extra={<h3 style={layout}>{showMoney}</h3>}
-                    wrap={true}
-                >
-                    {
-                        rowData["bill_desc"]
-                    }
-                    <List.Item.Brief style={{fontSize: "0.5rem"}}>
-                        {rowData["bill_type_name"]}
-                    </List.Item.Brief>
-                    <List.Item.Brief style={{fontSize: "0.5rem"}}>
-                        {rowData["date_time"]}
-                    </List.Item.Brief>
-                </List.Item>
-            </Link>
+            <List.Item thumb={pic}
+                       extra={<h3 style={layout}>{showMoney}</h3>}
+                       wrap={true}
+                       onClick={() => {
+                           this.onItemClick(rowData);
+                       }}
+            >
+                {
+                    rowData["bill_desc"]
+                }
+                <List.Item.Brief style={{fontSize: "0.5rem"}}>
+                    {rowData["bill_type_name"]}
+                </List.Item.Brief>
+                <List.Item.Brief style={{fontSize: "0.5rem"}}>
+                    {rowData["date_time"]}
+                </List.Item.Brief>
+            </List.Item>
         );
     };
 
@@ -162,21 +157,10 @@ export default class BillList extends React.Component {
     };
 
     render() {
-        console.log(this.constructor.name, "render", toJS(this._appState.listViewDataSource));
         return (
-            <Flex
-                style={globalStyles.container}
-                direction={"column"}
-                align={"center"}>
-
-                <NavBar
-                    style={{width: "100%"}}
-                    mode="light"
-                    icon={<Icon type="left" onClick={() => this.props.history.goBack()}/>}
-                    onLeftClick={() => window.location.href = publicPath + "/login/"}
-                    rightContent={<NavLink to={this.editPageRoute + "/" + undefined}>新增</NavLink>}
-                >账单列表</NavBar>
-
+            <Flex style={globalStyles.container}
+                  direction={"column"}
+                  align={"center"}>
                 <Flex.Item style={{width: "100%", position: "relative"}}>
                     {/*<ListView*/}
                     {/*className="am-list sticky-list"*/}
@@ -196,15 +180,20 @@ export default class BillList extends React.Component {
                     {/*onEndReached={this.onEndReached}*/}
                     {/*onEndReachedThreshold={10}*/}
                     {/*/>*/}
-                    <ListView
-                        style={{width: "100%", height: "100%"}}
-                        dataSource={toJS(this._appState.listViewDataSource)}
-                        renderRow={this.renderItem}
-                        renderSectionHeader={this.renderSectionHeader}
-                        initialListSize={15}
-                        renderSeparator={this.renderSeparator}
+                    <ListView style={{width: "100%", height: "100%"}}
+                              dataSource={toJS(this._appState.listViewDataSource)}
+                              renderRow={this.renderItem}
+                              renderSectionHeader={this.renderSectionHeader}
+                              initialListSize={15}
+                              renderSeparator={this.renderSeparator}
                     />
                 </Flex.Item>
+                <div style={{position: "absolute", bottom: "1rem", right: "1rem", zIndex: 99}}
+                     onClick={this.props.onAddClick}
+                >
+                    <img style={{width: "3rem",}}
+                         src={addIcon}/>
+                </div>
             </Flex>
         )
     }
