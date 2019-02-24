@@ -10,9 +10,9 @@ import screenfull from "screenfull";
 
 const routes = [
     {path: "/bill-add/:id", component: BillAdd},
-    {path: "/bill-type-add", component: BillTypeAdd},
-    {path: "/card-add", component: CardAdd},
-    {path: "/card-type-add", component: CardTypeAdd},
+    {path: "/bill-type-add/:id", component: BillTypeAdd},
+    {path: "/card-add/:id", component: CardAdd},
+    {path: "/card-type-add/:id", component: CardTypeAdd},
 ];
 
 export default class NavBarContent extends React.Component {
@@ -38,7 +38,7 @@ export default class NavBarContent extends React.Component {
                         routes.map(item =>
                             <Route
                                 key={match.path + item.path}
-                                path={match.path + item.path + item.params || ""}
+                                path={match.path + item.path}
                                 component={item.component}/>
                         )
                     }

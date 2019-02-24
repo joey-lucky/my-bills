@@ -5,6 +5,7 @@ import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
 import {cardApi} from "@services/api";
 import AddIcon from "@components/AddIcon";
 import {withRouter} from "react-router-dom";
+import {globalStyles} from "@global";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -48,7 +49,7 @@ export default class CardList extends React.Component {
     render() {
         return (
             <Flex
-                style={{height: "100%"}}
+                style={globalStyles.container}
                 direction={"column"}
                 align={"center"}>
 

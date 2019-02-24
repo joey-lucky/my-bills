@@ -1,9 +1,9 @@
 import * as React from "react";
 import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
-import {Flex, List, ListView} from "antd-mobile";
+import {Flex, List, ListView, Tag, WhiteSpace, WingBlank} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
-import {billApi} from "@services/api";
+import {billApi, safeController} from "@services/api";
 import {globalStyles} from "@global";
 import * as PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -18,10 +18,10 @@ class AppState {
         sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     });
     @observable isLoading = false;
-
-    asyncLoadData() {
+    userInfo = {};
+    asyncLoadData(params) {
         this.listViewDataSource = this.listViewDataSource.cloneWithRowsAndSections({}, [], []);
-        billApi.list().then((d) => {
+        billApi.list(params).then((d) => {
             let data = d.data || [];
             let dataBlobs = {};
             let sectionIDs = [];
@@ -50,6 +50,13 @@ class AppState {
             this.listViewDataSource = this.listViewDataSource.cloneWithRowsAndSections(dataBlobs, sectionIDs, rowIDs);
         });
     }
+
+    asyncLoadUserInfo() {
+        safeController.getUserInfo()
+            .then((d) => {
+                this.userInfo = d.data[0];
+            });
+    }
 }
 
 @withRouter
@@ -57,21 +64,30 @@ class AppState {
 export default class BillList extends React.Component {
     static propTypes = {
         onAddClick: PropTypes.any,
-        onItemClick:PropTypes.any,
+        onItemClick: PropTypes.any,
     };
 
     _appState = new AppState();
 
     componentDidMount() {
+        this._appState.asyncLoadUserInfo();
         this._appState.asyncLoadData();
     }
 
     onItemClick = (rowData) => {
-        this.props.history.push("/content/nav-bar/bill-add/"+rowData.id);
+        this.props.history.push("/content/nav-bar/bill-add/" + rowData.id);
     };
 
     onAddClick = () => {
-        this.props.history.push("/content/nav-bar/bill-add/"+undefined);
+        this.props.history.push("/content/nav-bar/bill-add/" + undefined);
+    };
+
+    onSelectOnlyOwn = (selected) => {
+        if (selected) {
+            this._appState.asyncLoadData({user_id: this._appState.userInfo.id});
+        } else {
+            this._appState.asyncLoadData({user_id: ""});
+        }
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
@@ -159,6 +175,18 @@ export default class BillList extends React.Component {
             <Flex style={globalStyles.container}
                   direction={"column"}
                   align={"center"}>
+                <Flex style={{width: "100%", backgroundColor: "rgba(255,255,255,0.5)"}}
+                      direction={"column"}>
+                    <WhiteSpace size={"sm"}/>
+                    <Flex style={{width: "100%"}}
+                          direction={"row"}>
+                        <WingBlank size={"sm"}/>
+                        <Tag onChange={this.onSelectOnlyOwn}>仅自己</Tag>
+                    </Flex>
+                    <WhiteSpace size={"sm"}/>
+                </Flex>
+
+
                 <Flex.Item style={{width: "100%", position: "relative"}}>
                     {/*<ListView*/}
                     {/*className="am-list sticky-list"*/}
@@ -187,7 +215,9 @@ export default class BillList extends React.Component {
                     />
                 </Flex.Item>
 
-                <AddIcon onAddClick={()=>{this.props.history.push("/content/nav-bar/bill-add/"+undefined);}}/>
+                <AddIcon onAddClick={() => {
+                    this.props.history.push("/content/nav-bar/bill-add/" + undefined);
+                }}/>
             </Flex>
         )
     }

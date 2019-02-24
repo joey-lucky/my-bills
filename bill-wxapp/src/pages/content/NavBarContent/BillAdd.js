@@ -10,10 +10,6 @@ import TopBar from "./TopBar";
 
 @createForm()
 export default class BillAdd extends React.Component {
-    static propTypes = {
-        onAddSuccess: PropTypes.any,
-    };
-
     _defData = {
         date_time: moment().format("YYYY-MM-DD HH:mm:ss"),
         bill_type_id: "32291f40-2cfb-11e9-b803-2fb0ad7f2291",
@@ -31,6 +27,7 @@ export default class BillAdd extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.props);
         let id = this.props.match.params.id;
         if (id && id !== "undefined") {
             this.loadBillData(id).then(data => {

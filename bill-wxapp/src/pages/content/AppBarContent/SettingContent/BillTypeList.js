@@ -5,6 +5,7 @@ import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
 import {tableController} from "@services/api";
 import AddIcon from "@components/AddIcon";
 import {withRouter} from "react-router-dom";
+import {globalStyles} from "@global";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -31,7 +32,6 @@ export default class BillTypeList extends React.Component {
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         return (
             <List.Item
-                arrow="horizontal"
                 multipleLine={false}
                 onClick={() => {
                 }}
@@ -44,7 +44,7 @@ export default class BillTypeList extends React.Component {
     render() {
         return (
             <Flex
-                style={{height: "100%"}}
+                style={globalStyles.container}
                 direction={"column"}
                 align={"center"}>
                 <ListView

@@ -30,10 +30,13 @@ export const cardAsset={
 
 };
 
-export const loginController = {
+export const safeController = {
     login: (params) => {
         return request('/safe/login', params);
     },
+    getUserInfo:()=>{
+        return request('/safe/get-user-info');
+    }
 };
 
 export const tableController = {

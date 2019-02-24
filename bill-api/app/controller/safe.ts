@@ -5,4 +5,9 @@ export default class Safe extends Controller {
         const {ctx} = this;
         ctx.body = await ctx.service.safe.login(ctx.query);
     }
+
+    public async getUserInfo(){
+        const {app, ctx} = this;
+        ctx.body = ctx.userInfo;
+    }
 }

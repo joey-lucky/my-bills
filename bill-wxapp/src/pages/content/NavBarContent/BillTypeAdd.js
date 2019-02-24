@@ -56,7 +56,6 @@ export default class BillTypeAdd extends React.Component {
                 direction={"column"}
                 align={"center"}>
                 <TopBar title={"账单类型新增/编辑"}/>
-
                 <List style={{width: "100%"}}>
                     <InputItem
                         {...form.getFieldProps("name",{rules: [{required: true,message:"名称不能为空"}]})}
