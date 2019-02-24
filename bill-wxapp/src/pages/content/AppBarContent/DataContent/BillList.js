@@ -109,7 +109,11 @@ export default class BillList extends React.Component {
                     rowData["bill_desc"]
                 }
                 <List.Item.Brief style={{fontSize: "0.5rem"}}>
-                    {rowData["bill_type_name"]}
+                    <Flex direction={"row"}>
+                        {rowData["bill_type_name"]}
+                        <WingBlank size={"sm"}/>
+                        {rowData["cardUserName"]+" - "+rowData["card_name"]}
+                    </Flex>
                 </List.Item.Brief>
                 <List.Item.Brief style={{fontSize: "0.5rem"}}>
                     {rowData["date_time"]}

@@ -46,6 +46,7 @@ export default class extends Controller {
         // language=MySQL
         let sql = "select t.*,\n" +
             "       t1.pic,\n" +
+            "       t3.name       as cardUserName,\n" +
             "       case\n" +
             "         when to_days(t.date_time) = to_days(now()) then \'今天\'\n" +
             "         when to_days(t.date_time) = to_days(now()) - 1 then \'昨天\'\n" +
@@ -54,6 +55,8 @@ export default class extends Controller {
             "         else \'\' end as timeDesc\n" +
             "from bd_bill t\n" +
             "       left join bc_user t1 on t1.id = t.user_id\n" +
+            "       left join bc_card t2 on t2.id = t.card_id\n" +
+            "       left join bc_user t3 on t3.id = t2.user_id\n" +
             "where 1 = 1\n";
         const params = ctx.query;
         const queryParams:string[] = [];
