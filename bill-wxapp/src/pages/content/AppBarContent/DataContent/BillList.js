@@ -5,9 +5,9 @@ import {Flex, List, ListView} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
 import {billApi} from "@services/api";
 import {globalStyles} from "@global";
-import screenfull from "screenfull";
-import addIcon from "./add.png";
 import * as PropTypes from "prop-types";
+import {withRouter} from "react-router-dom";
+import AddIcon from "@components/AddIcon";
 
 
 class AppState {
@@ -52,6 +52,7 @@ class AppState {
     }
 }
 
+@withRouter
 @observer
 export default class BillList extends React.Component {
     static propTypes = {
@@ -63,17 +64,14 @@ export default class BillList extends React.Component {
 
     componentDidMount() {
         this._appState.asyncLoadData();
-        if (screenfull.enabled) {
-            screenfull.exit();
-        }
     }
 
     onItemClick = (rowData) => {
-        this.props.onItemClick && this.props.onItemClick(rowData.id);
+        this.props.history.push("/content/nav-bar/bill-add/"+rowData.id);
     };
 
-    onEndReached = (event) => {
-
+    onAddClick = () => {
+        this.props.history.push("/content/nav-bar/bill-add/"+undefined);
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
@@ -188,12 +186,8 @@ export default class BillList extends React.Component {
                               renderSeparator={this.renderSeparator}
                     />
                 </Flex.Item>
-                <div style={{position: "absolute", bottom: "1rem", right: "1rem", zIndex: 99}}
-                     onClick={this.props.onAddClick}
-                >
-                    <img style={{width: "3rem",}}
-                         src={addIcon}/>
-                </div>
+
+                <AddIcon onAddClick={()=>{this.props.history.push("/content/nav-bar/bill-add/"+undefined);}}/>
             </Flex>
         )
     }

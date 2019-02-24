@@ -1,18 +1,17 @@
 import * as React from "react";
-import {Button, DatePicker, Flex, Icon, InputItem, List, NavBar, Toast} from "antd-mobile";
+import {Button, DatePicker, Flex, InputItem, List, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
 import {billApi, cardApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import moment from "moment";
 import {globalStyles} from "@global";
-import screenfull from "screenfull";
 import * as PropTypes from "prop-types";
+import TopBar from "./TopBar";
 
 @createForm()
 export default class BillAdd extends React.Component {
     static propTypes = {
-        onBackClick: PropTypes.any,
-        onAddSuccess:PropTypes.any,
+        onAddSuccess: PropTypes.any,
     };
 
     _defData = {
@@ -32,27 +31,17 @@ export default class BillAdd extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.id) {
-            this.loadBillData(this.props.id).then(data => {
+        let id = this.props.match.params.id;
+        if (id && id !== "undefined") {
+            this.loadBillData(id).then(data => {
                 let money = data["money"];
                 data.money = Math.abs(money);
                 data.bill_type = money >= 0 ? "1" : "-1";
                 this.setState({data});
-
             });
         }
         this.loadCardData().then(data => this.setState({cardData: data}));
-        if (screenfull.enabled && !screenfull.isFullscreen) {
-            screenfull.request();
-        }
     }
-
-    componentWillUnmount() {
-        if (screenfull.enabled) {
-            screenfull.exit();
-        }
-    }
-
 
     onSaveClick = () => {
         this.props.form.validateFields((error, values) => {
@@ -88,12 +77,7 @@ export default class BillAdd extends React.Component {
                 style={globalStyles.container}
                 direction={"column"}
                 align={"center"}>
-                <NavBar
-                    style={{width: "100%"}}
-                    mode="light"
-                    icon={<Icon type="left"/>}
-                    onLeftClick={this.props.onBackClick}
-                >账单新增</NavBar>
+                <TopBar title={"账单新增/编辑"}/>
                 <List style={{width: "100%"}}>
                     <PickerItem
                         {...this.getFieldProps("card_id", {rules: [{required: true, message: "请选择卡片类型"}]})}

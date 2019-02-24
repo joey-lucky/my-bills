@@ -3,6 +3,8 @@ import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
 import {cardApi} from "@services/api";
+import AddIcon from "@components/AddIcon";
+import {withRouter} from "react-router-dom";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -18,6 +20,7 @@ class AppState {
     }
 }
 
+@withRouter
 @observer
 export default class CardList extends React.Component {
     _appState = new AppState();
@@ -27,9 +30,7 @@ export default class CardList extends React.Component {
     }
 
     onAddClick = () => {
-        let {match} = this.props;
-        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/card-add');
-        this.props.history.push(path);
+        this.props.history.push("/content/nav-bar/card-add/"+undefined);
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
@@ -70,6 +71,7 @@ export default class CardList extends React.Component {
                         )}
                     />
                 </Flex.Item>
+                <AddIcon onAddClick={()=>{this.props.history.push("/content/nav-bar/card-add/"+undefined);}}/>
             </Flex>
         )
     }

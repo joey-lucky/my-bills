@@ -1,44 +1,49 @@
 import React from "react";
-import {Flex, Icon, NavBar} from "antd-mobile";
+import {Flex} from "antd-mobile";
+import {Redirect, Route, Switch} from "react-router-dom";
 import {globalStyles} from "@global";
 import BillAdd from "./BillAdd";
 import BillTypeAdd from "./BillTypeAdd";
 import CardAdd from "./CardAdd";
 import CardTypeAdd from "./CardTypeAdd";
+import screenfull from "screenfull";
 
-const pages = {
-    "bill-add": BillAdd,
-    "bill-type-add": BillTypeAdd,
-    "card-add": CardAdd,
-    "card-type-add": CardTypeAdd,
-};
+const routes = [
+    {path: "/bill-add/:id", component: BillAdd},
+    {path: "/bill-type-add", component: BillTypeAdd},
+    {path: "/card-add", component: CardAdd},
+    {path: "/card-type-add", component: CardTypeAdd},
+];
 
 export default class NavBarContent extends React.Component {
-    static getDerivedStateFromProps(nextProps, preState) {
-        let stateStr = nextProps.routeParams.state;
-        console.log(stateStr);
+    componentDidMount(){
+        if (screenfull.enabled && !screenfull.isFullscreen) {
+            screenfull.request();
+        }
     }
 
-    onBackClick=()=>{
-        let {history} = this.props;
-        history.push("/app-bar",{index:[0,0,0],})
-    };
+    componentWillUnmount(){
+        if (screenfull.enabled) {
+            screenfull.exit();
+        }
+    }
+
 
     render() {
-        const {pageKey, id} = this.state;
-        let Comp = pages[pageKey] || BillAdd;
+        const {match} = this.props;
         return (
-            <Flex style={globalStyles.container}
-                  direction={"column"}
-            >
-                <NavBar style={{width: "100%"}}
-                        mode="light"
-                        icon={<Icon type="left"/>}
-                        onLeftClick={this.onBackClick}
-                >账单新增</NavBar>
-                <Flex.Item style={{width: "100%"}}>
-                    <Comp id={id}/>
-                </Flex.Item>
+            <Flex style={globalStyles.container}>
+                <Switch>
+                    {
+                        routes.map(item =>
+                            <Route
+                                key={match.path + item.path}
+                                path={match.path + item.path + item.params || ""}
+                                component={item.component}/>
+                        )
+                    }
+                    <Redirect to={match.path + routes[0].path}/>
+                </Switch>
             </Flex>
         );
     }

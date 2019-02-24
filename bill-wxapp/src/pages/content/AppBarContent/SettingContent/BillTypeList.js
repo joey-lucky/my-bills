@@ -3,6 +3,8 @@ import {observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
 import {tableController} from "@services/api";
+import AddIcon from "@components/AddIcon";
+import {withRouter} from "react-router-dom";
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -11,31 +13,28 @@ class AppState {
 
     asyncLoadData() {
         this.listViewDataSource = this.listViewDataSource.cloneWithRows([]);
-        tableController.list("bc_card_type").then((d) => {
+        tableController.list("bc_bill_type").then((d) => {
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(d.data);
         });
     }
 }
 
+@withRouter
 @observer
-export default class CardTypeList extends React.Component {
+export default class BillTypeList extends React.Component {
     _appState = new AppState();
 
     componentDidMount() {
         this._appState.asyncLoadData();
     }
 
-    onAddClick = () => {
-        let {match} = this.props;
-        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/card-type-add');
-        this.props.history.push(path);
-    };
-
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         return (
             <List.Item
                 arrow="horizontal"
                 multipleLine={false}
+                onClick={() => {
+                }}
             >
                 {rowData["name"]}
             </List.Item>
@@ -65,6 +64,7 @@ export default class CardTypeList extends React.Component {
                         />
                     )}
                 />
+                <AddIcon onAddClick={()=>{this.props.history.push("/content/nav-bar/bill-type-add/"+undefined);}}/>
             </Flex>
         )
     }

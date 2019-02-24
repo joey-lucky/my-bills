@@ -6,6 +6,7 @@ import {createForm} from 'rc-form';
 import {billApi, tableController} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import {Toast}  from "antd-mobile";
+import TopBar from "./TopBar";
 
 class AppState {
     @observable initData = {};
@@ -54,6 +55,7 @@ export default class BillTypeAdd extends React.Component {
                 style={{height: "100%"}}
                 direction={"column"}
                 align={"center"}>
+                <TopBar title={"卡类型新增/编辑"}/>
                 <List style={{width: "100%"}}>
                     <InputItem
                         {...form.getFieldProps("name",{rules: [{required: true,message:"名称不能为空"}]})}
