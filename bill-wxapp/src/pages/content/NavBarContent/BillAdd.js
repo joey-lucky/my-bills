@@ -156,9 +156,9 @@ export default class BillAdd extends React.Component {
     async saveData(values) {
         let id = this.props.match.params.id;
         if (id && id !== "undefined") {
-            return await billApi.create(values);
-        } else {
             return await billApi.update({...this.state.data, ...values});
+        } else {
+            return await billApi.create(values);
         }
     }
 }
