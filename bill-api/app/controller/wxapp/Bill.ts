@@ -42,7 +42,7 @@ export default class extends Controller {
 
     public async list() {
         const {app, ctx} = this;
-        const {sqlExecutor, tableRowHelper} = app;
+        const {sqlExecutor:SqlExecutor, tableRowHelper} = app;
         // language=MySQL
         let sql = "select t.*,\n" +
             "       t1.pic,\n" +
@@ -52,7 +52,7 @@ export default class extends Controller {
             "         when to_days(t.date_time) = to_days(now()) - 1 then \'昨天\'\n" +
             "         when yearweek(t.date_time) = yearweek(now()) then \'本周\'\n" +
             "         when DATE_FORMAT(t.date_time, \'%Y%m\') = DATE_FORMAT(now(), \'%Y%m\') then \'本月\'\n" +
-            "         else \'\' end as timeDesc\n" +
+            "         else date_format(t.date_time, \'%Y年%m月\') end as timeDesc\n" +
             "from bd_bill t\n" +
             "       left join bc_user t1 on t1.id = t.user_id\n" +
             "       left join bc_card t2 on t2.id = t.card_id\n" +
