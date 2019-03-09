@@ -7,7 +7,14 @@
     "typescript": true,
     "require": [
       "egg-ts-helper/register"
-    ]
+    ],
+    "framework": "egg",
+    "tsHelper": {
+      "watchDirs": {
+        "extend": false,
+        "service":true
+      }
+    }
   },
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-bill-api",
@@ -40,10 +47,10 @@
     "egg-bin": "^4.6.2",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.16.0",
-    "egg-ts-helper": "^1.11.0",
+    "egg-ts-helper": "^1.23.0",
     "tslib": "^1.9.0",
     "tslint": "^4.0.0",
-    "typescript": "^3.0.0"
+    "typescript": "^3.3.3333"
   },
   "engines": {
     "node": ">=8.9.0"
@@ -60,4 +67,5 @@
   ],
   "author": "joey",
   "license": "MIT"
+
 }

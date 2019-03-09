@@ -1,6 +1,6 @@
 import {EggAppConfig, EggAppInfo, PowerPartial} from 'egg';
 
-const middleware = ["errorHandler", "requestLogger","paramParser","tokenVerify","resultParser"];
+const middleware = ["errorHandler", "requestLogger","tokenVerify"];
 export default (appInfo: EggAppInfo) => {
     const config = {} as PowerPartial<EggAppConfig>;
 

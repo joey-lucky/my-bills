@@ -1,8 +1,9 @@
-import {Controller} from 'egg';
+import {Controller,Application,Context} from 'egg';
 
 export default class BillList extends Controller {
     public async list() {
-        const {app, ctx} = this;
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
         const {sqlExecutor,tableRowHelper} = app;
         let sql = "select t.*\n" +
             "from bc_card t\n" +
@@ -12,11 +13,12 @@ export default class BillList extends Controller {
             await tableRowHelper.translateId(row);
             await tableRowHelper.translateDateTime("bc_card", row);
         }
-        ctx.body =data;
+        ctx.body.data =data;
     }
 
     public async listGroupByUser() {
-        const {app, ctx} = this;
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
         const {sqlExecutor,tableRowHelper} = app;
         let sql = "select t.*\n" +
             "from bc_card t\n" +
@@ -47,6 +49,6 @@ export default class BillList extends Controller {
                 children:value,
             })
         }
-        ctx.body =result;
+        ctx.body.data =result;
     }
 }

@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import {Transaction} from "../../../typings";
+import {Transaction} from "egg";
 import TableRowHelper from "./TableRowHelper";
 
 

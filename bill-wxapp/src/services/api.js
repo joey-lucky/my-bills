@@ -32,10 +32,10 @@ export const cardAsset={
 
 export const safeController = {
     login: (params) => {
-        return request('/safe/login', params);
+        return request('/wxapp/safe/login', params);
     },
     getUserInfo:()=>{
-        return request('/safe/get-user-info');
+        return request('/wxapp/safe/get-user-info');
     }
 };
 

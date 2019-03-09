@@ -1,4 +1,3 @@
-import { EggAppConfig, PowerPartial } from 'egg';
 const mysql = {
     // 单数据库信息配置
     client: {
@@ -17,6 +16,7 @@ const mysql = {
     agent: false,
 };
 export default () => {
-  const config: PowerPartial<EggAppConfig> = {mysql};
-  return config;
+  return {
+      mysql:mysql
+  };
 };

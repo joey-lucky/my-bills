@@ -50,7 +50,7 @@ export default class extends Subscription {
                 .map((item) => item["column_name"]);
         }
         this.app.mCache.set("tableStructure", result);
-        this.app.mLoggers.schedule.info("[schedule]", "app.cache.tableStructure refresh")
+        this.app.loggers.logger.info("[schedule]", "app.cache.tableStructure refresh");
     }
 
 
@@ -85,7 +85,7 @@ export default class extends Subscription {
             cache.set(foreignKey, map);
         }
         this.app.mCache.set("bcForeignKey", cache);
-        this.app.mLoggers.schedule.info("[schedule]", "app.cache.bcForeignKey refresh")
+        this.app.loggers.logger.info("[schedule]", "app.cache.bcForeignKey refresh");
     }
 
     private async updateBcCache() {
@@ -97,6 +97,6 @@ export default class extends Subscription {
             cache.set(tableName, rows);
         }
         this.app.mCache.set("bcTableCache", cache);
-        this.app.mLoggers.schedule.info("[schedule]", "app.cache.bcTableCache refresh")
+        this.app.loggers.logger.info("[schedule]", "app.cache.bcTableCache refresh");
     }
 }

@@ -1,18 +1,38 @@
 import TokenError from "./error/TokenError";
+import {Context, RequestResult,PageInfo} from "egg";
+import * as assert from "assert";
 
 export default function (options) {
-    return async (ctx, next)=>{
+    return async (ctx: Context, next) => {
+        let pageInfo:PageInfo={} = ctx.request.queryObjects.pageInfo;
+        let defResult:RequestResult = {
+            pageInfo: pageInfo,
+            code: "1",
+            message: "",
+            data: [],
+            status: "200"
+        };
+        ctx.body = defResult;
         try {
             await next();
-            ctx.body.status = "200";
+            if (ctx.body) {
+                let data = ctx.body.data;
+                assert.ok(Array.isArray(data),"ctx.body.data must be array")
+            }else {
+                ctx.body = {
+                    ...defResult,
+                    message: "数据异常",
+                    code: "0"
+                };
+            }
         } catch (e) {
             ctx.body = {
-                data: [],
+                ...defResult,
                 message: e.message,
-                code: "0"
+                code: "0",
             };
             if (e instanceof TokenError) {
-                ctx.body.status ="403";
+                ctx.body.status = "403";
             }
         }
     };

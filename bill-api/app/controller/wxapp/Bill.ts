@@ -1,21 +1,22 @@
-import {Controller} from 'egg';
-import * as assert from "assert";
+import {Application, Context, Controller} from 'egg';
 import StringUtils from "../../utils/StringUtils";
+import Assert from "../../utils/Assert";
 
 export default class extends Controller {
     //添加账单
     public async create() {
-        const {app, ctx} = this;
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
         const {sqlExecutor, tableRowHelper} = app;
-        const params = ctx.query;
-
-        assert.ok(params["data"], "数据不能为空");
-        let data = JSON.parse(params["data"] || "{}");
-        data["user_id"] = ctx.userInfo["id"];
+        let params = this.ctx.request.queryObjects;
+        Assert.notNull(params.data, "数据不能为空");
+        let data = params.data;
+        let userInfo = await ctx.getUserInfo();
+        data["user_id"] = userInfo["id"];
         try {
             await tableRowHelper.completeInsertTableRow(data, ctx);
             await sqlExecutor.insert("bd_bill", data);
-            ctx.body = "保存成功";
+            ctx.body.message = "保存成功";
         } catch (e) {
             throw new Error("数据库插入异常");
         }
@@ -23,26 +24,32 @@ export default class extends Controller {
 
     //添加账单
     public async update() {
-        const {app, ctx} = this;
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
         const {sqlExecutor, tableRowHelper} = app;
-        const params = ctx.query;
-
-        assert.ok(params["data"], "数据不能为空");
-        let data = JSON.parse(params["data"] || "{}");
-        data["user_id"] = ctx.userInfo["id"];
+        let params = this.ctx.request.queryObjects;
+        Assert.notNull(params.data, "数据不能为空");
+        let data = params.data;
+        let userInfo = await ctx.getUserInfo();
+        data["user_id"] = userInfo["id"];
         try {
             await tableRowHelper.completeUpdateTableRow(data, ctx);
             let result = await sqlExecutor.update("bd_bill", data);
-            assert.ok(result.affectedRows >= 1, "更新0条记录");
-            ctx.body = "更新成功";
+            Assert.isTrue(result.affectedRows >= 1, "更新0条记录");
+            ctx.body.message = "更新成功"
         } catch (e) {
             throw new Error("数据库插入异常");
         }
     }
 
     public async list() {
-        const {app, ctx} = this;
-        const {sqlExecutor:SqlExecutor, tableRowHelper} = app;
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
+        let params = this.ctx.request.queryObjects;
+        let userId = params["user_id"];
+        let pageInfo = params["pageInfo"];
+
+        const {sqlExecutor, tableRowHelper} = app;
         // language=MySQL
         let sql = "select t.*,\n" +
             "       t1.pic,\n" +
@@ -58,18 +65,18 @@ export default class extends Controller {
             "       left join bc_card t2 on t2.id = t.card_id\n" +
             "       left join bc_user t3 on t3.id = t2.user_id\n" +
             "where 1 = 1\n";
-        const params = ctx.query;
-        const queryParams:string[] = [];
-        if (StringUtils.hasText(params["user_id"])) {
+        const queryParams: any[] = [];
+        if (StringUtils.hasText(userId)) {
             sql += "  and t.user_id = ?\n";
-            queryParams.push(params["user_id"]);
+            queryParams.push(userId);
         }
         sql += "order by t.date_time desc";
-        let data: any[] = await sqlExecutor.query(sql,queryParams);
-        for (let row of data) {
+        let result = await sqlExecutor.queryPage(sql, queryParams, params.pageInfo);
+        for (let row of result.rows) {
             await tableRowHelper.translateId(row);
             await tableRowHelper.translateDateTime("bd_bill", row);
         }
-        ctx.body = data;
+        ctx.body.pageInfo = pageInfo;
+        ctx.body.data = result.rows;
     }
 }

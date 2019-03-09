@@ -1,38 +1,42 @@
-import TokenCrypto from "./TokenCrypto";
-import {SqlExecutor} from "./database/SqlExecutor";
-import Loggers from "./Loggers";
-import TableRowHelper from "./database/TableRowHelper";
+import {SqlExecutor} from "./application/SqlExecutor";
+import TableRowHelper from "./application/TableRowHelper";
+import TokenCrypto from "./application/TokenCrypto";
 
-let app: any = {
-    get tokenCrypto():TokenCrypto{
+export interface ExtendApplication {
+    tokenCrypto: TokenCrypto,
+    sqlExecutor: SqlExecutor,
+    tableRowHelper: TableRowHelper,
+    mCache: Map<string, any>,
+}
+
+const extend: ExtendApplication = {
+    get tokenCrypto(): TokenCrypto {
         let cache = "TOKEN_CRYPTO";
         if (!this[cache]) {
             this[cache] = new TokenCrypto("joey");
         }
         return this[cache];
     },
-    get sqlExecutor():SqlExecutor{
+
+    get sqlExecutor(): SqlExecutor {
+        let app: any = this;
         let cache = "SQL_EXECUTOR";
         if (!this[cache]) {
-            this[cache] = new SqlExecutor(this);
+            this[cache] = new SqlExecutor(app);
         }
         return this[cache];
     },
-    get tableRowHelper():TableRowHelper{
+
+    get tableRowHelper(): TableRowHelper {
         let cache = "TABLEROWHELPER";
         if (!this[cache]) {
-            this[cache] = new TableRowHelper(this);
+            let app: any = this;
+            this[cache] = new TableRowHelper(app);
         }
         return this[cache];
     },
-    get mLoggers():Loggers{
-        let cache = "LOGGERS";
-        if (!this[cache]) {
-            this[cache] = new Loggers();
-        }
-        return this[cache];
-    },
-    get mCache():Map<string,any>{
+
+    get mCache(): Map<string, any> {
         let cache = "CACHE";
         if (!this[cache]) {
             this[cache] = new Map();
@@ -41,4 +45,4 @@ let app: any = {
     },
 };
 
-module.exports = app;
+export default extend;

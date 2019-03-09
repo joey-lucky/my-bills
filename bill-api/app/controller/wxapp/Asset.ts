@@ -1,11 +1,12 @@
-import {Controller} from 'egg';
+import {Application, Context, Controller} from 'egg';
 
 export default class extends Controller {
     //添加账单
     public async list() {
-        const {app, ctx} = this;
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
+        let params = ctx.request.queryParams;
         const {sqlExecutor,tableRowHelper} = app;
-        const params = ctx.query;
         // language=MySQL
         const sql = "select t.*,\n" +
             "       IFNULL(t1.totalMoney,0) totalMoney,\n" +
@@ -17,6 +18,6 @@ export default class extends Controller {
             "order by length(t.name) asc, t.user_id asc";
         let data = await sqlExecutor.query(sql,[]);
         await tableRowHelper.translateIds(data);
-        ctx.body = data;
+        ctx.body.data = data;
     }
 }
