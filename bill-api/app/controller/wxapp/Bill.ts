@@ -76,7 +76,7 @@ export default class extends Controller {
             await tableRowHelper.translateId(row);
             await tableRowHelper.translateDateTime("bd_bill", row);
         }
-        ctx.body.pageInfo = pageInfo;
+        ctx.body.pageInfo = result.pageInfo;
         ctx.body.data = result.rows;
     }
 }

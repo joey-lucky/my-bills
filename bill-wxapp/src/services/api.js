@@ -12,7 +12,16 @@ export const billApi = {
     },
 };
 
-export const cardApi={
+export const statApi = {
+    getStatGroupByMonth: (params = {}) => {
+        return request('/wxapp/stat/get-stat-group-by-month', params);
+    },
+    getMonthStatDetail: (params = {}) => {
+        return request('/wxapp/stat/get-month-stat-detail', params);
+    },
+};
+
+export const cardApi = {
     list: (values = {}) => {
         return request('/wxapp/card/list', values);
     },
@@ -21,9 +30,7 @@ export const cardApi={
     },
 };
 
-
-
-export const cardAsset={
+export const cardAsset = {
     list: (values = {}) => {
         return request('/wxapp/asset/list', values);
     },
@@ -34,16 +41,16 @@ export const safeController = {
     login: (params) => {
         return request('/wxapp/safe/login', params);
     },
-    getUserInfo:()=>{
+    getUserInfo: () => {
         return request('/wxapp/safe/get-user-info');
     }
 };
 
 export const tableController = {
-    list: (tableName,values = {}) => {
-        return request('/wxapp/table/list',  {tableName: tableName, data: JSON.stringify(values)});
+    list: (tableName, values = {}) => {
+        return request('/wxapp/table/list', {tableName: tableName, data: JSON.stringify(values)});
     },
-    add: (tableName,values = {}) => {
-        return request('/wxapp/table/create',  {tableName: tableName, data: JSON.stringify(values)});
+    add: (tableName, values = {}) => {
+        return request('/wxapp/table/create', {tableName: tableName, data: JSON.stringify(values)});
     }
 };

@@ -1,37 +1,37 @@
-import {Service} from 'egg';
+import {Application, Context, Controller,Service} from 'egg';
 import * as assert from "assert";
+import Assert from "../../utils/Assert";
 
 export default class extends Service {
     public async list(params) {
-        this.validTableName(params);
-        const {app: {sqlExecutor}, ctx} = this;
-        let tableName = params["tableName"];
-        let queryParams =JSON.parse(params["data"] || "{}");
-        let data: any[] = await sqlExecutor.select(tableName,queryParams);
+        let app: Application = this.app;
+        let {tableName,data} = params;
+        Assert.hasText(tableName, "表名为空");
+        let rows: any[] = await app.sqlExecutor.select(tableName,  data);
         if ("bc_user" === tableName) {
-            for (let item of data) {
+            for (let item of rows) {
                 item["login_name"] = "";
                 item["login_password"] = "";
             }
         }
-        return data;
+        return rows;
     }
 
     public async create(params) {
-        this.validTableName(params);
-        const {app: {sqlExecutor, tableRowHelper}, ctx} = this;
-        let tableName = params["tableName"];
-        assert.ok(params["data"], "数据不能为空");
-        let data = JSON.parse(params["data"] || "{}");
-        let transaction = await sqlExecutor.beginTransaction();
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
+        let {tableName,data} = params;
+        Assert.hasText(tableName, "表名为空");
+        Assert.notNull(data, "数据不能为空");
+        let transaction = await app.sqlExecutor.beginTransaction();
         try {
             if (Array.isArray(data)) {
                 for (let row of data) {
-                    await tableRowHelper.completeInsertTableRow(row, ctx);
+                    await app.tableRowHelper.completeInsertTableRow(row, ctx);
                     await transaction.insert(tableName, row);
                 }
             } else {
-                await tableRowHelper.completeInsertTableRow(data, ctx);
+                await app.tableRowHelper.completeInsertTableRow(data, ctx);
                 await transaction.insert(tableName, data);
             }
             await transaction.commit();
@@ -48,11 +48,6 @@ export default class extends Service {
 
     public async delete(params) {
 
-    }
-
-    private validTableName(params) {
-        let tableName = params["tableName"];
-        assert.ok(tableName, "表名为空");
     }
 }
 

@@ -7,6 +7,7 @@ import moment from "moment";
 import {globalStyles} from "@global";
 import * as PropTypes from "prop-types";
 import TopBar from "./TopBar";
+import screenfull from "screenfull";
 
 @createForm()
 export default class BillAdd extends React.Component {
@@ -26,8 +27,10 @@ export default class BillAdd extends React.Component {
         }
     }
 
-    componentDidMount() {
-        console.log(this.props);
+    componentDidMount(){
+        if (screenfull.enabled && !screenfull.isFullscreen) {
+            screenfull.request();
+        }
         let id = this.props.match.params.id;
         if (id && id !== "undefined") {
             this.loadBillData(id).then(data => {
@@ -38,6 +41,12 @@ export default class BillAdd extends React.Component {
             });
         }
         this.loadCardData().then(data => this.setState({cardData: data}));
+    }
+
+    componentWillUnmount(){
+        if (screenfull.enabled) {
+            screenfull.exit();
+        }
     }
 
     onSaveClick = () => {

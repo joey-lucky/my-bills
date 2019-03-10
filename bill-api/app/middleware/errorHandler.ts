@@ -4,7 +4,8 @@ import * as assert from "assert";
 
 export default function (options) {
     return async (ctx: Context, next) => {
-        let pageInfo:PageInfo={} = ctx.request.queryObjects.pageInfo;
+        let objects = ctx.request.queryObjects;
+        let pageInfo:PageInfo= objects.pageInfo||{};
         let defResult:RequestResult = {
             pageInfo: pageInfo,
             code: "1",
@@ -34,6 +35,7 @@ export default function (options) {
             if (e instanceof TokenError) {
                 ctx.body.status = "403";
             }
+            ctx.logger.info("[errorHandler]", e);
         }
     };
 };

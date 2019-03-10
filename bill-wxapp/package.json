@@ -11,6 +11,7 @@
     "build-dll": "webpack --config webpack.dll.config.js"
   },
   "devDependencies": {
+    "@antv/g2": "^3.4.10",
     "@types/node": "^10.5.1",
     "@types/prop-types": "^15.5.3",
     "@types/react": "^16.8.2",

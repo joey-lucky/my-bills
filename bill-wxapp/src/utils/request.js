@@ -1,4 +1,5 @@
 import {apiPath, publicPath} from "@global";
+import {Toast} from "antd-mobile";
 
 const headers = new Headers();
 headers.append("Content-Type", "application/json;charset=utf-8");
@@ -47,11 +48,12 @@ export function request(url, params = {}) {
                 throw new Error(message);
             }
         } catch (e) {
-            // if (e.message.indexOf("token")!==-1) {
-            //     window.location.href=publicPath+"/login/"
-            // }else{
-            //     reject(e);
-            // }
+            if (e.message.indexOf("token") !== -1) {
+                window.location.href = publicPath + "/login/"
+            } else {
+                Toast.info(e.message, 1, null, true);
+                reject(e.message);
+            }
         }
     });
     return wrapPromise(promise);

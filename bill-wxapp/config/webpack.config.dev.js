@@ -18,6 +18,9 @@ const config = {
             return "js/bundle.[name]." + pageVersion[chunkData.chunk.name] + ".js"
         },
     },
+    externals: {
+        G2: '@antv/g2',
+    },
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
         alias: {
@@ -136,7 +139,7 @@ config.devServer = {
     },
     disableHostCheck: true,
     open: true,
-    openPage: publicPath.substr(1),
+    openPage: publicPath.substr(1)+"/content",
     //跨域？不能存在的。
     allowedHosts: [allowedHost],
     proxy: {

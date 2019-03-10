@@ -28,10 +28,14 @@ let extend: ExtendRequest = {
             Object.keys(params).forEach((key) => {
                 let value = params[key];
                 if (value) {
-                    let obj = JSON.parse(value);
-                    if (typeof obj !== "string") {
-                        objects[key] = obj;
-                    } else {
+                    try{
+                        let obj = JSON.parse(value);
+                        if (typeof obj !== "string") {
+                            objects[key] = obj;
+                        } else {
+                            objects[key] = value;
+                        }
+                    }catch (e) {
                         objects[key] = value;
                     }
                 } else {

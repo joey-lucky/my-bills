@@ -6,29 +6,17 @@ import BillAdd from "./BillAdd";
 import BillTypeAdd from "./BillTypeAdd";
 import CardAdd from "./CardAdd";
 import CardTypeAdd from "./CardTypeAdd";
-import screenfull from "screenfull";
+import MonthStatDetail from "./MonthStatDetail";
 
 const routes = [
     {path: "/bill-add/:id", component: BillAdd},
     {path: "/bill-type-add/:id", component: BillTypeAdd},
     {path: "/card-add/:id", component: CardAdd},
     {path: "/card-type-add/:id", component: CardTypeAdd},
+    {path: "/month-stat-detail", component: MonthStatDetail},
 ];
 
 export default class NavBarContent extends React.Component {
-    componentDidMount(){
-        if (screenfull.enabled && !screenfull.isFullscreen) {
-            screenfull.request();
-        }
-    }
-
-    componentWillUnmount(){
-        if (screenfull.enabled) {
-            screenfull.exit();
-        }
-    }
-
-
     render() {
         const {match} = this.props;
         return (
