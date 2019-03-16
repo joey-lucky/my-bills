@@ -1,14 +1,13 @@
 import * as React from "react";
 import {action, observable, runInAction, toJS} from "mobx";
 import {observer} from "mobx-react";
-import {Flex, List, ListView, Tag, WhiteSpace, WingBlank} from "antd-mobile";
+import {Flex, List, ListView, Picker, Tag, WhiteSpace, WingBlank} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
-import {billApi, safeController} from "@services/api";
+import {billList} from "@services/api";
 import {globalStyles} from "@global";
 import * as PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
 import AddIcon from "@components/AddIcon";
-
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
@@ -24,13 +23,14 @@ class AppState {
         pageIndex: 1,
     };
 
+
     userInfo = {};
 
     cacheData = {
-        dataBlobs:{},
-        rowIDs:[],
-        sectionIDs:[],
-        timeDescList:[]
+        dataBlobs: {},
+        rowIDs: [],
+        sectionIDs: [],
+        timeDescList: []
     };
 
     asyncLoadData() {
@@ -41,10 +41,10 @@ class AppState {
         if (this.selectOnlyMe) {
             params["user_id"] = this.userInfo.id;
         }
-        billApi.list(params).then((d) => {
+        billList.getBillPageData(params).then((d) => {
             let data = d.data || [];
             let pageInfo = d.pageInfo || {};
-            let {dataBlobs,rowIDs,sectionIDs,timeDescList} = this.cacheData;
+            let {dataBlobs, rowIDs, sectionIDs, timeDescList} = this.cacheData;
             let groupByTimeDesc = this.groupByTimeDesc(data);
             Object.keys(groupByTimeDesc).forEach((timeDesc, i) => {
                 let index = timeDescList.indexOf(timeDesc);
@@ -71,7 +71,7 @@ class AppState {
     }
 
     asyncLoadUserInfo() {
-        safeController.getUserInfo()
+        billList.getUserInfo()
             .then((d) => {
                 this.userInfo = d.data[0];
             });
@@ -89,12 +89,12 @@ class AppState {
         return groupByTimeDesc;
     }
 
-    resetCacheAndPage(){
+    resetCacheAndPage() {
         this.cacheData = {
-            dataBlobs:{},
-            rowIDs:[],
-            sectionIDs:[],
-            timeDescList:[]
+            dataBlobs: {},
+            rowIDs: [],
+            sectionIDs: [],
+            timeDescList: []
         };
         this.pageInfo = {
             pageSize: 15,
@@ -106,11 +106,18 @@ class AppState {
 @withRouter
 @observer
 export default class BillList extends React.Component {
+    static NORMAL_BILL = "普通";
+    static CREDIT_BILL = "信用卡还款";
+
     static propTypes = {
         onAddClick: PropTypes.any,
         onItemClick: PropTypes.any,
     };
 
+    _addBillType = [
+        {value: BillList.NORMAL_BILL, label: BillList.NORMAL_BILL},
+        {value: BillList.CREDIT_BILL, label: BillList.CREDIT_BILL}
+    ];
     _appState = new AppState();
     _listView;
 
@@ -120,7 +127,7 @@ export default class BillList extends React.Component {
     }
 
     onItemClick = (rowData) => {
-        this.props.history.push("/content/nav-bar/bill-add/" + rowData.id);
+        this.props.history.push("/content/nav-bar/bill-add", {bill: rowData});
     };
 
     onAddClick = () => {
@@ -134,7 +141,7 @@ export default class BillList extends React.Component {
         this._appState.selectOnlyMe = selected;
         this._appState.asyncLoadData();
         if (this._listView) {
-            this._listView.scrollTo(0,0);
+            this._listView.scrollTo(0, 0);
         }
     };
 
@@ -222,6 +229,14 @@ export default class BillList extends React.Component {
         );
     };
 
+    onPickerSelect = (value) => {
+        if (value[0] === BillList.NORMAL_BILL) {
+            this.props.history.push("/content/nav-bar/normal-bill-add", {});
+        }else {
+            this.props.history.push("/content/nav-bar/credit_bill-add", {});
+        }
+    };
+
     render() {
         return (
             <Flex style={globalStyles.container}
@@ -242,7 +257,9 @@ export default class BillList extends React.Component {
 
                 <Flex.Item style={{width: "100%", position: "relative"}}>
                     <ListView
-                        ref={(e)=>{this._listView = e}}
+                        ref={(e) => {
+                            this._listView = e
+                        }}
                         style={{width: "100%", height: "100%"}}
                         dataSource={toJS(this._appState.listViewDataSource)}
                         renderRow={this.renderItem}
@@ -259,9 +276,14 @@ export default class BillList extends React.Component {
                     />
                 </Flex.Item>
 
-                <AddIcon onAddClick={() => {
-                    this.props.history.push("/content/nav-bar/bill-add/" + undefined);
-                }}/>
+                <Picker
+                    title={"记账类型"}
+                    data={this._addBillType}
+                    cols={1}
+                    onOk={this.onPickerSelect}
+                >
+                    <AddIcon/>
+                </Picker>
             </Flex>
         )
     }

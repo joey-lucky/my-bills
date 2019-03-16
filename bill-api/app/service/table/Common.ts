@@ -17,7 +17,7 @@ export default class extends Service {
         return rows;
     }
 
-    public async create(params) {
+    public async create(params:any) {
         let app: Application = this.app;
         let ctx: Context = this.ctx;
         let {tableName,data} = params;
@@ -42,8 +42,10 @@ export default class extends Service {
         }
     }
 
-    public async update(params) {
-
+    public async update(params:any|any[]) {
+        let app: Application = this.app;
+        let ctx: Context = this.ctx;
+        await app.tableRowHelper.completeInsertTableRow(params, ctx);
     }
 
     public async delete(params) {

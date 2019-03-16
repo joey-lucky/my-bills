@@ -1,47 +1,49 @@
 import {SqlExecutor} from "./application/SqlExecutor";
 import TableRowHelper from "./application/TableRowHelper";
 import TokenCrypto from "./application/TokenCrypto";
+import {AppCache, createAppCache} from "../typings/AppCache";
+
+const cacheSymbol = Symbol("Application#cache");
+const tableRowHelperSymbol = Symbol("Application#TableRowHelper");
+const sqlExecutorSymbol = Symbol("Application#SqlExecutor");
+const tokenCryptoSymbol = Symbol("Application#TokenCrypto");
 
 export interface ExtendApplication {
     tokenCrypto: TokenCrypto,
     sqlExecutor: SqlExecutor,
     tableRowHelper: TableRowHelper,
-    mCache: Map<string, any>,
+    mCache: AppCache,
 }
 
 const extend: ExtendApplication = {
     get tokenCrypto(): TokenCrypto {
-        let cache = "TOKEN_CRYPTO";
-        if (!this[cache]) {
-            this[cache] = new TokenCrypto("joey");
+        if (!this[tokenCryptoSymbol]) {
+            this[tokenCryptoSymbol] = new TokenCrypto("joey");
         }
-        return this[cache];
+        return this[tokenCryptoSymbol];
     },
 
     get sqlExecutor(): SqlExecutor {
         let app: any = this;
-        let cache = "SQL_EXECUTOR";
-        if (!this[cache]) {
-            this[cache] = new SqlExecutor(app);
+        if (!this[sqlExecutorSymbol]) {
+            this[sqlExecutorSymbol] = new SqlExecutor(app);
         }
-        return this[cache];
+        return this[sqlExecutorSymbol];
     },
 
     get tableRowHelper(): TableRowHelper {
-        let cache = "TABLEROWHELPER";
-        if (!this[cache]) {
+        if (!this[tableRowHelperSymbol]) {
             let app: any = this;
-            this[cache] = new TableRowHelper(app);
+            this[tableRowHelperSymbol] = new TableRowHelper(app);
         }
-        return this[cache];
+        return this[tableRowHelperSymbol];
     },
 
-    get mCache(): Map<string, any> {
-        let cache = "CACHE";
-        if (!this[cache]) {
-            this[cache] = new Map();
+    get mCache(): AppCache {
+        if (!this[cacheSymbol]) {
+            this[cacheSymbol] = createAppCache();
         }
-        return this[cache];
+        return this[cacheSymbol];
     },
 };
 

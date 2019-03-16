@@ -1,11 +1,6 @@
 import {Subscription} from 'egg';
-
-interface Table {
-    tableName: string;
-    columns: any[];
-    dateTimeColumns: string[];
-}
-
+import Table from "../typings/Table";
+import {ForeignKeyData} from "../typings/appCache";
 
 export default class extends Subscription {
     static get schedule() {
@@ -31,12 +26,12 @@ export default class extends Subscription {
         let rows: any [] = await mysql.query(sql, []);
         for (let row of rows) {
             let tableName = row["table_name"];
-            let table:Table|undefined = result.get(tableName);
+            let table: Table | undefined = result.get(tableName);
             if (!table) {
                 table = {
-                    tableName:tableName,
-                    columns:[],
-                    dateTimeColumns:[]
+                    tableName: tableName,
+                    columns: [],
+                    dateTimeColumns: []
                 };
                 result.set(tableName, table);
             }
@@ -49,7 +44,7 @@ export default class extends Subscription {
                 .filter((item) => item["data_type"] === "datetime" || item["data_type"] === "date")
                 .map((item) => item["column_name"]);
         }
-        this.app.mCache.set("tableStructure", result);
+        this.app.mCache.tableStructure = result;
         this.app.loggers.logger.info("[schedule]", "app.cache.tableStructure refresh");
     }
 
@@ -71,20 +66,20 @@ export default class extends Subscription {
     private async updateForeignKey() {
         const {mysql} = this.app;
         let tableNames: string[] = await this.getAllBcTableNames();
-        let cache: Map<string, Map<string, object>> = new Map<string, Map<string, object>>();
+        let cache: Map<string, Map<string, ForeignKeyData>> = new Map<string, Map<string, ForeignKeyData>>();
         for (let tableName of tableNames) {
             let rows = await mysql.select(tableName);
             let foreignName = tableName.substr(3) + "_name";
             let foreignKey = tableName.substr(3) + "_id";
-            let map = new Map<string, object>();
+            let map = new Map<string, ForeignKeyData>();
             for (let row of rows) {
                 let id = row["id"];
                 let name = row["name"];
-                map.set(id, {[foreignName]: name})
+                map.set(id, {foreignKey, foreignName, foreignValue: name,})
             }
             cache.set(foreignKey, map);
         }
-        this.app.mCache.set("bcForeignKey", cache);
+        this.app.mCache.bcForeignKey = cache;
         this.app.loggers.logger.info("[schedule]", "app.cache.bcForeignKey refresh");
     }
 
@@ -96,7 +91,7 @@ export default class extends Subscription {
             let rows = await mysql.select(tableName);
             cache.set(tableName, rows);
         }
-        this.app.mCache.set("bcTableCache", cache);
+        this.app.mCache.bcTableCache = cache;
         this.app.loggers.logger.info("[schedule]", "app.cache.bcTableCache refresh");
     }
 }

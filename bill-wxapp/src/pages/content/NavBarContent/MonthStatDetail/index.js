@@ -63,7 +63,7 @@ export default class MonthStatDetail extends React.Component {
                 if (percent >= 0.01) {
                     item.percent = percent;
                     result.push({
-                        "percent":percent,
+                        "percent":Number(percent),
                         "bill_type_name":item["bill_type_name"],
                         "money":item["money"],
                     });

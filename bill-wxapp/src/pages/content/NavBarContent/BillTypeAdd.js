@@ -1,12 +1,11 @@
 import * as React from "react";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
-import {Button, Flex, Icon, InputItem, List, ListView, NavBar, TextareaItem} from "antd-mobile";
+import {Button, Flex, InputItem, List, ListView, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
-import {billApi, tableController} from "@services/api";
-import PickerItem from "@components/PickerItem";
-import {Toast}  from "antd-mobile";
+import {tableController} from "@services/api";
 import TopBar from "./TopBar";
+import moment from "moment";
 
 class AppState {
     @observable initData = {};
@@ -32,6 +31,11 @@ export default class BillTypeAdd extends React.Component {
 
     constructor(props) {
         super(props);
+        let locationState = this.props.location.state || {};
+        this.state = {
+            isUpdate: !!locationState.billType,
+            data: locationState.billType||{},
+        };
     }
 
     onSaveClick = () => {
@@ -39,10 +43,18 @@ export default class BillTypeAdd extends React.Component {
             if (error) {
               Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
-                this._appState.asyncSaveData(values)
-                    .then((d) => {
-                        this.props.history.goBack();
-                    });
+                let data = {...this.state.data, ...values};
+                if (this.state.isUpdate) {
+                    tableController.add("bc_bill_type", data)
+                        .then((d) => {
+                            this.props.history.goBack();
+                        });
+                } else {
+                    tableController.update("bc_bill_type", data)
+                        .then((d) => {
+                            this.props.history.goBack();
+                        });
+                }
             }
         });
 
@@ -58,7 +70,10 @@ export default class BillTypeAdd extends React.Component {
                 <TopBar title={"账单类型新增/编辑"}/>
                 <List style={{width: "100%"}}>
                     <InputItem
-                        {...form.getFieldProps("name",{rules: [{required: true,message:"名称不能为空"}]})}
+                        {...form.getFieldProps("name",{
+                            rules: [{required: true,message:"名称不能为空"}],
+                            initialValue:this.state.data["name"]
+                        })}
                         autoHeight={true}
                     >名称</InputItem>
                     <Button type={"primary"} onClick={this.onSaveClick}>保存</Button>

@@ -29,6 +29,11 @@ export default class BillTypeList extends React.Component {
         this._appState.asyncLoadData();
     }
 
+    onAddClick = () => {
+        console.log("onAddClick");
+        this.props.history.push("/content/nav-bar/bill-type-add", {});
+    };
+
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         return (
             <List.Item
@@ -64,7 +69,7 @@ export default class BillTypeList extends React.Component {
                         />
                     )}
                 />
-                <AddIcon onAddClick={()=>{this.props.history.push("/content/nav-bar/bill-type-add/"+undefined);}}/>
+                <AddIcon onClick={this.onAddClick}/>
             </Flex>
         )
     }

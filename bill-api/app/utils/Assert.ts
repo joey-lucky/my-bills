@@ -1,4 +1,5 @@
 import StringUtils from "./StringUtils";
+import AssertError from "../model/AssertError";
 
 export default class Assert {
     static hasText(str, msg) {
@@ -11,7 +12,7 @@ export default class Assert {
 
     static isTrue(needTrue: boolean, msg) {
         if (!needTrue) {
-            throw new Error(msg);
+            throw new AssertError(msg);
         }
     }
 }

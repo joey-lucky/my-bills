@@ -66,4 +66,8 @@ declare module 'egg' {
         beginTransaction(): MySqlExecutor & Transaction
     }
 
+    interface PageResult {
+        pageInfo:PageInfo,
+        rows:any[],
+    }
 }

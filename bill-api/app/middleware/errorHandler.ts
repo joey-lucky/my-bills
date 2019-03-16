@@ -1,6 +1,7 @@
 import TokenError from "./error/TokenError";
 import {Context, RequestResult,PageInfo} from "egg";
 import * as assert from "assert";
+import RequestError from "../model/RequestError";
 
 export default function (options) {
     return async (ctx: Context, next) => {
@@ -34,8 +35,12 @@ export default function (options) {
             };
             if (e instanceof TokenError) {
                 ctx.body.status = "403";
+                ctx.logger.error("[errorHandler]", "token error",e);
+            }else if (e instanceof RequestError) {
+                ctx.logger.error("[errorHandler]", e);
+            }else {
+                ctx.logger.error("[errorHandler]", e);
             }
-            ctx.logger.info("[errorHandler]", e);
         }
     };
 };

@@ -30,9 +30,7 @@ export default class CardTypeList extends React.Component {
     }
 
     onAddClick = () => {
-        let {match} = this.props;
-        let path = match.path.replace(/(.*)(\/[a-z-]+)/, '$1/card-type-add');
-        this.props.history.push(path);
+        this.props.history.push("/content/nav-bar/card-type-add",{});
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
@@ -68,7 +66,7 @@ export default class CardTypeList extends React.Component {
                         />
                     )}
                 />
-                <AddIcon onAddClick={()=>{this.props.history.push("/content/nav-bar/card-type-add/"+undefined);}}/>
+                <AddIcon onAddClick={this.onAddClick}/>
             </Flex>
         )
     }

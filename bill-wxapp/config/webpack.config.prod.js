@@ -3,8 +3,9 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-let {publicPath, pageVersion, pages,apiPath, resolveApp} = paths;
+let {publicPath, pageVersion, pages, apiPath, resolveApp} = paths;
 
 let config = {
     devtool: "source-map",
@@ -19,6 +20,9 @@ let config = {
         filename: (chunkData) => {
             return "js/bundle.[name]." + pageVersion[chunkData.chunk.name] + ".js"
         },
+    },
+    externals: {
+        "@antv/g2": "G2",
     },
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
@@ -105,7 +109,9 @@ let config = {
                 filename: "view/" + pageName + ".html",
                 template: paths.resolveApp("src/pages/" + pageName + "/index.html")
             })
-        })
+        }),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+        new BundleAnalyzerPlugin()
     ]
 };
 module.exports = config;

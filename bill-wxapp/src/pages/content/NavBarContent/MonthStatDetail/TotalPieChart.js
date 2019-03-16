@@ -25,7 +25,7 @@ export default class TotalPieChart extends React.Component {
         chart.source(this.props.value, {
             percent: {
                 formatter: function formatter(val) {
-                    val = Number(val* 100).toFixed(2) + '%';
+                    val = Number(val * 100).toFixed(2) + '%';
                     return val;
                 }
             }

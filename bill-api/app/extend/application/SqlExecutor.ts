@@ -2,6 +2,8 @@ import * as assert from "assert";
 import {Application, MySql, PageInfo} from "egg";
 import {TransactionExecutor} from "./TransactionExecutor";
 import TableRowHelper from "./TableRowHelper";
+import PageResult from "../../typings/PageResult";
+import Assert from "../../utils/Assert";
 
 export class SqlExecutor {
     readonly mysql: MySql;
@@ -17,7 +19,7 @@ export class SqlExecutor {
         return rows;
     }
 
-    public async queryPage(sql: string, values: any[] = [], pageInfo: PageInfo): Promise<{pageInfo:PageInfo,rows:any[]}> {
+    public async queryPage(sql: string, values: any[] = [], pageInfo: PageInfo): Promise<PageResult> {
         let pageSize = pageInfo.pageSize || 15;
         let pageIndex = pageInfo.pageIndex || 1;
         let rowCount = await this.getRowsCount(sql, values);
@@ -65,22 +67,23 @@ export class SqlExecutor {
         return rows;
     }
 
-    public async delete(tableName: string, find?: {}): Promise<any> {
-        assert.ok(tableName, "tableName is null");
-        return await this.mysql.delete(tableName, find);
+    public async delete(tableName: string, id:string): Promise<any> {
+        Assert.hasText(tableName, "tableName is null");
+        Assert.hasText(id, "id is null");
+        return await this.mysql.delete(tableName, {id:id});
     }
 
     public async insert(tableName: string, values?: {}): Promise<any> {
-        assert.ok(tableName, "tableName is null");
-        assert.ok(values, "insert values is null");
+        Assert.hasText(tableName, "tableName is null");
+        Assert.notNull(values, "insert values is null");
         await this.tableRowHelper.translateDateTime(tableName, values);
         await this.tableRowHelper.deleteUselessFields(tableName, values);
         return await this.mysql.insert(tableName, values);
     }
 
     public async update(tableName: string, values?: {}, options?: {}): Promise<any> {
-        assert.ok(tableName, "tableName is null");
-        assert.ok(values, "insert values is null");
+        Assert.hasText(tableName, "tableName is null");
+        Assert.notNull(values, "update values is null");
         await this.tableRowHelper.translateDateTime(tableName, values);
         await this.tableRowHelper.deleteUselessFields(tableName, values);
         return await this.mysql.update(tableName, values, options);

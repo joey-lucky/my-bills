@@ -19,7 +19,7 @@ const config = {
         },
     },
     externals: {
-        G2: '@antv/g2',
+        "@antv/g2": "G2",
     },
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
@@ -115,7 +115,8 @@ const config = {
                 filename: "view/" + pageName + ".html",
                 template: paths.resolveApp("src/pages/" + pageName + "/index.html")
             })
-        })
+        }),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     ]
 };
 
