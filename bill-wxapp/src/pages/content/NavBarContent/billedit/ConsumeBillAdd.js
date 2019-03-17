@@ -1,25 +1,27 @@
 import * as React from "react";
 import {Button, DatePicker, Flex, InputItem, List, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
-import {normalBillAdd} from "@services/api";
+import {billApi} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import moment from "moment";
 import {globalStyles} from "@global";
 import TopBar from "@components/TopBar";
 import UUID from "@utils/UUID";
 
+/**
+ * 收入账单
+ */
 @createForm()
-export default class NormalBillAdd extends React.Component {
+export default class ConsumeBillAdd extends React.Component {
     _defBill = {
         date_time: new Date(),
         bill_type_id: "32291f40-2cfb-11e9-b803-2fb0ad7f2291",
-        bill_type: "-1"
     };
 
     constructor(props) {
         super(props);
         let locationState = this.props.location.state || {};
-        let locationBill = locationState.bill;
+        let locationBill = locationState.data;
         let bill = this._defBill;
         if (locationBill) {
             bill = locationBill;
@@ -27,20 +29,30 @@ export default class NormalBillAdd extends React.Component {
             let dateTime = bill["date_time"];
             bill.date_time = moment(dateTime).toDate();
             bill.money = Math.abs(money);
-            bill["bill_type"] = money > 0 ? "1" : "-1";
         }
         this.state = {
             isUpdate: !!locationState.bill,
             bill: bill,
             cardData: [],
+            billTypeData: [],
         };
     }
 
     componentDidMount() {
-        normalBillAdd.getCardList().then(d => {
+        billApi.consumeBillAdd.getCardList().then(d => {
             let data = d.data || [];
             this.setState({
                 cardData: this.parseDataToPickerData(data)
+            });
+        });
+        billApi.consumeBillAdd.getBillTypeList().then(d => {
+            let data = d.data || [];
+            data.forEach(item => {
+                item.value = item.id;
+                item.label = item.name;
+            });
+            this.setState({
+                billTypeData: data
             });
         });
     }
@@ -50,23 +62,21 @@ export default class NormalBillAdd extends React.Component {
             if (error) {
                 Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
-                if (values["bill_type"] === "-1") {
-                    values["money"] = 0 - values["money"];
-                }
+                values["money"] = 0 - values["money"];
                 values["date_time"] = moment(values["date_time"]).format("YYYY-MM-DD HH:mm:ss");
                 if (this.state.isUpdate) {
                     let bill = {...this.state.bill, ...values};
                     let params = {
                         "bd_bill": [bill],
                     };
-                    normalBillAdd.updateBill(params).then(() => this.props.history.goBack());
+                    billApi.consumeBillAdd.updateBill(params).then(() => this.props.history.goBack());
                 } else {
                     let bill = {...this.state.bill, ...values};
                     bill["id"] = UUID.randomGuid();
                     let params = {
                         "bd_bill": [bill],
                     };
-                    normalBillAdd.createBill(params).then(() => this.props.history.goBack());
+                    billApi.consumeBillAdd.createBill(params).then(() => this.props.history.goBack());
                 }
             }
         });
@@ -126,15 +136,7 @@ export default class NormalBillAdd extends React.Component {
                     <PickerItem
                         {...this.getFieldProps("bill_type_id", {rules: [{required: true, message: "请选择账单类型"}]})}
                         label={"账单类型"}
-                        url={"/wxapp/normal-bill-add/get-bill-type-list"}
-                        parse={{id: "id", name: "name"}}
-                    />
-                    <PickerItem
-                        {...this.getFieldProps("bill_type", {
-                            rules: [{required: true, message: "请选择账单类型"}],
-                        })}
-                        label={"类型"}
-                        data={[{value: "-1", label: "支出"}, {value: "1", label: "收入"}]}
+                        data={this.state.billTypeData}
                     />
                     <InputItem
                         {...this.getFieldProps("money", {rules: [{required: true, message: "请输入金额"}]})}

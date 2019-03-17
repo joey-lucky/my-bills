@@ -2,7 +2,7 @@ import * as React from "react";
 import {Button, DatePicker, Flex, InputItem, List, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
 import moment from "moment";
-import {creditBillAdd} from "@services/api";
+import {billApi} from "@services/api";
 import PickerItem from "@components/PickerItem";
 import {globalStyles} from "@global";
 import TopBar from "@components/TopBar";
@@ -12,7 +12,7 @@ import UUID from "@utils/UUID";
  * 信用卡账单
  */
 @createForm()
-export default class CreditBillAdd extends React.Component {
+export default class TransferBillAdd extends React.Component {
     _defBill = {
         date_time: new Date(),
     };
@@ -20,7 +20,7 @@ export default class CreditBillAdd extends React.Component {
     constructor(props) {
         super(props);
         let locationState = this.props.location.state || {};
-        let locationBill = locationState.bill;
+        let locationBill = locationState.data;
         let bill = this._defBill;
         if (locationBill) {
             bill = locationBill;
@@ -31,58 +31,69 @@ export default class CreditBillAdd extends React.Component {
         }
         let billTransfer = (bill.children && bill.children["bd_bill_transfer"] && bill.children["bd_bill_transfer"][0]) || {};
         this.state = {
-            isUpdate: !!locationState.bill,
+            isUpdate: !!locationState.data,
             bill: bill,
             billTransfer: billTransfer,
             cashCardData: [],
-            creditCardData: [],
+            targetCardData: [],
+            billTypeData: [],
         };
     }
 
     componentDidMount() {
-        creditBillAdd.getCashCardList().then(d => {
+        billApi.transferBillAdd.getTargetCardList().then(d => {
+            let data = d.data || [];
+            this.setState({
+                targetCardData: this.parseDataToPickerData(data)
+            });
+        });
+        billApi.transferBillAdd.getCashCardList().then(d => {
             let data = d.data || [];
             this.setState({
                 cashCardData: this.parseDataToPickerData(data)
             });
         });
-        creditBillAdd.getCreditCardList().then(d => {
+        billApi.transferBillAdd.getBillTypeList().then(d => {
             let data = d.data || [];
+            data.forEach(item => {
+                item.value = item.id;
+                item.label = item.name;
+            });
             this.setState({
-                creditCardData: this.parseDataToPickerData(data)
+                billTypeData: data
             });
         });
     }
 
     onSaveClick = () => {
+        console.log("onSaveClick");
         this.props.form.validateFields((error, values) => {
             if (error) {
                 Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
                 values["money"] = 0 - values["money"];
                 values["date_time"] = moment(values["date_time"]).format("YYYY-MM-DD HH:mm:ss");
-                let {bill,billTransfer} = this.state;
+
+                let {bill, billTransfer} = this.state;
                 billTransfer["target_card_id"] = values["target_card_id"];
                 if (this.state.isUpdate) {
                     bill = {...bill, ...values};
-                    let params  ={
+                    let params = {
                         "bd_bill": [bill],
                         "bd_bill_transfer": [billTransfer],
                     };
-                    creditBillAdd.updateBill(params).then(() => this.props.history.goBack());
+                    billApi.transferBillAdd.updateBill(params).then(() => this.props.history.goBack());
                 } else {
                     let billId = UUID.randomGuid();
                     bill = {...bill, ...values};
                     bill["id"] = billId;
-                    bill["bill_type_id"] = "cde34d70-2cfb-11e9-b803-2fb0ad7f2291";
                     billTransfer["bill_id"] = billId;
-                    let params  ={
+                    let params = {
                         "bd_bill": [bill],
                         "bd_bill_transfer": [billTransfer],
                     };
-                    creditBillAdd.createBill(params).then(() => this.props.history.goBack());
+                    billApi.transferBillAdd.createBill(params).then(() => this.props.history.goBack());
                 }
-
             }
         });
     };
@@ -90,7 +101,7 @@ export default class CreditBillAdd extends React.Component {
     getFieldProps = (id, opt = {}) => {
         if (id === "target_card_id") {
             opt.initialValue = this.state.billTransfer[id];
-        }else {
+        } else {
             opt.initialValue = this.state.bill[id];
         }
         return this.props.form.getFieldProps(id, opt);
@@ -137,18 +148,23 @@ export default class CreditBillAdd extends React.Component {
                 <TopBar title={title}/>
                 <List style={{width: "100%"}}>
                     <PickerItem
-                        {...this.getFieldProps("target_card_id", {rules: [{required: true, message: "请选择信用卡"}]})}
-                        label={"信用卡"}
-                        cols={2}
-                        data={this.state.creditCardData}
-                    />
-                    <PickerItem
-                        {...this.getFieldProps("card_id", {rules: [{required: true, message: "请选择卡片类型"}]})}
-                        label={"银行卡"}
+                        {...this.getFieldProps("card_id", {rules: [{required: true, message: "请选择付款账户"}]})}
+                        label={"付款账户"}
                         cols={2}
                         data={this.state.cashCardData}
                     />
-                    <List.Item extra={"信用卡还款"}>账单类型</List.Item>
+                    <PickerItem
+                        {...this.getFieldProps("target_card_id", {rules: [{required: true, message: "请选择收款账户"}]})}
+                        label={"收款账户"}
+                        cols={2}
+                        data={this.state.targetCardData}
+                    />
+                    <PickerItem
+                        {...this.getFieldProps("bill_type_id", {rules: [{required: true, message: "请选择账单类型"}]})}
+                        label={"账单类型"}
+                        cols={1}
+                        data={this.state.billTypeData}
+                    />
                     <InputItem
                         {...this.getFieldProps("money", {rules: [{required: true, message: "请输入金额"}]})}
                         type={"money"}

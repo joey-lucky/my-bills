@@ -5,23 +5,12 @@ import {Button, Flex, InputItem, List, ListView, Toast} from "antd-mobile";
 import {createForm} from 'rc-form';
 import {tableController} from "@services/api";
 import TopBar from "./TopBar";
-import moment from "moment";
 
 class AppState {
     @observable initData = {};
-
-
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
     });
-
-    asyncLoadData() {
-
-    }
-
-    asyncSaveData(values) {
-        return tableController.add("bc_bill_type",values);
-    }
 }
 
 @createForm()
@@ -33,8 +22,8 @@ export default class BillTypeAdd extends React.Component {
         super(props);
         let locationState = this.props.location.state || {};
         this.state = {
-            isUpdate: !!locationState.billType,
-            data: locationState.billType||{},
+            isUpdate: !!locationState.data,
+            data: locationState.data||{},
         };
     }
 
@@ -45,12 +34,12 @@ export default class BillTypeAdd extends React.Component {
             } else {
                 let data = {...this.state.data, ...values};
                 if (this.state.isUpdate) {
-                    tableController.add("bc_bill_type", data)
+                    tableController.update("bc_bill_type", data)
                         .then((d) => {
                             this.props.history.goBack();
                         });
                 } else {
-                    tableController.update("bc_bill_type", data)
+                    tableController.add("bc_bill_type", data)
                         .then((d) => {
                             this.props.history.goBack();
                         });

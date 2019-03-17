@@ -30,7 +30,6 @@ export default class BillTypeList extends React.Component {
     }
 
     onAddClick = () => {
-        console.log("onAddClick");
         this.props.history.push("/content/nav-bar/bill-type-add", {});
     };
 

@@ -1,10 +1,10 @@
 import {Application, Context, Controller} from 'egg';
-import RequestError from "../../model/RequestError";
+import RequestError from "../../../model/RequestError";
 
 /**
  * 信用卡账单
  */
-export default class CreditBillAdd extends Controller {
+export default class IncomeBillAdd extends Controller {
     /**
      * 添加转账账单
      */
@@ -47,11 +47,11 @@ export default class CreditBillAdd extends Controller {
         try{
             for (let bdBill of bdBills) {
                 await app.tableRowHelper.completeUpdateTableRow(bdBill, ctx);
-                await conn.insert("bd_bill", bdBill);
+                await conn.update("bd_bill", bdBill);
             }
             for (let bdTransfer of bdTransfers) {
                 await app.tableRowHelper.completeUpdateTableRow(bdTransfer, ctx);
-                await conn.insert("bd_bill_transfer", bdTransfer);
+                await conn.update("bd_bill_transfer", bdTransfer);
             }
             await conn.commit();
         }catch (e) {
@@ -64,18 +64,18 @@ export default class CreditBillAdd extends Controller {
     /**
      * 获取信用卡列表
      */
-    public async getCreditCardList() {
+    public async getCardList() {
         let ctx = this.ctx;
         let bcCardService = ctx.service.table.bcCard;
-        ctx.body.data = await bcCardService.getListByCardTypeId("ee48fce0-2c74-11e9-ad9d-8b0a6420bc1c");
+        ctx.body.data = await bcCardService.getList();
     }
 
     /**
      * 获取现金银行卡（只包含银行卡和金融储蓄）
      */
-    public async getCashCardList() {
+    public async getBillTypeList() {
         let ctx = this.ctx;
-        let bcCardService = ctx.service.table.bcCard;
-        ctx.body.data = await bcCardService.getListByCardTypeId(['eb7a9aa0-2c74-11e9-ad9d-8b0a6420bc1c','e448b730-2c74-11e9-ad9d-8b0a6420bc1c']);
+        let bcBillTypeService = ctx.service.table.bcBillType;
+        ctx.body.data = await bcBillTypeService.getList(["-1"]);
     }
 }

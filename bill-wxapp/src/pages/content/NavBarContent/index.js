@@ -6,12 +6,16 @@ import BillTypeAdd from "./BillTypeAdd";
 import CardAdd from "./CardAdd";
 import CardTypeAdd from "./CardTypeAdd";
 import MonthStatDetail from "./MonthStatDetail";
-import CreditBillAdd from "./CreditBillAdd";
-import NormalBillAdd from "./NormalBillAdd";
+import CreditBillAdd from "./billedit/CreditBillAdd";
+import IncomeBillAdd from "./billedit/IncomeBillAdd";
+import ConsumeBillAdd from "./billedit/ConsumeBillAdd";
+import TransferBillAdd from "./billedit/TransferBillAdd";
 
 const routes = [
-    {path: "/normal-bill-add", component: NormalBillAdd},
-    {path: "/credit_bill-add", component: CreditBillAdd},
+    {path: "/billedit/income", component: IncomeBillAdd},
+    {path: "/billedit/consume", component: ConsumeBillAdd},
+    {path: "/billedit/credit", component: CreditBillAdd},
+    {path: "/billedit/transfer", component: TransferBillAdd},
     {path: "/bill-type-add", component: BillTypeAdd},
     {path: "/card-add/:id", component: CardAdd},
     {path: "/card-type-add/:id", component: CardTypeAdd},

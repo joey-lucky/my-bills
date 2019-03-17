@@ -26,7 +26,6 @@ export default class extends Service {
         let rows:any[] = await app.sqlExecutor.query(sql, queryParams);
         for (let row of rows) {
             await app.tableRowHelper.translateId(row);
-            await app.tableRowHelper.translateDateTime("bd_bill", row);
         }
         return rows;
     }

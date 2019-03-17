@@ -3,7 +3,7 @@ import {action, observable, runInAction, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, List, ListView, Picker, Tag, WhiteSpace, WingBlank} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
-import {billList} from "@services/api";
+import { billApi} from "@services/api";
 import {globalStyles} from "@global";
 import * as PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -41,7 +41,7 @@ class AppState {
         if (this.selectOnlyMe) {
             params["user_id"] = this.userInfo.id;
         }
-        billList.getBillPageData(params).then((d) => {
+        billApi.billList.getBillPageData(params).then((d) => {
             let data = d.data || [];
             let pageInfo = d.pageInfo || {};
             let {dataBlobs, rowIDs, sectionIDs, timeDescList} = this.cacheData;
@@ -71,7 +71,7 @@ class AppState {
     }
 
     asyncLoadUserInfo() {
-        billList.getUserInfo()
+        billApi.billList.getUserInfo()
             .then((d) => {
                 this.userInfo = d.data[0];
             });
@@ -106,8 +106,10 @@ class AppState {
 @withRouter
 @observer
 export default class BillList extends React.Component {
-    static NORMAL_BILL = "普通";
-    static CREDIT_BILL = "信用卡还款";
+    static BILL_CONSUME = "支出";
+    static BILL_INCOME = "收入";
+    static BILL_TRANSFER = "互转";
+    static BILL_CREDIT = "信用卡还款";
 
     static propTypes = {
         onAddClick: PropTypes.any,
@@ -115,8 +117,10 @@ export default class BillList extends React.Component {
     };
 
     _addBillType = [
-        {value: BillList.NORMAL_BILL, label: BillList.NORMAL_BILL},
-        {value: BillList.CREDIT_BILL, label: BillList.CREDIT_BILL}
+        {value: BillList.BILL_CONSUME, label: BillList.BILL_CONSUME},
+        {value: BillList.BILL_INCOME, label: BillList.BILL_INCOME},
+        {value: BillList.BILL_TRANSFER, label: BillList.BILL_TRANSFER},
+        {value: BillList.BILL_CREDIT, label: BillList.BILL_CREDIT},
     ];
     _appState = new AppState();
     _listView;
@@ -127,7 +131,18 @@ export default class BillList extends React.Component {
     }
 
     onItemClick = (rowData) => {
-        this.props.history.push("/content/nav-bar/bill-add", {bill: rowData});
+        let billTypeId = rowData["bill_type_id"];
+        let billTypeType = rowData["bill_type_type"];
+
+        if (billTypeId === "6efb4370-4868-11e9-a5f7-8d7957d89dc7") {
+            this.props.history.push("/content/nav-bar/billedit/credit", {data: rowData});
+        } else if (billTypeType==="1") {
+            this.props.history.push("/content/nav-bar/billedit/income", {data: rowData});
+        }else if (billTypeType==="-1") {
+            this.props.history.push("/content/nav-bar/billedit/consume", {data: rowData});
+        }else if (billTypeType==="0") {
+            this.props.history.push("/content/nav-bar/billedit/transfer", {data: rowData});
+        }
     };
 
     onAddClick = () => {
@@ -230,10 +245,15 @@ export default class BillList extends React.Component {
     };
 
     onPickerSelect = (value) => {
-        if (value[0] === BillList.NORMAL_BILL) {
-            this.props.history.push("/content/nav-bar/normal-bill-add", {});
-        }else {
-            this.props.history.push("/content/nav-bar/credit_bill-add", {});
+        let id = value[0];
+        if (id === BillList.BILL_INCOME) {
+            this.props.history.push("/content/nav-bar/billedit/income", {});
+        } else if (id === BillList.BILL_CONSUME) {
+            this.props.history.push("/content/nav-bar/billedit/consume", {});
+        } else if (id === BillList.BILL_TRANSFER) {
+            this.props.history.push("/content/nav-bar/billedit/transfer", {});
+        } else if (id === BillList.BILL_CREDIT) {
+            this.props.history.push("/content/nav-bar/billedit/credit", {});
         }
     };
 
