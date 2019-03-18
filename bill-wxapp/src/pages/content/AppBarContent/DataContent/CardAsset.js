@@ -1,13 +1,13 @@
 import * as React from "react";
 import {observable, runInAction, toJS} from "mobx";
 import {observer} from "mobx-react";
-import {Flex, Icon, List, ListView, NavBar} from "antd-mobile";
-import {cardAsset, tableController} from "@services/api";
+import {Flex, List, ListView} from "antd-mobile";
+import {cardAsset} from "@services/api";
 import {createForm} from "rc-form";
 
 class AppState {
 
-    @observable totalMoney = 0;
+    @observable balance = 0;
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
     });
@@ -16,11 +16,12 @@ class AppState {
         this.listViewDataSource = this.listViewDataSource.cloneWithRows([]);
         cardAsset.list().then((d) => {
             let data = d.data || [];
-            let totalMoney = data.reduce((pre, curr) => pre + (curr["totalMoney"] || 0), 0);
-            totalMoney = new Number(totalMoney).toFixed(2);
+            let balance = data.reduce((pre, curr) => pre + (Number(curr["balance"]) || 0), 0);
+            console.log(balance);
+            balance = Number(balance).toFixed(2);
             runInAction(() => {
                 this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
-                this.totalMoney = totalMoney;
+                this.balance = balance;
             });
         });
     }
@@ -40,14 +41,14 @@ export default class CardAsset extends React.Component {
     };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
-        let {totalMoney=0, pic} = rowData;
-        let income = totalMoney >= 0;
-        let showMoney = income ? " + " + totalMoney : " - " + Math.abs(totalMoney);
+        let {balance=0, pic} = rowData;
+        let income = balance >= 0;
+        let showMoney = income ? " + " + balance : " - " + Math.abs(balance);
 
         let layout = {color: "black"};
-        if (totalMoney < 0) {
+        if (balance < 0) {
             layout = {color: "green"}
-        }else if (totalMoney > 0) {
+        }else if (balance > 0) {
             layout = {color: "red"}
         }
         return (
@@ -75,7 +76,7 @@ export default class CardAsset extends React.Component {
                 direction={"column"}
                 align={"center"}>
                 <div>
-                    {"总资产：" + this._appState.totalMoney}
+                    {"总资产：" + this._appState.balance}
                 </div>
                 <Flex.Item style={{width: "100%"}}>
                     <ListView

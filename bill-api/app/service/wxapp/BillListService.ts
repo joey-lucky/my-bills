@@ -49,7 +49,7 @@ export default class BillListService extends Service {
 
     private async completeDetail(row: any): Promise<void> {
         let app: Application = this.app;
-        if (row["bill_type_id"] === "6efb4370-4868-11e9-a5f7-8d7957d89dc7") {
+        if (row["bill_type_type"] === "0") {
             let billId = row.id;
             let sql = "select *\n" +
                 "from bd_bill_transfer t\n" +

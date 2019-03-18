@@ -16,7 +16,7 @@ export default class CalculateBalance {
             let id = card.id;
             let money = cardOfMoney.get(id) || 0;
             let transferMoney = transferCardOfMoney.get(id) || 0;
-            card.balance = money + (0 - transferMoney);
+            card.balance = Number(Number(money + (0 - transferMoney)).toFixed(2));
             await this.app.sqlExecutor.update("bc_card", card);
         }
     }

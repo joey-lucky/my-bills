@@ -57,9 +57,9 @@ export default class Stat extends React.Component {
                 direction={"column"}
                 align={"center"}>
                 {
-                    data.map((item) =>
+                    data.map((item,index) =>
                         <Card
-                            key={item.month}
+                            key={item.yearMonthStr}
                             style={{width: "95%",marginTop:"1rem"}}>
                             <Card.Header title={item.yearMonthStr}/>
                             <Card.Body >

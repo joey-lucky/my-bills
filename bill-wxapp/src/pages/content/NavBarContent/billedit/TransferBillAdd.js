@@ -21,6 +21,8 @@ export default class TransferBillAdd extends React.Component {
         super(props);
         let locationState = this.props.location.state || {};
         let locationBill = locationState.data;
+        let isUpdate = !!locationBill;
+
         let bill = this._defBill;
         if (locationBill) {
             bill = locationBill;
@@ -31,7 +33,7 @@ export default class TransferBillAdd extends React.Component {
         }
         let billTransfer = (bill.children && bill.children["bd_bill_transfer"] && bill.children["bd_bill_transfer"][0]) || {};
         this.state = {
-            isUpdate: !!locationState.data,
+            isUpdate,
             bill: bill,
             billTransfer: billTransfer,
             cashCardData: [],
