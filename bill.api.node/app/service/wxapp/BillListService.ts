@@ -7,12 +7,17 @@ import TranslateConfig from "../../typings/TranslateConfig";
 export default class BillListService extends Service {
     /**
      * 获取分页账单信息
+     *
+     * params:{user_id,date_time,bill_type_id}
+     *
      */
     public async getBillPageData(): Promise<PageResult> {
         let ctx = this.ctx;
         let app: Application = this.app;
         let params = this.ctx.request.queryObjects;
         let userId = params["user_id"];
+        let dateTime:string[] = params["date_time"]||[];
+        let billTypeId:string = params["bill_type_id"];
         let pageInfo = params["pageInfo"];
         Assert.notNull(pageInfo, "page info is null");
         // language=MySQL
@@ -36,6 +41,20 @@ export default class BillListService extends Service {
         if (StringUtils.hasText(userId)) {
             sql += "  and t.user_id = ?\n";
             queryParams.push(userId);
+        }
+        if (StringUtils.hasText(billTypeId)) {
+            sql += " and t.bill_type_id = ?\n";
+            queryParams.push(billTypeId);
+        }
+        if (dateTime.length > 0) {
+            let dateStr = dateTime[0];
+            sql += "  and t.date_time >= str_to_date(?, '%Y-%m-%d %H:%i:%s')";
+            queryParams.push(dateStr);
+        }
+        if (dateTime.length > 1) {
+            let dateStr = dateTime[1];
+            sql += "  and t.date_time <= str_to_date(?, '%Y-%m-%d %H:%i:%s')";
+            queryParams.push(dateStr);
         }
         sql += "order by t.date_time desc";
         let result = await app.sqlExecutor.queryPage(sql, queryParams, params.pageInfo);

@@ -31,7 +31,7 @@ export default class ConsumeBillAdd extends React.Component {
             bill.money = Math.abs(money);
         }
         this.state = {
-            isUpdate: !!locationState.bill,
+            isUpdate: !!locationState.data,
             bill: bill,
             cardData: [],
             billTypeData: [],

@@ -2,7 +2,9 @@ import * as React from "react";
 import UUID from "@utils/UUID";
 import * as PropTypes from "prop-types";
 import G2 from "@antv/g2";
+import {withRouter} from "react-router-dom";
 
+@withRouter
 export default class TotalPieChart extends React.Component {
     static propTypes = {
         value: PropTypes.arrayOf(PropTypes.shape({

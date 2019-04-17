@@ -14,18 +14,20 @@ export default class DataContent extends React.Component {
         {title: '资产概况', sub: '3'},
     ];
 
-    onTabClick=(tab, index)=>{
+    onTabClick = (tab, index) => {
         barState.tabBar.index = index;
     };
 
     render() {
         return (
-            <Tabs tabs={this._tabs}
-                  page={barState.tabBar.index}
-                  initialPage={0}
-                  tabBarPosition={"top"}
-                  renderTab={tab => <span>{tab.title}</span>}
-                  onTabClick={this.onTabClick}
+            <Tabs
+                swipeable={false}
+                tabs={this._tabs}
+                page={barState.tabBar.index}
+                initialPage={0}
+                tabBarPosition={"top"}
+                renderTab={tab => <span>{tab.title}</span>}
+                onTabClick={this.onTabClick}
             >
                 <BillList/>
                 <Stat/>

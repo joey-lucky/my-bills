@@ -96,6 +96,7 @@ export default class MonthStatDetail extends React.Component {
                 direction={"column"}>
                 <TopBar title={this.state.title}/>
                 <Tabs
+                    swipeable={false}
                     tabs={this._tabs}
                     page={this.state.index}
                     initialPage={0}

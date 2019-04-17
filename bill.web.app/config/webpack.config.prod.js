@@ -1,28 +1,40 @@
 const paths = require("./paths");
 const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-const publicPath = paths.publicPath;
+let {publicPath, pageVersion, pages, apiPath, resolveApp} = paths;
 
-module.exports = {
-    // devtool: "source-map",
+let config = {
     devtool: false,
+    // devtool: "source-map",
     mode: "production",
-    entry: paths.resolveApp("src/index.js"),
-
+    entry: pages.reduce((previousValue, pageName) => {
+        previousValue[pageName] = resolveApp("src/pages/" + pageName + "/index.js");
+        return previousValue;
+    }, {}),
     output: {
         path: paths.resolveApp("build"),
         publicPath: publicPath,
-        filename: "js/bundle.[name].[hash].js"
+        filename: (chunkData) => {
+            return "js/bundle.[name]." + pageVersion[chunkData.chunk.name] + ".js"
+        },
     },
-
+    externals: {
+        "@antv/g2": "G2",
+    },
     resolve: {
-        extensions: ['.wasm', '.mjs', '.js', '.json']
+        extensions: ['.wasm', '.mjs', '.js', '.json'],
+        alias: {
+            "@global": paths.resolveApp("src/global.js"),
+            "@utils": paths.resolveApp("src/utils"),
+            "@layouts": paths.resolveApp("src/layouts"),
+            "@components": paths.resolveApp("src/components"),
+            "@services": paths.resolveApp("src/services"),
+        }
     },
-
     module: {
         rules: [
             {
@@ -73,23 +85,34 @@ module.exports = {
     },
 
     plugins: [
-        new CleanWebpackPlugin(["build"]),
-        new CopyWebpackPlugin([{from: 'public', to: "view", ignore: "*.html"}]),
+        new CleanWebpackPlugin([paths.resolveApp("build")], {root: paths.resolveApp(".")}),
         new webpack.HotModuleReplacementPlugin(),
         new MiniCssExtractPlugin({
-            filename: "css/bundle.[name].[hash].css",
-            chunkFilename: "css/bundle.[id].[hash].css",
+            chunkFilename: (chunkData) => {
+                return "css/bundle.[id]." + pageVersion[chunkData.chunk.name] + ".css";
+            },
+            filename: (chunkData) => {
+                return "css/bundle.[id]." + pageVersion[chunkData.chunk.name] + ".css";
+            },
         }),
         new webpack.DefinePlugin({//全局变量
             'process.env': {
                 NODE_ENV: JSON.stringify('production'),
-                PUBLIC_PATH: JSON.stringify(publicPath)
+                PUBLIC_PATH: JSON.stringify(publicPath),
+                API_PATH: JSON.stringify(apiPath),
             }
         }),
-        new HtmlWebpackPlugin({
-            PUBLIC_PATH: publicPath,
-            filename: "view/index.html",
-            template: paths.resolveApp("public/index.html")
+        ...pages.map(pageName => {
+            return new HtmlWebpackPlugin({
+                PUBLIC_PATH: publicPath,
+                chunks: [pageName],
+                inject: true,
+                filename: "view/" + pageName + ".html",
+                template: paths.resolveApp("src/pages/" + pageName + "/index.html")
+            })
         }),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+        new BundleAnalyzerPlugin()
     ]
 };
+module.exports = config;
