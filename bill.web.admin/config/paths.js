@@ -5,18 +5,11 @@ const moment = require("moment");
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const packageJson = require(resolveApp('package.json'));
-const {
-    homePage = "http://localhost:8080/omip/front",
-    apiHost = "http://localhost:8080/omip/api",
-    fileDirectory = "http://localhost:8080",
-    name="",
-} = packageJson;
-const pages = fs.readdirSync(resolveApp("src/pages")) || [];
-const version = "v" + moment().format("YYYYMMDDHHmmss");
-const pageVersion = pages.reduce((pre, pageName) => {
-    pre[pageName] = version;
-    return pre;
-}, {});
+const {homePage, apiHost,} = packageJson;
+
+const publicPath = getPath(homePage);
+const buildPath ="build";
+const apiPath = getPath(apiHost);
 
 //url地址 http://localhost:8080/om/front -> 8080
 function getPort(url) {
@@ -33,35 +26,60 @@ function getHost(url) {
     return url.replace(getPath(url), "");
 }
 
-let filePath = "/" + getPath(homePage).split("/")[1] + "/file";
+function getServerRewrites(publicPath) {
+    const pages = fs.readdirSync(resolveApp("src/pages/")) || [];
+    let result = pages.map(pageName => ({
+        from: `^${publicPath}/${pageName}`,
+        to: `${publicPath}/view/${pageName}.html`
+    }));
+    result.push({
+        from: `^${publicPath}`,
+        to: `${publicPath}/view/home.html`,
+    });
+    return result;
+}
 
-const paths = {
+//获取页面相关配置 {home:{},login:{}}
+function getPageConfig() {
+    const version = "v" + moment().format("YYYYMMDDHHmmss");
+    const pages = fs.readdirSync(resolveApp("src/pages/" )) || [];
+    return pages.reduce((pre, pageName) => {
+        let pageRoot = `src/pages/${pageName}`;
+        pre[pageName] = {
+            jsPath: `js/${pageName}.${version}.bundle.js`,
+            cssPath: `css/${pageName}.${version}.[id].bundle.css`,
+            htmlPath: `view/${pageName}.html`,
+            htmlTemplate: pageRoot + "/index.html",
+            entry: pageRoot + "/index.js",
+        };
+        return pre;
+    }, {});
+}
+
+let paths = {
+    server: {
+        rewrites: getServerRewrites(publicPath),
+        port: getPort(homePage),
+        apiTarget: getHost(apiHost),
+        apiPath: apiPath,
+    },
+    pageConfig: getPageConfig(),
+    buildPath,
     resolveApp,
-    pages,
-    pageVersion,
-    publicPath: getPath(homePage),
+    publicPath,
     port: getPort(homePage),
     allowedHost: getHost(apiHost),
-    apiPath: getPath(apiHost),
-    fileDirectory,
-    filePath,
-    projectName:name,
 };
 
-paths.ENV = {//环境变量
-    PUBLIC_PATH: JSON.stringify(paths.publicPath),
-    API_PATH: JSON.stringify(paths.apiPath),
-    FILE_PATH: JSON.stringify(fileDirectory.startsWith("http")? fileDirectory : filePath),
-    PROJECT_NAME: JSON.stringify(name),
-};
-
+console.log(JSON.stringify(paths));
 paths.resolveAlias = {
     "@global": paths.resolveApp("src/global.js"),
     "@utils": paths.resolveApp("src/utils"),
     "@layouts": paths.resolveApp("src/layouts"),
     "@components": paths.resolveApp("src/components"),
-    "@pages": paths.resolveApp("src/pages"),
-    "@routes": paths.resolveApp("src/routes"),
 };
-
+paths.ENV = {//环境变量
+    PUBLIC_PATH: JSON.stringify(paths.publicPath),
+    API_PATH: JSON.stringify(apiPath),
+};
 module.exports = paths;

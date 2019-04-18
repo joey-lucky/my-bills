@@ -1,0 +1,21 @@
+.dialogBody {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.dialogBody > * {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.tex{
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+}

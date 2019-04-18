@@ -1,33 +1,26 @@
 const webpack = require("webpack");
-const express = require("express");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const paths = require("./paths");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-let {
-    pages = [], pageVersion,
-    apiPath, allowedHost, ENV, resolveAlias,
-    port, publicPath, resolveApp
-    , filePath, fileDirectory
-} = paths;
+let {pageConfig, buildPath, ENV, resolveAlias, publicPath, resolveApp,} = paths;
+
 
 let config = {
     // devtool: "inline-source-map",
     devtool: "cheap-module-eval-source-map",
     mode: "development",
-    entry: pages.reduce((previousValue, pageName) => {
-        previousValue[pageName] = [
-            'babel-polyfill',
-            'whatwg-fetch',
-            resolveApp("src/pages/" + pageName + "/index.js")
-        ];
+    entry: Object.keys(pageConfig).reduce((previousValue, pageName) => {
+        previousValue[pageName] =  resolveApp(pageConfig[pageName].entry);
         return previousValue;
     }, {}),
     output: {
-        path: paths.resolveApp("build"),
+        path: paths.resolveApp(buildPath),
         publicPath: publicPath,
-        filename: "js/bundle.[name].[hash].js",
+        filename: (chunkData) => {
+            let name = chunkData.chunk.name;
+            return pageConfig[name].jsPath;
+        },
     },
     resolve: {
         extensions: ['.wasm', '.mjs', '.js', '.json'],
@@ -74,6 +67,7 @@ let config = {
         namedModules: true,
         minimize: false,
     },
+
     plugins: [
         new CopyWebpackPlugin([{from: 'public', to: "public"}]),
         new webpack.HotModuleReplacementPlugin(),
@@ -83,62 +77,52 @@ let config = {
                 ...ENV,
             }
         }),
-        ...pages.map(pageName => {
+        ...Object.keys(pageConfig).map(pageName => {
             return new HtmlWebpackPlugin({
                 PUBLIC_PATH: publicPath,
                 chunks: [pageName],
                 inject: true,
-                filename: "view/" + pageName + ".html",
-                template: paths.resolveApp("src/pages/" + pageName + "/index.html")
+                filename: pageConfig[pageName].htmlPath,
+                template: paths.resolveApp(pageConfig[pageName].htmlTemplate)
             })
-        })
+        }),
     ]
 };
+
+let {
+    rewrites,
+    port,
+    apiTarget,
+    apiPath,
+} = paths.server;
+
 
 config.devServer = {
     // host: "127.0.0.1",
     hot: true,
-    contentBase: resolveApp("build"),
+    contentBase: resolveApp(buildPath),
     port: port,
     publicPath: publicPath,
     historyApiFallback: {
-        rewrites: [
-            ...pages.map(pageName => ({
-                from: new RegExp(`^${publicPath}/${pageName}`),
-                to: `${publicPath}/view/${pageName}.html`
-            })),
-            {
-                from: new RegExp("^" + publicPath),
-                to: `${publicPath}/view/${pages[0]}.html`
-            },
-        ]
+        rewrites: rewrites.map(item => ({
+            from: new RegExp(item.from),
+            to: item.to
+        }))
     },
     disableHostCheck: true,
     open: true,
     openPage: publicPath.substr(1),
     //跨域？不能存在的。
-    allowedHosts: [allowedHost],
+    allowedHosts: [apiTarget],
     before(app) {
-        if (!fileDirectory.startsWith("http")) {
-            app.use(filePath, express.static(fileDirectory));
-        }
+
     },
     proxy: {
         [apiPath]: {
-            target: allowedHost,
-            // 因为使用的是https，会有安全校验，所以设置secure为false
+            target: apiTarget,
             secure: false,
-            // port: 80,
-            // ingorePath 默认即为 false, 注释掉也可以
-            // ingorePath: false,
-            // changeOrigin是关键，如果不加这个就无法跳转请求
             changeOrigin: true,
         },
-        [`/${paths.projectName}/upload`]: {
-            target: allowedHost,
-            secure: false,
-            changeOrigin: true,
-        }
     },
     // useLocalIp: true,
     index: "/index.html",

@@ -6,24 +6,27 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-let {publicPath, pageVersion, pages, resolveApp, ENV, resolveAlias} = paths;
+let {publicPath, resolveApp, ENV, resolveAlias,pageConfig,buildPath} = paths;
 let config = {
-    // devtool: "source-map",
     devtool: false,
     mode: "production",
-    entry: pages.reduce((previousValue, pageName) => {
-        previousValue[pageName] = ['babel-polyfill','whatwg-fetch',resolveApp("src/pages/" + pageName + "/index.js")];
+    entry: Object.keys(pageConfig).reduce((previousValue, pageName) => {
+        previousValue[pageName] = [
+            'babel-polyfill',
+            'whatwg-fetch',
+            resolveApp(pageConfig[pageName].entry)
+        ];
         return previousValue;
     }, {}),
     output: {
-        path: paths.resolveApp("build"),
+        path: paths.resolveApp(buildPath),
         publicPath: publicPath,
         filename: (chunkData) => {
-            return "js/bundle.[name]." + pageVersion[chunkData.chunk.name] + ".js";
+            let name = chunkData.chunk.name;
+            return pageConfig[name].jsPath;
         },
     },
     resolve: {
-        // extensions: ['.wasm', '.mjs', '.js', '.json'],
         extensions: ['.js','.jsx'],
         alias: resolveAlias
     },
@@ -67,7 +70,7 @@ let config = {
                 loader: "file-loader",
                 options: {
                     publicPath: publicPath,
-                    name: "image/[hash].[ext]"
+                    name:"image/[hash].[ext]"
                 },
             }
         ]
@@ -77,17 +80,18 @@ let config = {
         minimize: true,
         mergeDuplicateChunks: true,
     },
-
     plugins: [
-        new CleanWebpackPlugin([paths.resolveApp("build")], {root: paths.resolveApp(".")}),
-        // new CopyWebpackPlugin([{from: 'public', to: "public"}]),
+        new CleanWebpackPlugin([paths.resolveApp(buildPath)], {root: paths.resolveApp("../build")}),
+        new CopyWebpackPlugin([{from: 'public', to: "public"}]),
         new webpack.HotModuleReplacementPlugin(),
         new MiniCssExtractPlugin({
             chunkFilename: (chunkData) => {
-                return "css/bundle.[id]." + pageVersion[chunkData.chunk.name] + ".css";
+                let name = chunkData.chunk.name;
+                return pageConfig[name].cssPath;
             },
             filename: (chunkData) => {
-                return "css/bundle.[id]." + pageVersion[chunkData.chunk.name] + ".css";
+                let name = chunkData.chunk.name;
+                return pageConfig[name].cssPath;
             },
         }),
         new webpack.DefinePlugin({//全局变量
@@ -100,13 +104,13 @@ let config = {
         //     /moment[/\\]locale$/,
         //     /zh-cn/,
         // ),
-        ...pages.map(pageName => {
+        ...Object.keys(pageConfig).map(pageName => {
             return new HtmlWebpackPlugin({
                 PUBLIC_PATH: publicPath,
                 chunks: [pageName],
                 inject: true,
-                filename: "view/" + pageName + ".html",
-                template: paths.resolveApp("src/pages/" + pageName + "/index.html")
+                filename: pageConfig[pageName].htmlPath,
+                template: paths.resolveApp(pageConfig[pageName].htmlTemplate)
             })
         }),
         // new BundleAnalyzerPlugin()

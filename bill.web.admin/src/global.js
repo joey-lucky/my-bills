@@ -1,7 +1,7 @@
-import {createBrowserHistory} from "history";
-import PreviewPhotoDialog from "./component/PreviewPhotoDialog";
+export const publicPath = process.env.PUBLIC_PATH || "";
+export const apiPath = process.env.API_PATH || "";
+export const filePath = process.env.FILE_PATH || "";
+export const projectName = process.env.PROJECT_NAME || "";
 
-export const browserHistory = createBrowserHistory(
-    {basename: process.env["PUBLIC_PATH"] || ""}
-);
-export const previewPhotoState = PreviewPhotoDialog.newState();
+export const getUploadPath = () => "/" + projectName + "/upload";
+

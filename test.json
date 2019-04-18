@@ -1,0 +1,52 @@
+{
+  "server": {
+    "rewrites": [
+      {
+        "from": "^/bill/admin/home",
+        "to": "/bill/admin/view/home.html"
+      },
+      {
+        "from": "^/bill/admin/op",
+        "to": "/bill/admin/view/op.html"
+      },
+      {
+        "from": "^/bill/admin/ws",
+        "to": "/bill/admin/view/ws.html"
+      },
+      {
+        "from": "^/bill/admin",
+        "to": "/bill/admin/view/home.html"
+      }
+    ],
+    "port": "8080",
+    "apiTarget": "http://localhost:3000",
+    "apiPath": "/bill/api"
+  },
+  "pageConfig": {
+    "home": {
+      "jsPath": "js/home.v20190418211325.bundle.js",
+      "cssPath": "css/home.v20190418211325.[id].bundle.css",
+      "htmlPath": "view/home.html",
+      "htmlTemplate": "src/pages/home/index.html",
+      "entry": "src/pages/home/index.js"
+    },
+    "op": {
+      "jsPath": "js/op.v20190418211325.bundle.js",
+      "cssPath": "css/op.v20190418211325.[id].bundle.css",
+      "htmlPath": "view/op.html",
+      "htmlTemplate": "src/pages/op/index.html",
+      "entry": "src/pages/op/index.js"
+    },
+    "ws": {
+      "jsPath": "js/ws.v20190418211325.bundle.js",
+      "cssPath": "css/ws.v20190418211325.[id].bundle.css",
+      "htmlPath": "view/ws.html",
+      "htmlTemplate": "src/pages/ws/index.html",
+      "entry": "src/pages/ws/index.js"
+    }
+  },
+  "buildPath": "build",
+  "publicPath": "/bill/admin",
+  "port": "8080",
+  "allowedHost": "http://localhost:3000"
+}
