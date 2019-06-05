@@ -1,0 +1,65 @@
+@import "~antd/dist/antd.less";   // 引入官方提供的 less 样式入口文件
+//@menu-dark-bg:#0099CC;
+//@layout-header-background:#0099CC;
+//@layout-trigger-background:#0099CC;
+//@primary-color:#3080fe;
+//@menu-dark-item-selected-bg:rgba(0,0,0,0.2);
+//@layout-body-background: #FFFFFF;
+
+
+//@primary-color: #1890ff;                         // 全局主色
+//@link-color: #1890ff;                            // 链接色
+//@success-color: #52c41a;                         // 成功色
+//@warning-color: #faad14;                         // 警告色
+//@error-color: #f5222d;                           // 错误色
+//@font-size-base: 14px;                           // 主字号
+//@heading-color: rgba(0, 0, 0, .85);              // 标题色
+//@text-color: rgba(0, 0, 0, .65);                 // 主文本色
+//@text-color-secondary : rgba(0, 0, 0, .45);      // 次文本色
+//@disabled-color : rgba(0, 0, 0, .25);            // 失效色
+//@border-radius-base: 4px;                        // 组件/浮层圆角
+//@border-color-base: #d9d9d9;                     // 边框色
+//@box-shadow-base: 0 2px 8px rgba(0, 0, 0, .15);  // 浮层阴影
+//
+//@component-background:#2f323f;
+
+#root{
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.fill-parent{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/*水平布局*/
+.horizontal{
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+/*垂直布局*/
+.vertical{
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/*填满父类剩余空间*/
+.fill-space-v{
+  position: relative;
+  width: 100%;
+  height: 0;
+  flex-grow: 1;
+}
+
+.fill-space-h{
+  position: relative;
+  width: 0;
+  height: 100%;
+  flex-grow: 1;
+  box-sizing: border-box;
+}

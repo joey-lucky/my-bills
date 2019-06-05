@@ -128,11 +128,11 @@ export default class RouteMenu extends React.Component {
     }
 
     render() {
-        const {childRouteData, location, ...menuProps} = this.props;
+        const {childRouteData, location,style = {}, ...menuProps} = this.props;
         return (
             <Menu
                 {...menuProps}
-                style={{position: "relative", height: "100%", width: "100%", overflowY: "auto", overflowX: "hidden"}}
+                style={{...styles.container,...style}}
                 mode="inline"
                 openKeys={this.state.openKeys}
                 selectedKeys={this.state.selectedKeys}
@@ -146,3 +146,13 @@ export default class RouteMenu extends React.Component {
         );
     }
 }
+
+const styles = {
+    container: {
+        position: "relative",
+        height: "100%",
+        width: "100%",
+        overflowY: "auto",
+        overflowX: "hidden"
+    }
+};

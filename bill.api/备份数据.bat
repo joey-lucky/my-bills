@@ -1,0 +1,1 @@
+mysqldump -h112.74.165.42 -uroot -P3306 -p123456 bill>D:\backups\database-bill\%date:~0,4%%date:~5,2%%date:~8,2%.sql

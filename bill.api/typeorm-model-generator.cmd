@@ -1,0 +1,1 @@
+typeorm-model-generator -h localhost -p 3306 -d bill -u root -x 123456 -e mysql -o ./app/database/entity/ ---noConfig --case-entity pascal --case-file pascal --case-property camel

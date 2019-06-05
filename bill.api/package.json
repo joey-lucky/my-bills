@@ -28,7 +28,8 @@
     "ci": "npm run lint && npm run cov && npm run tsc",
     "autod": "autod",
     "lint": "tslint --project . -c tslint.json",
-    "clean": "ets clean"
+    "clean": "ets clean",
+    "typeorm": "./node_modules/.bin/typeorm "
   },
   "dependencies": {
     "@types/mysql": "^2.15.5",
@@ -36,7 +37,10 @@
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.6.0",
     "moment": "^2.24.0",
-    "node-uuid": "^1.4.8"
+    "mysql": "^2.17.1",
+    "node-uuid": "^1.4.8",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.17"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",
