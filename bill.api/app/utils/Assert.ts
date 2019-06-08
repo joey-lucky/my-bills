@@ -1,5 +1,5 @@
-import StringUtils from "./StringUtils";
 import AssertError from "../model/AssertError";
+import StringUtils from "./StringUtils";
 
 export default class Assert {
     static hasText(str, msg) {

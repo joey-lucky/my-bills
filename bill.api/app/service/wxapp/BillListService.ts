@@ -1,8 +1,8 @@
-import {Application, Service} from 'egg';
-import Assert from "../../utils/Assert";
-import StringUtils from "../../utils/StringUtils";
+import {Application, Service} from "egg";
 import PageResult from "../../typings/PageResult";
 import TranslateConfig from "../../typings/TranslateConfig";
+import Assert from "../../utils/Assert";
+import StringUtils from "../../utils/StringUtils";
 
 export default class BillListService extends Service {
     /**
@@ -12,13 +12,13 @@ export default class BillListService extends Service {
      *
      */
     public async getBillPageData(): Promise<PageResult> {
-        let ctx = this.ctx;
-        let app: Application = this.app;
-        let params = this.ctx.request.queryObjects;
-        let userId = params["user_id"];
-        let dateTime:string[] = params["date_time"]||[];
-        let billTypeId:string = params["bill_type_id"];
-        let pageInfo = params["pageInfo"];
+        const ctx = this.ctx;
+        const app: Application = this.app;
+        const params = this.ctx.request.queryObjects;
+        const userId = params["user_id"];
+        const dateTime: string[] = params["date_time"] || [];
+        const billTypeId: string = params["bill_type_id"];
+        const pageInfo = params["pageInfo"];
         Assert.notNull(pageInfo, "page info is null");
         // language=MySQL
         let sql = "select t.*,\n" +
@@ -37,7 +37,7 @@ export default class BillListService extends Service {
             "       left join bc_user t3 on t3.id = t2.user_id\n" +
             "       left join bc_bill_type t4 on t4.id = t.bill_type_id\n" +
             "where 1 = 1\n";
-        let queryParams: any[] = [];
+        const queryParams: any[] = [];
         if (StringUtils.hasText(userId)) {
             sql += "  and t.user_id = ?\n";
             queryParams.push(userId);
@@ -47,18 +47,18 @@ export default class BillListService extends Service {
             queryParams.push(billTypeId);
         }
         if (dateTime.length > 0) {
-            let dateStr = dateTime[0];
+            const dateStr = dateTime[0];
             sql += "  and t.date_time >= str_to_date(?, '%Y-%m-%d %H:%i:%s')";
             queryParams.push(dateStr);
         }
         if (dateTime.length > 1) {
-            let dateStr = dateTime[1];
+            const dateStr = dateTime[1];
             sql += "  and t.date_time <= str_to_date(?, '%Y-%m-%d %H:%i:%s')";
             queryParams.push(dateStr);
         }
         sql += "order by t.date_time desc";
-        let result = await app.sqlExecutor.queryPage(sql, queryParams, params.pageInfo);
-        for (let row of result.rows) {
+        const result = await app.sqlExecutor.queryPage(sql, queryParams, params.pageInfo);
+        for (const row of result.rows) {
             await app.tableRowHelper.translateId(row);
             await app.tableRowHelper.translateDateTime("bd_bill", row);
             await this.completeDetail(row);
@@ -67,18 +67,18 @@ export default class BillListService extends Service {
     }
 
     private async completeDetail(row: any): Promise<void> {
-        let app: Application = this.app;
+        const app: Application = this.app;
         if (row["bill_type_type"] === "0") {
-            let billId = row.id;
-            let sql = "select *\n" +
+            const billId = row.id;
+            const sql = "select *\n" +
                 "from bd_bill_transfer t\n" +
                 "where t.bill_id = ?";
-            let rows = await app.sqlExecutor.query(sql, [billId]);
-            let translateConfig: TranslateConfig = {foreignName:"target_card_name",foreignKey:"target_card_id",aliasForeignKeyAlias:"card_id"};
-            for (let itemRow of rows) {
-                await app.tableRowHelper.translateId(itemRow,[translateConfig]);
+            const rows = await app.sqlExecutor.query(sql, [billId]);
+            const translateConfig: TranslateConfig = {foreignName: "target_card_name", foreignKey: "target_card_id", aliasForeignKeyAlias: "card_id"};
+            for (const itemRow of rows) {
+                await app.tableRowHelper.translateId(itemRow, [translateConfig]);
             }
-            let children = row.children || {};
+            const children = row.children || {};
             children["bd_bill_transfer"] = rows;
             row.children = children;
         }

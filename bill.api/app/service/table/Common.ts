@@ -1,15 +1,15 @@
-import {Application, Context, Controller,Service} from 'egg';
 import * as assert from "assert";
+import {Application, Context, Controller, Service} from "egg";
 import Assert from "../../utils/Assert";
 
 export default class extends Service {
     public async list(params) {
-        let app: Application = this.app;
-        let {tableName,data} = params;
+        const app: Application = this.app;
+        const {tableName, data} = params;
         Assert.hasText(tableName, "表名为空");
-        let rows: any[] = await app.sqlExecutor.select(tableName,  data);
+        const rows: any[] = await app.sqlExecutor.select(tableName,  data);
         if ("bc_user" === tableName) {
-            for (let item of rows) {
+            for (const item of rows) {
                 item["login_name"] = "";
                 item["login_password"] = "";
             }
@@ -17,16 +17,16 @@ export default class extends Service {
         return rows;
     }
 
-    public async create(params:any) {
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let {tableName,data} = params;
+    public async create(params: any) {
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const {tableName, data} = params;
         Assert.hasText(tableName, "表名为空");
         Assert.notNull(data, "数据不能为空");
-        let transaction = await app.sqlExecutor.beginTransaction();
+        const transaction = await app.sqlExecutor.beginTransaction();
         try {
             if (Array.isArray(data)) {
-                for (let row of data) {
+                for (const row of data) {
                     await app.tableRowHelper.completeInsertTableRow(row, ctx);
                     await transaction.insert(tableName, row);
                 }
@@ -35,16 +35,16 @@ export default class extends Service {
                 await transaction.insert(tableName, data);
             }
             await transaction.commit();
-            return "保存成功"
+            return "保存成功";
         } catch (e) {
             await transaction.rollback();
             throw new Error("数据库插入异常");
         }
     }
 
-    public async update(params:any|any[]) {
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
+    public async update(params: any|any[]) {
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
         await app.tableRowHelper.completeInsertTableRow(params, ctx);
     }
 
@@ -52,4 +52,4 @@ export default class extends Service {
 
     }
 }
-
+

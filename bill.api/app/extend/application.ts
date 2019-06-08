@@ -1,9 +1,9 @@
+import {AppCache, createAppCache} from "../typings/AppCache";
+import CalculateBalance from "./application/CalculateBalance";
+import DataBaseObserverFactory from "./application/DataBaseObserverFactory";
 import {SqlExecutor} from "./application/SqlExecutor";
 import TableRowHelper from "./application/TableRowHelper";
 import TokenCrypto from "./application/TokenCrypto";
-import {AppCache, createAppCache} from "../typings/AppCache";
-import DataBaseObserverFactory from "./application/DataBaseObserverFactory";
-import CalculateBalance from "./application/CalculateBalance";
 
 const cacheSymbol = Symbol("Application#cache");
 const tableRowHelperSymbol = Symbol("Application#TableRowHelper");
@@ -13,12 +13,12 @@ const dataBaseObserverFactorySymbol = Symbol("Application#DataBaseObserverFactor
 const calculateBalanceSymbol = Symbol("Application#CalculateBalance");
 
 export interface ExtendApplication {
-    tokenCrypto: TokenCrypto,
-    sqlExecutor: SqlExecutor,
-    tableRowHelper: TableRowHelper,
-    dataBaseObserver: DataBaseObserverFactory,
-    calculateBalance: CalculateBalance,
-    mCache: AppCache,
+    tokenCrypto: TokenCrypto;
+    sqlExecutor: SqlExecutor;
+    tableRowHelper: TableRowHelper;
+    dataBaseObserver: DataBaseObserverFactory;
+    calculateBalance: CalculateBalance;
+    mCache: AppCache;
 }
 
 const extend: ExtendApplication = {
@@ -30,7 +30,7 @@ const extend: ExtendApplication = {
     },
 
     get sqlExecutor(): SqlExecutor {
-        let app: any = this;
+        const app: any = this;
         if (!this[sqlExecutorSymbol]) {
             this[sqlExecutorSymbol] = new SqlExecutor(app);
         }
@@ -39,7 +39,7 @@ const extend: ExtendApplication = {
 
     get tableRowHelper(): TableRowHelper {
         if (!this[tableRowHelperSymbol]) {
-            let app: any = this;
+            const app: any = this;
             this[tableRowHelperSymbol] = new TableRowHelper(app);
         }
         return this[tableRowHelperSymbol];
@@ -47,7 +47,7 @@ const extend: ExtendApplication = {
 
     get calculateBalance(): CalculateBalance {
         if (!this[calculateBalanceSymbol]) {
-            let app: any = this;
+            const app: any = this;
             this[calculateBalanceSymbol] = new CalculateBalance(app);
         }
         return this[calculateBalanceSymbol];

@@ -1,4 +1,4 @@
-import {Application} from 'egg';
+import {Application} from "egg";
 import SqlStringUtils from "../../utils/SqlStringUtils";
 
 export default class CalculateBalance {
@@ -9,13 +9,13 @@ export default class CalculateBalance {
     }
 
     public async calculate(cardIds?: string[]) {
-        let cardOfMoney = await this.getCardOfMoney(cardIds);
-        let transferCardOfMoney = await this.getTransferCardOfMoney(cardIds);
-        let cardList: any[] = await this.getCardList(cardIds);
-        for (let card of cardList) {
-            let id = card.id;
-            let money = cardOfMoney.get(id) || 0;
-            let transferMoney = transferCardOfMoney.get(id) || 0;
+        const cardOfMoney = await this.getCardOfMoney(cardIds);
+        const transferCardOfMoney = await this.getTransferCardOfMoney(cardIds);
+        const cardList: any[] = await this.getCardList(cardIds);
+        for (const card of cardList) {
+            const id = card.id;
+            const money = cardOfMoney.get(id) || 0;
+            const transferMoney = transferCardOfMoney.get(id) || 0;
             card.balance = Number(Number(money + (0 - transferMoney)).toFixed(2));
             await this.app.sqlExecutor.update("bc_card", card);
         }
@@ -26,17 +26,17 @@ export default class CalculateBalance {
             "       sum(t.money) as money\n" +
             "from bd_bill t\n" +
             "where 1 = 1\n";
-        let queryParams: string[] = [];
+        const queryParams: string[] = [];
         if (cardIds && cardIds.length > 0) {
             queryParams.push(...cardIds);
-            sql += ` and t.card_id in (${SqlStringUtils.getNumOfQuestionMark(cardIds.length)})\n`
+            sql += ` and t.card_id in (${SqlStringUtils.getNumOfQuestionMark(cardIds.length)})\n`;
         }
         sql += "group by t.card_id";
-        let data = await this.app.sqlExecutor.query(sql, queryParams);
-        let result: Map<string, number> = new Map<string, number>();
-        for (let item of data) {
-            let cardId = item["card_id"];
-            let money = item["money"];
+        const data = await this.app.sqlExecutor.query(sql, queryParams);
+        const result: Map<string, number> = new Map<string, number>();
+        for (const item of data) {
+            const cardId = item["card_id"];
+            const money = item["money"];
             result.set(cardId, money);
         }
         return result;
@@ -48,17 +48,17 @@ export default class CalculateBalance {
             "from bd_bill_transfer t\n" +
             "            left join bd_bill t1 on t1.id = t.bill_id\n" +
             "where 1 = 1\n";
-        let queryParams: string[] = [];
+        const queryParams: string[] = [];
         if (cardIds && cardIds.length > 0) {
             queryParams.push(...cardIds);
-            sql += ` and t.target_card_id in (${SqlStringUtils.getNumOfQuestionMark(cardIds.length)})\n`
+            sql += ` and t.target_card_id in (${SqlStringUtils.getNumOfQuestionMark(cardIds.length)})\n`;
         }
         sql += "group by t.target_card_id";
-        let data = await this.app.sqlExecutor.query(sql, queryParams);
-        let result: Map<string, number> = new Map<string, number>();
-        for (let item of data) {
-            let cardId = item["target_card_id"];
-            let money = item["money"];
+        const data = await this.app.sqlExecutor.query(sql, queryParams);
+        const result: Map<string, number> = new Map<string, number>();
+        for (const item of data) {
+            const cardId = item["target_card_id"];
+            const money = item["money"];
             result.set(cardId, money);
         }
         return result;
@@ -68,10 +68,10 @@ export default class CalculateBalance {
         let sql = "select *\n" +
             "from bc_card t\n" +
             "where 1 = 1\n";
-        let queryParams: string[] = [];
+        const queryParams: string[] = [];
         if (cardIds && cardIds.length > 0) {
             queryParams.push(...cardIds);
-            sql += ` and t.id in (${SqlStringUtils.getNumOfQuestionMark(cardIds.length)})\n`
+            sql += ` and t.id in (${SqlStringUtils.getNumOfQuestionMark(cardIds.length)})\n`;
         }
         return await this.app.sqlExecutor.query(sql, queryParams);
     }

@@ -1,37 +1,37 @@
-import {Controller,Application,Context} from 'egg';
+import {Application, Context, Controller} from "egg";
 
 export default class BillList extends Controller {
     public async list() {
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        const {sqlExecutor,tableRowHelper} = app;
-        let sql = "select t.*\n" +
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const {sqlExecutor, tableRowHelper} = app;
+        const sql = "select t.*\n" +
             "from bc_card t\n" +
             "order by length(t.name) asc, t.user_id asc";
-        let data:any[] = await sqlExecutor.query(sql);
-        for (let row of data) {
+        const data: any[] = await sqlExecutor.query(sql);
+        for (const row of data) {
             await tableRowHelper.translateId(row);
             await tableRowHelper.translateDateTime("bc_card", row);
         }
-        ctx.body.data =data;
+        ctx.body.data = data;
     }
 
     public async listGroupByUser() {
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        const {sqlExecutor,tableRowHelper} = app;
-        let sql = "select t.*\n" +
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const {sqlExecutor, tableRowHelper} = app;
+        const sql = "select t.*\n" +
             "from bc_card t\n" +
             "order by length(t.name) asc, t.user_id asc";
-        let data:any[] = await sqlExecutor.query(sql);
-        for (let row of data) {
+        const data: any[] = await sqlExecutor.query(sql);
+        for (const row of data) {
             await tableRowHelper.translateId(row);
             await tableRowHelper.translateDateTime("bc_card", row);
         }
         //分组
-        let map: Map<string, any[]> = new Map<string, any[]>();
-        for (let row of data) {
-            let userId = row["user_id"];
+        const map: Map<string, any[]> = new Map<string, any[]>();
+        for (const row of data) {
+            const userId = row["user_id"];
             let arrays = map.get(userId);
             if (!arrays) {
                 arrays = [];
@@ -39,16 +39,16 @@ export default class BillList extends Controller {
             }
             arrays.push(row);
         }
-        let result:any[] = [];
-        for (let key of map.keys()) {
-            let value:any = map.get(key);
-            let firstValue = value[0];
+        const result: any[] = [];
+        for (const key of map.keys()) {
+            const value: any = map.get(key);
+            const firstValue = value[0];
             result.push({
-                id:key,
-                name:firstValue["user_name"],
-                children:value,
-            })
+                id: key,
+                name: firstValue["user_name"],
+                children: value,
+            });
         }
-        ctx.body.data =result;
+        ctx.body.data = result;
     }
 }

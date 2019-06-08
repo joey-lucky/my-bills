@@ -1,23 +1,21 @@
-import {Application, Context, PageResult, Service} from 'egg';
+import {Application, Context, PageResult, Service} from "egg";
 import Assert from "../../utils/Assert";
 import StringUtils from "../../utils/StringUtils";
 
 export default class BdBill extends Service {
     //添加普通账单
     public async createBill(params: any): Promise<void> {
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let userInfo = await ctx.getUserInfo();
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const userInfo = await ctx.getUserInfo();
         Assert.isTrue(params && params["bd_bill"] && params["bd_bill"].length > 0, "数据不能为空");
-        let transaction = await app.sqlExecutor.beginTransaction();
+        const transaction = await app.sqlExecutor.beginTransaction();
         try {
-            let billData: any[] = params["bd_bill"];
-            for (let bill of billData) {
+            const billData: any[] = params["bd_bill"];
+            for (const bill of billData) {
                 bill["user_id"] = userInfo["id"];
-                let billTransfers:any[] = (bill.children && bill.children["bd_bill_transfer"]) || [];
-                for (let billTransfer of billTransfers) {
-
-
+                const billTransfers: any[] = (bill.children && bill.children["bd_bill_transfer"]) || [];
+                for (const billTransfer of billTransfers) {
 
                 }
                 await app.tableRowHelper.completeInsertTableRow(billData, ctx);
@@ -25,18 +23,16 @@ export default class BdBill extends Service {
 
             }
 
-
             await transaction.commit();
         } catch (e) {
             await transaction.rollback();
             throw e;
         }
 
-        let billData = params["bd_bill"][0];
+        const billData = params["bd_bill"][0];
         billData["user_id"] = userInfo["id"];
-        let children = billData.children || {};
+        const children = billData.children || {};
         await app.tableRowHelper.completeInsertTableRow(billData, ctx);
-
 
         await app.tableRowHelper.completeInsertTableRow(billData, ctx);
         await app.sqlExecutor.insert("bd_bill", billData);
@@ -45,11 +41,11 @@ export default class BdBill extends Service {
     //添加普通账单
     public async createNormalBill(params: any): Promise<void> {
         Assert.isTrue(params && params["bd_bill"] && params["bd_bill"].length === 1, "数据不能为空");
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let userInfo = await ctx.getUserInfo();
-        let billList: any[] = params["bd_bill"];
-        let billData = billList[0];
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const userInfo = await ctx.getUserInfo();
+        const billList: any[] = params["bd_bill"];
+        const billData = billList[0];
         billData["user_id"] = userInfo["id"];
         await app.tableRowHelper.completeInsertTableRow(billData, ctx);
         await app.sqlExecutor.insert("bd_bill", billData);
@@ -58,11 +54,11 @@ export default class BdBill extends Service {
     //修改普通账单
     public async updateNormalBill(params: any): Promise<void> {
         Assert.isTrue(params && params["bd_bill"] && params["bd_bill"].length === 1, "数据不能为空");
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let userInfo = await ctx.getUserInfo();
-        let billList: any[] = params["bd_bill"];
-        let billData = billList[0];
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const userInfo = await ctx.getUserInfo();
+        const billList: any[] = params["bd_bill"];
+        const billData = billList[0];
         billData["user_id"] = userInfo["id"];
         await app.tableRowHelper.completeUpdateTableRow(billData, ctx);
         await app.sqlExecutor.update("bd_bill", billData);
@@ -74,17 +70,17 @@ export default class BdBill extends Service {
         Assert.isTrue(params["bd_bill"] && params["bd_bill"].length === 1, "数据不能为空");
         Assert.isTrue(params["bd_bill_transfer_detail"] && params["bd_bill_transfer_detail"].length === 1, "数据不能为空");
 
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let userInfo = await ctx.getUserInfo();
-        let billList: any[] = params["bd_bill"];
-        let transferList: any[] = params["bd_bill_transfer_detail"];
-        let billData = billList[0];
-        let transferData = transferList[0];
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const userInfo = await ctx.getUserInfo();
+        const billList: any[] = params["bd_bill"];
+        const transferList: any[] = params["bd_bill_transfer_detail"];
+        const billData = billList[0];
+        const transferData = transferList[0];
         billData["user_id"] = userInfo["id"];
         await app.tableRowHelper.completeInsertTableRow(billData, ctx);
         await app.tableRowHelper.completeInsertTableRow(transferData, ctx);
-        let transaction = await app.sqlExecutor.beginTransaction();
+        const transaction = await app.sqlExecutor.beginTransaction();
         try {
             await transaction.insert("bd_bill", billData);
             await transaction.insert("bd_bill_transfer_detail", transferData);
@@ -100,17 +96,17 @@ export default class BdBill extends Service {
         Assert.isTrue(params, "数据不能为空");
         Assert.isTrue(params["bd_bill"] && params["bd_bill"].length === 1, "数据不能为空");
         Assert.isTrue(params["bd_bill_transfer_detail"] && params["bd_bill_transfer_detail"].length === 1, "数据不能为空");
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let userInfo = await ctx.getUserInfo();
-        let billList: any[] = params["bd_bill"];
-        let transferList: any[] = params["bd_bill_transfer_detail"];
-        let billData = billList[0];
-        let transferData = transferList[0];
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const userInfo = await ctx.getUserInfo();
+        const billList: any[] = params["bd_bill"];
+        const transferList: any[] = params["bd_bill_transfer_detail"];
+        const billData = billList[0];
+        const transferData = transferList[0];
         billData["user_id"] = userInfo["id"];
         await app.tableRowHelper.completeUpdateTableRow(billData, ctx);
         await app.tableRowHelper.completeUpdateTableRow(transferData, ctx);
-        let transaction = await app.sqlExecutor.beginTransaction();
+        const transaction = await app.sqlExecutor.beginTransaction();
         try {
             await transaction.update("bd_bill", billData);
             await transaction.update("bd_bill_transfer_detail", transferData);
@@ -123,10 +119,10 @@ export default class BdBill extends Service {
 
     //获取分页账单信息
     public async getBillPageData(params: any): Promise<PageResult> {
-        let app: Application = this.app;
-        let ctx: Context = this.ctx;
-        let userId = params["user_id"];
-        let pageInfo = params["pageInfo"];
+        const app: Application = this.app;
+        const ctx: Context = this.ctx;
+        const userId = params["user_id"];
+        const pageInfo = params["pageInfo"];
         Assert.notNull(pageInfo, "page info is null");
         const {sqlExecutor, tableRowHelper} = app;
         // language=MySQL
@@ -144,14 +140,14 @@ export default class BdBill extends Service {
             "       left join bc_card t2 on t2.id = t.card_id\n" +
             "       left join bc_user t3 on t3.id = t2.user_id\n" +
             "where 1 = 1\n";
-        let queryParams: any[] = [];
+        const queryParams: any[] = [];
         if (StringUtils.hasText(userId)) {
             sql += "  and t.user_id = ?\n";
             queryParams.push(userId);
         }
         sql += "order by t.date_time desc";
-        let result = await sqlExecutor.queryPage(sql, queryParams, params.pageInfo);
-        for (let row of result.rows) {
+        const result = await sqlExecutor.queryPage(sql, queryParams, params.pageInfo);
+        for (const row of result.rows) {
             await tableRowHelper.translateId(row);
             await tableRowHelper.translateDateTime("bd_bill", row);
         }

@@ -3,5 +3,4 @@ export default class StringUtils {
         return str && str.length > 0;
     }
 
-
 }

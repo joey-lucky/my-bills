@@ -1,7 +1,7 @@
 export default class TokenError extends Error {
     static hasText(token): void {
         if (!token) {
-            throw new TokenError("token is null")
+            throw new TokenError("token is null");
         }
     };
 

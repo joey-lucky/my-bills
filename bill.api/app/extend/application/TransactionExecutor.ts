@@ -1,7 +1,6 @@
 import {Application, Transaction} from "egg";
 import Assert from "../../utils/Assert";
 
-
 export class TransactionExecutor {
     readonly transaction: Transaction;
     readonly app: Application;
@@ -11,13 +10,12 @@ export class TransactionExecutor {
         this.app = app;
     }
 
-
     public async delete(tableName: string, id: string): Promise<any> {
         Assert.hasText(tableName, "tableName is null");
         Assert.hasText(id, "id is null");
-        let result = await this.transaction.delete(tableName, {id: id});
+        const result = await this.transaction.delete(tableName, {id});
         setTimeout(async () => {
-            await this.app.dataBaseObserver.onDeleted(tableName, id)
+            await this.app.dataBaseObserver.onDeleted(tableName, id);
         }, 100);
         return result;
     }
@@ -27,9 +25,9 @@ export class TransactionExecutor {
         Assert.notNull(values, "insert values is null");
         await this.app.tableRowHelper.translateDateTime(tableName, values);
         await this.app.tableRowHelper.deleteUselessFields(tableName, values);
-        let result = await this.transaction.insert(tableName, values);
+        const result = await this.transaction.insert(tableName, values);
         setTimeout(async () => {
-            await this.app.dataBaseObserver.onInserted(tableName, values)
+            await this.app.dataBaseObserver.onInserted(tableName, values);
         }, 100);
         return result;
     }
@@ -39,9 +37,9 @@ export class TransactionExecutor {
         Assert.notNull(values, "update values is null");
         await this.app.tableRowHelper.translateDateTime(tableName, values);
         await this.app.tableRowHelper.deleteUselessFields(tableName, values);
-        let result = await this.transaction.update(tableName, values, options);
+        const result = await this.transaction.update(tableName, values, options);
         setTimeout(async () => {
-            await this.app.dataBaseObserver.onUpdated(tableName, values)
+            await this.app.dataBaseObserver.onUpdated(tableName, values);
         }, 100);
         return result;
     }

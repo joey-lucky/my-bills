@@ -1,4 +1,4 @@
-import {Service} from 'egg';
+import {Service} from "egg";
 
 export default class BcUser extends Service {
     public async getUserByLoginName(loginName: string): Promise<object> {

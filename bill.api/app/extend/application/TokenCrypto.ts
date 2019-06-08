@@ -14,18 +14,18 @@ export default class TokenCrypto {
     }
 
     public createToken(userId): string {
-        let tokenObj: TokenObject = {userId, expires: Date.now()};
-        let str = JSON.stringify(tokenObj);
-        const cipher = crypto.createCipher('aes192', this.secretKey);
-        let token = cipher.update(str, 'utf8', 'hex');
-        token += cipher.final('hex');
-        return token;//编码方式从utf-8转为hex;
+        const tokenObj: TokenObject = {userId, expires: Date.now()};
+        const str = JSON.stringify(tokenObj);
+        const cipher = crypto.createCipher("aes192", this.secretKey);
+        let token = cipher.update(str, "utf8", "hex");
+        token += cipher.final("hex");
+        return token; //编码方式从utf-8转为hex;
     }
 
     public parseToken(token): TokenObject {
-        const decipher = crypto.createDecipher('aes192', this.secretKey);
-        let result = decipher.update(token, 'hex', 'utf8');
-        result += decipher.final('utf8');
+        const decipher = crypto.createDecipher("aes192", this.secretKey);
+        let result = decipher.update(token, "hex", "utf8");
+        result += decipher.final("utf8");
         return JSON.parse(result);
     }
 }
