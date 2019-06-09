@@ -4,4 +4,7 @@ import BaseSubscriber from "../BaseSubscriber";
 
 @EventSubscriber()
 export class BdBillTransferSubscriber extends BaseSubscriber<BdBillTransfer> {
+    afterLoad(entity: BdBillTransfer): Promise<any> | void{
+        entity.targetCardName = entity.targetCard && entity.targetCard.name;
+    }
 }

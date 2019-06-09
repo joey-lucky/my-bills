@@ -10,6 +10,6 @@ export class BcBillType extends BaseEntity {
     @Column({name:"sort"})
     sort: number;
 
-    @Column({name:"type"})
+    @Column({name:"type",comment:"-1支出 1收入 0转账"})
     type: string;
 }

@@ -8,6 +8,9 @@ export const billApi = {
         getUserInfo: function () {
             return request('/wxapp/bill/bill-list/get-user-info',{});
         },
+        getBillEntity:function (id) {
+            return request('/wxapp/bill/bill-list/get-bill-entity',{id});
+        }
     },
     creditBillAdd:{
         createBill: function (params) {

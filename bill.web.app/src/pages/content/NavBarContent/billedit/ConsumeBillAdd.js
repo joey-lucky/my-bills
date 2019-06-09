@@ -13,32 +13,31 @@ import UUID from "@utils/UUID";
  */
 @createForm()
 export default class ConsumeBillAdd extends React.Component {
-    _defBill = {
-        date_time: new Date(),
-        bill_type_id: "32291f40-2cfb-11e9-b803-2fb0ad7f2291",
-    };
-
     constructor(props) {
         super(props);
-        let locationState = this.props.location.state || {};
-        let locationBill = locationState.data;
-        let bill = this._defBill;
-        if (locationBill) {
-            bill = locationBill;
-            let money = bill["money"];
-            let dateTime = bill["date_time"];
-            bill.date_time = moment(dateTime).toDate();
-            bill.money = Math.abs(money);
+        let id = this.props.match.params.id;
+        let isUpdate = !!id;
+        let bill = {id: id};
+        if (!isUpdate) {
+            bill.billTypeId = "32291f40-2cfb-11e9-b803-2fb0ad7f2291";
+            bill.dateTime = moment().format("YYYY-MM-DD HH:mm:ss");
         }
         this.state = {
-            isUpdate: !!locationState.data,
-            bill: bill,
+            isUpdate,
+            bill,
             cardData: [],
             billTypeData: [],
         };
     }
 
     componentDidMount() {
+        if (this.state.isUpdate) {
+            let id = this.props.match.params.id;
+            billApi.billList.getBillEntity(id).then(d => {
+                let data = d.data && d.data[0];
+                this.setState({bill: data})
+            });
+        }
         billApi.consumeBillAdd.getCardList().then(d => {
             let data = d.data || [];
             this.setState({
@@ -83,7 +82,13 @@ export default class ConsumeBillAdd extends React.Component {
     };
 
     getFieldProps = (id, opt = {}) => {
-        opt.initialValue = this.state.bill[id];
+        if (id === "money") {
+            opt.initialValue = Math.abs(this.state.bill[id]);
+        }else if (id === "dateTime") {
+            opt.initialValue = moment(this.state.bill[id]).toDate();
+        }else {
+            opt.initialValue = this.state.bill[id];
+        }
         return this.props.form.getFieldProps(id, opt);
     };
 
@@ -128,13 +133,13 @@ export default class ConsumeBillAdd extends React.Component {
                 <TopBar title={title}/>
                 <List style={{width: "100%"}}>
                     <PickerItem
-                        {...this.getFieldProps("card_id", {rules: [{required: true, message: "请选择卡片类型"}]})}
+                        {...this.getFieldProps("cardId", {rules: [{required: true, message: "请选择卡片类型"}]})}
                         label={"银行卡类型"}
                         cols={2}
                         data={this.state.cardData}
                     />
                     <PickerItem
-                        {...this.getFieldProps("bill_type_id", {rules: [{required: true, message: "请选择账单类型"}]})}
+                        {...this.getFieldProps("billTypeId", {rules: [{required: true, message: "请选择账单类型"}]})}
                         label={"账单类型"}
                         data={this.state.billTypeData}
                     />
@@ -144,7 +149,7 @@ export default class ConsumeBillAdd extends React.Component {
                         extra={"¥"}
                     >金额</InputItem>
                     <DatePicker
-                        {...this.getFieldProps("date_time", {
+                        {...this.getFieldProps("dateTime", {
                             rules: [{required: true, message: "请选择时间"}]
                         })}
                         mode={"date"}
@@ -157,7 +162,7 @@ export default class ConsumeBillAdd extends React.Component {
                         </List.Item>
                     </DatePicker>
                     <InputItem
-                        {...this.getFieldProps("bill_desc", {
+                        {...this.getFieldProps("billDesc", {
                             rules: [{required: true, message: "请输入具体明细"}]
                         })}
                         type={"text"}

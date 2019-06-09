@@ -1,19 +1,16 @@
 import 'egg';
 import {ExtendApplication} from "../app/extend/application";
 import {ExtendRequest} from "../app/extend/request";
+import {BcUser} from "../app/database/entity/BcUser";
 
 declare module 'egg' {
-
-    import {ExtendApplication} from "../app/extend/application";
-    import {ExtendRequest} from "../app/extend/request";
-    import {ExtendContext} from "../app/extend/context";
-
     interface Request extends ExtendRequest {
 
     }
 
-    interface Context extends ExtendContext {
-        body: RequestResult
+    interface Context{
+        body: RequestResult;
+        user: BcUser;
     }
 
     interface Application extends ExtendApplication {

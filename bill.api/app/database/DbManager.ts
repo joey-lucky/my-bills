@@ -8,6 +8,8 @@ import {BcCardType} from "./entity/BcCardType";
 import {BdBill} from "./entity/BdBill";
 import {BdBillTransfer} from "./entity/BdBillTransfer";
 type Entity = BcUser|BcBillType|BcCard|BcCardType|BdBill|BdBillTransfer;
+
+
 export default class DbManager {
     static async insert(ctx: Context, entity:Entity):Promise<void> {
         try {

@@ -1,5 +1,4 @@
-import * as assert from "assert";
-import {Application, Context, Controller, Service} from "egg";
+import {Application, Context, Service} from "egg";
 import Assert from "../../utils/Assert";
 
 export default class extends Service {
@@ -52,4 +51,4 @@ export default class extends Service {
 
     }
 }
-
+

@@ -3,7 +3,7 @@ import {action, observable, runInAction, toJS} from "mobx";
 import {observer} from "mobx-react";
 import {Flex, List, ListView, Picker, Tag, WhiteSpace, WingBlank} from "antd-mobile";
 import {StickyContainer} from "react-sticky";
-import { billApi} from "@services/api";
+import {billApi} from "@services/api";
 import {globalStyles} from "@global";
 import * as PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
@@ -131,16 +131,16 @@ export default class BillList extends React.Component {
     }
 
     onItemClick = (rowData) => {
-        let billTypeId = rowData["bill_type_id"];
-        let billTypeType = rowData["bill_type_type"];
+        let billTypeId = rowData.billTypeId;
+        let billTypeType = rowData.billTypeType;
 
         if (billTypeId === "6efb4370-4868-11e9-a5f7-8d7957d89dc7") {
             this.props.history.push("/content/nav-bar/billedit/credit", {data: rowData});
-        } else if (billTypeType==="1") {
+        } else if (billTypeType === "1") {
             this.props.history.push("/content/nav-bar/billedit/income", {data: rowData});
-        }else if (billTypeType==="-1") {
-            this.props.history.push("/content/nav-bar/billedit/consume", {data: rowData});
-        }else if (billTypeType==="0") {
+        } else if (billTypeType === "-1") {
+            this.props.history.push("/content/nav-bar/billedit/consume/" + rowData.id);
+        } else if (billTypeType === "0") {
             this.props.history.push("/content/nav-bar/billedit/transfer", {data: rowData});
         }
     };
@@ -176,17 +176,17 @@ export default class BillList extends React.Component {
                        }}
             >
                 {
-                    rowData["bill_desc"]
+                    rowData.billDesc
                 }
                 <List.Item.Brief style={{fontSize: "0.5rem"}}>
                     <Flex direction={"row"}>
-                        {rowData["bill_type_name"]}
+                        {rowData.billTypeName}
                         <WingBlank size={"sm"}/>
-                        {rowData["cardUserName"] + " - " + rowData["card_name"]}
+                        {rowData.cardUserName + " - " + rowData.cardName}
                     </Flex>
                 </List.Item.Brief>
                 <List.Item.Brief style={{fontSize: "0.5rem"}}>
-                    {rowData["date_time"]}
+                    {rowData.dateTime}
                 </List.Item.Brief>
             </List.Item>
         );

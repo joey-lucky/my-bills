@@ -13,6 +13,7 @@ import TransferBillAdd from "./billedit/TransferBillAdd";
 
 const routes = [
     {path: "/billedit/income", component: IncomeBillAdd},
+    {path: "/billedit/consume/:id", component: ConsumeBillAdd},
     {path: "/billedit/consume", component: ConsumeBillAdd},
     {path: "/billedit/credit", component: CreditBillAdd},
     {path: "/billedit/transfer", component: TransferBillAdd},
