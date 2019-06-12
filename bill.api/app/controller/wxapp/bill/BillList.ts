@@ -23,30 +23,14 @@ export default class BillList extends Controller {
      */
     public async getBillPageData() {
         const params = this.ctx.request.queryObjects;
-        let [data, pageInfo] = await getCustomRepository(BdBillRepo).getPageData(
+        let [data, pageInfo] = await getCustomRepository(BdBillRepo).getViewPageData(
             params["pageInfo"],
             {
                 userId: params["user_id"],
                 dateTime: params["date_time"] && params["date_time"].map(item => moment(item).toDate()),
                 billTypeId: params["bill_type_id"],
             });
-        let rows: BillData[] = [];
-        for (let item of data) {
-            let cardUserId = item.card.userId;
-            let cardUserName = await getCustomRepository(BcUserRepo).findUserName(cardUserId);
-            rows.push({
-                id: item.id,
-                cardName: item.card.name,
-                cardUserName: cardUserName,
-                userName: item.user.name,
-                billTypeName: item.billType.name,
-                money: item.money,
-                billDesc: item.billDesc,
-                dateTime: item.dateTime,
-                billTypeType:item.billType.type
-            });
-        }
-        this.ctx.body.data = rows;
+        this.ctx.body.data = data;
         this.ctx.body.pageInfo = pageInfo;
     }
 

@@ -1,14 +1,4 @@
-import {
-    Column,
-    Entity,
-    FindConditions,
-    FindOperator,
-    getRepository,
-    Index,
-    JoinColumn,
-    ManyToOne,
-    OneToOne
-} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToOne} from "typeorm";
 import BaseEntity from "../BaseEntity";
 import {BcUser} from "./BcUser";
 import {BcBillType} from "./BcBillType";
@@ -18,16 +8,16 @@ import * as moment from "moment";
 
 @Entity()
 export class BdBill extends BaseEntity {
-    @Column({name: "card_id"})
+    @JoinColumn({name: "card_id"})
     cardId: string;
 
-    @Column({name: "user_id"})
+    @JoinColumn({name: "user_id"})
     userId: string;
 
-    @Column({name: "bill_type_id"})
+    @JoinColumn({name: "bill_type_id"})
     billTypeId: string;
 
-    @Column({name: "money",type:"double",scale:2})
+    @Column({name: "money", type: "double", scale: 2})
     money: number;
 
     @Column({name: "bill_desc"})
@@ -35,7 +25,7 @@ export class BdBill extends BaseEntity {
 
     @Column({
         name: "date_time",
-        type:"datetime",
+        type: "datetime",
         transformer: {
             from: (date: Date) => moment(date).format("YYYY-MM-DD HH:mm:ss"),
             to: (date: string) => moment(date).toDate(),
@@ -43,19 +33,18 @@ export class BdBill extends BaseEntity {
     })
     dateTime: string;
 
-    @ManyToOne(type => BcCard)
-    @JoinColumn({name: "card_id"})
-    card: BcCard;
-
-    @ManyToOne(() => BcUser)
-    @JoinColumn({
-        name: "user_id"
-    })
-    user: BcUser;
-
-    @ManyToOne(type => BcBillType)
+    @ManyToOne(() => BcBillType, {onDelete: "SET NULL", onUpdate: "CASCADE"})
     @JoinColumn({name: "bill_type_id"})
     billType: BcBillType;
+
+    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @JoinColumn({name: "user_id"})
+    user: BcUser;
+
+
+    @ManyToOne(() => BcCard, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @JoinColumn({name: "card_id"})
+    card: BcCard;
 
     @OneToOne(type => BdBillTransfer, (transfer) => transfer.bill)
     billTransfer: BdBillTransfer | null;

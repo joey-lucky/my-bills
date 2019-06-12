@@ -1,14 +1,9 @@
 import {app} from "egg-mock/bootstrap";
 import {Context} from "egg";
-import {Connection, createConnection, getConnection, getCustomRepository, getRepository} from "typeorm";
+import {createConnection, getCustomRepository, getRepository} from "typeorm";
 // import {BdBill} from "../../../app/database/entity/BdBill";
 // import {BcUser} from "../../../app/database/entity/BcUser";
-import {BcCard} from "../../../app/database/entity/BcCard";
-import {BdBill} from "../../../app/database/entity/BdBill";
 import BdBillRepo from "../../../app/database/repositories/BdBillRepo";
-import BcUserRepo from "../../../app/database/repositories/BcUserRepo";
-import {BcUser} from "../../../app/database/entity/BcUser";
-import BcCardRepo from "../../../app/database/repositories/BcCardRepo";
 
 describe("test/app/database/DbManager.test.ts", () => {
     let ctx: Context;
@@ -20,7 +15,10 @@ describe("test/app/database/DbManager.test.ts", () => {
 
     it('sayHi', async () => {
         await createConnection();
-        let data =  await BdBill.find();
+        let data = null;
+        data = await getCustomRepository(BdBillRepo).find({loadEagerRelations: false})
+
+        data = await getCustomRepository(BdBillRepo).getViewPageData({pageIndex: 1, pageSize: 5}, {});
         console.log(data);
         return "sayHi";
     });

@@ -25,7 +25,7 @@ export default class IncomeBillAdd extends Controller {
         try {
             let params: DeepPartial<BdBill> = this.ctx.request.queryObjects["bd_bill"][0];
             let entity: BdBill = getCustomRepository(BdBillRepo).create(params);
-            await getCustomRepository(BdBillRepo).update(params.id, params);
+            await getCustomRepository(BdBillRepo).save(entity);
         } catch (e) {
             throw new RequestError("账单更新失败", e);
         }
@@ -33,7 +33,7 @@ export default class IncomeBillAdd extends Controller {
     }
 
     public async getCardList() {
-        this.ctx.body.data = await getCustomRepository(BcCardRepo).getList();
+        this.ctx.body.data = await getCustomRepository(BcCardRepo).getViewList();
     }
 
     public async getBillTypeList() {

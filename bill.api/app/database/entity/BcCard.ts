@@ -8,23 +8,20 @@ export class BcCard extends BaseEntity {
     @Column({name: "name"})
     name: string;
 
-    @Column({name: "user_id"})
+    @JoinColumn({name: "user_id"})
     userId: string;
 
-    @Column({name: "card_type_id"})
+    @JoinColumn({name: "card_type_id"})
     cardTypeId: string;
 
     @Column({name: "balance"})
     balance: number;
 
-    @ManyToOne(type => BcUser)
+    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
     @JoinColumn({name: "user_id"})
     user: BcUser;
 
-    @ManyToOne(type => BcCardType)
+    @ManyToOne(() => BcCardType, {onDelete: "SET NULL", onUpdate: "CASCADE"})
     @JoinColumn({name: "card_type_id"})
     cardType: BcCardType;
-
-    userName: string | undefined;
-    cardTypeName: string | undefined;
 }
