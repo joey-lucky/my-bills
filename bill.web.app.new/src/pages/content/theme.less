@@ -1,0 +1,58 @@
+@import "../../../node_modules/antd-mobile/dist/antd-mobile.less"; // 引入官方提供的 less 样式入口文件
+
+@menu-dark-bg:#0099CC;
+@layout-header-background:#0099CC;
+@layout-trigger-background:#0099CC;
+@primary-color:#0099CC;
+@menu-dark-item-selected-bg:rgba(0,0,0,0.2);
+@layout-body-background: #FFFFFF;
+*{
+  padding: 0;
+  margin: 0;
+}
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0.0,0,0,0.02);
+  position: relative;
+}
+
+.fill-parent{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/*水平布局*/
+.horizontal{
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+/*垂直布局*/
+.vertical{
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/*填满父类剩余空间*/
+.fill-space-v{
+  position: relative;
+  width: 100%;
+  height: 0;
+  flex-grow: 1;
+}
+
+.fill-space-h{
+  position: relative;
+  width: 0;
+  height: 100%;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
