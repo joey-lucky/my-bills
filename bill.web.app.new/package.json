@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "antd-mobile": "^2.2.8",
+    "he": "^1.2.0",
     "history": "^4.6.2",
     "mobx": "^4.2.0",
     "mobx-react": "^5.0.0",

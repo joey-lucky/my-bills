@@ -51,6 +51,14 @@ let config = {
                     publicPath: publicPath,
                     name: pageConfig.imagePath,
                 },
+            },
+            {
+                test: /\.(eot|woff2|woff|ttf)$/,
+                loader: "file-loader",
+                options: {
+                    publicPath: publicPath,
+                    name: pageConfig.fontsPath,
+                },
             }
         ]
     },

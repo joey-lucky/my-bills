@@ -1,14 +1,22 @@
 import * as React from "react";
-import * as styles from "./index.css";
 import ToolBar from "./ToolBar";
+import Total from "./Total";
+import Content from "@pages/Home/Content";
+import BottomBar from "@pages/Home/BottomBar";
+import {Flex} from "antd-mobile";
 
 export default class Home extends React.Component{
     render(){
         return(
-            <div className={styles.container}>
+            <Flex
+                style={{width:"100%",height:"100%"}}
+                direction={"column"}
+            >
                 <ToolBar title={"默认账本"}/>
-                <h1>首页</h1>
-            </div>
+                <Total/>
+                <Content/>
+                <BottomBar/>
+            </Flex>
         );
 
     }

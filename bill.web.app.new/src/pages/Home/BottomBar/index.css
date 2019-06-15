@@ -1,0 +1,20 @@
+.container{
+    height: 1.57rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.center{
+    width: 2.7rem;
+    height: 1.25rem;
+    border: 1px solid #D89F72;
+    background: #FE853E;
+    color: #FEFFF7;
+    font-size: 0.45rem;
+    border-radius: 1.25rem;
+    line-height: 1.25rem;
+    text-align: center;
+}

@@ -1,0 +1,70 @@
+.container {
+    display: flex;
+    width: 100%;
+    height: 2.16rem;
+    padding-left: 0.5rem;
+    box-sizing: border-box;
+}
+
+.container > div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    border-bottom: #E9E9E9 1px solid;
+    padding-left: 0.1rem;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.leftIcon {
+    font-size: 0.7rem;
+    color: #E17F76;
+    margin-right: 0.4rem;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    width: 0;
+    flex: 1;
+    justify-content: center;
+}
+
+.content :last-child {
+    font-size: 0.33rem;
+    color: #ABABAB;
+    margin-top: 0.1rem;
+}
+
+.content div:first-child{
+    font-weight: bold;
+    font-size: 0.43rem;
+    color: #2A2925;
+}
+
+
+
+.money {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.35rem;
+    margin-right: 0.2rem;
+    font-weight: bold;
+}
+
+.money div:first-child {
+    color: #E6543B;
+}
+
+.money div:last-child {
+    margin-top: 0.1rem;
+    color: #2EAC87;
+}
+
+.rightIcon {
+    margin-right: 0.55rem;
+    font-size: 0.37rem;
+    color: #C3C3C3;
+}

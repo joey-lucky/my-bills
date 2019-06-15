@@ -44,11 +44,11 @@ const getServerStaticProxy = () => {
 
 const version = "v" + moment().format("YYYYMMDDHHmmss");
 const pageConfig = {
-
     jsPath: `js/${version}.index.js`,
     cssPath: `css/${version}.[id].index.css`,
-    htmlPath: `view/${version}.index.html`,
-    imagePath: "image/[hash].[ext]",
+    imagePath: "img/[hash].[ext]",
+    fontsPath: "fonts/[hash].[ext]",
+    htmlPath: `index.html`,
     htmlTemplate: "public/index.html",
     entry: "src/index.js",
 };
