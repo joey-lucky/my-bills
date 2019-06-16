@@ -1,8 +1,7 @@
 import * as React from "react";
 import * as styles from "./index.css";
 
-
-export default class Total extends React.Component {
+export default class SlideShow extends React.Component {
     render() {
         return (
             <div className={styles.container}>

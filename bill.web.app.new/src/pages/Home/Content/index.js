@@ -6,17 +6,15 @@ export default class Content extends React.Component{
 
     render(){
         return(
-            <Flex.Item
-                style={{width:"100%"}}
+            <Flex
+                style={{width:"100%",height:0,flex:1,boxShadow:"0px -0.07rem #F5F5F5 inset"}}
                 direction={"column"}
             >
-                <Flex direction={"column"}>
-                    <ContentItem/>
-                    <ContentItem/>
-                    <ContentItem/>
-                    <ContentItem/>
-                </Flex>
-            </Flex.Item>
+                <ContentItem onClick={()=>{}}/>
+                <ContentItem/>
+                <ContentItem/>
+                <ContentItem/>
+            </Flex>
         );
     }
 }

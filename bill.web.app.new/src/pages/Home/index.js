@@ -1,8 +1,8 @@
 import * as React from "react";
 import ToolBar from "./ToolBar";
 import Total from "./Total";
-import Content from "@pages/Home/Content";
-import BottomBar from "@pages/Home/BottomBar";
+import Content from "./Content";
+import BottomBar from "./BottomBar";
 import {Flex} from "antd-mobile";
 
 export default class Home extends React.Component{

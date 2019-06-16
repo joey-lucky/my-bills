@@ -1,12 +1,30 @@
 import * as React from "react";
+import {Flex} from "antd-mobile";
+import ToolBar from "@components/ToolBar";
+import Total from "@pages/Home/Total";
+import * as PropTypes from "prop-types";
 
 
 export default class Assert extends React.Component{
+
+    onAddClick = (event) => {
+
+        event.stopPropagation();
+    };
+
     render(){
         return(
-            <div>
-                <h1>资产页</h1>
-            </div>
+            <Flex
+                style={{width:"100%",height:"100%"}}
+                direction={"column"}
+            >
+                <ToolBar
+                    title={"账户"}
+                    showAdd={true}
+                    onAddClick={this.onAddClick}
+                />
+                <Total/>
+            </Flex>
         );
 
     }
