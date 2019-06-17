@@ -20,28 +20,8 @@ export const propTypes = {
     }
 };
 
-/**
- * 黑色：[87% 普通文字] [54% 减淡文字] [26% 禁用状态/提示文字] [12% 分隔线]
- * 白色：[100% 普通文字] [70% 减淡文字] [30% 禁用状态/提示文字] [12% 分隔线]
- */
-export const colors = {
-    black:{
-        appBar: "rgba(0,0,0,0.95)",
-        title: "rgba(0,0,0,0.87)",
-        text: "rgba(0,0,0,0.54)",
-        tooltip: "rgba(0,0,0,0.26)",
-        divider: "rgba(0,0,0,0.12)",
-    },
-    white:{
-        appBar: "rgba(255,255,255,0.95)",
-        title: "rgba(255,255,255,0.87)",
-        text: "rgba(255,255,255,0.54)",
-        tooltip: "rgba(255,255,255,0.26)",
-        divider: "rgba(255,255,255,0.12)",
-    },
-    income:"#E6543B",
-    outgoing:"#2EAC87",
-};
+
+
 
 /**
  * 计算是 sp * 2.5 / 100

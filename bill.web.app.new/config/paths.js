@@ -72,6 +72,7 @@ paths.resolveAlias = {
     "@layouts": paths.resolveApp("src/layouts"),
     "@components": paths.resolveApp("src/components"),
     "@pages": paths.resolveApp("src/pages"),
+    "@res": paths.resolveApp("src/res"),
 };
 paths.ENV = {// 环境变量
     PUBLIC_PATH: JSON.stringify(paths.publicPath),

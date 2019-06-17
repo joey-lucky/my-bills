@@ -19,7 +19,10 @@ export default class FontIcon extends React.Component {
             search: "&#xe314;",
             add: "&#xe315;",
         },
-        bottomBar:["&#xe301;","&#xe302;","&#xe303;","&#xe304;"],
+        xe301:"&#xe301;",
+        xe302:"&#xe302;",
+        xe303:"&#xe303;",
+        xe304:"&#xe304;",
     };
 
     render() {

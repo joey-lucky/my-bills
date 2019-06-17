@@ -5,6 +5,7 @@ import Text from "@components/Text";
 import {Flex} from "antd-mobile";
 import Blank from "@components/Blank";
 
+
 export default class ToolBar extends React.Component {
     static propTypes = {
         title: PropTypes.string.isRequired,

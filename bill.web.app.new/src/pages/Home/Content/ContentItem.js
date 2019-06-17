@@ -3,8 +3,8 @@ import FontIcon from "@components/FontIcon";
 import Text from "@components/Text";
 import {Flex} from "antd-mobile";
 import Blank from "@components/Blank";
-import {colors} from "@global";
 import * as PropTypes from "prop-types";
+import colors from "@res/colors";
 
 export default class ContentItem extends React.Component {
     static propTypes = {

@@ -1,19 +1,35 @@
 import * as React from "react";
 import * as styles from "./index.css";
 import BottomIcon from "@pages/Home/BottomBar/BottomIcon";
-import FontIcon from "@components/FontIcon";
+import * as PropTypes from "prop-types";
+import {withRouter} from "react-router-dom";
 
-export default class BottomBar extends React.Component{
+@withRouter
+export default class BottomBar extends React.Component {
+    static propTypes = {
+        onItemClick: PropTypes.func,
+        data: PropTypes.array.isRequired,
+    };
 
-
-    render(){
-        return(
+    render() {
+        return (
             <div className={styles.container}>
-                <BottomIcon title={"账户"} unicode={FontIcon.icons.bottomBar[0]}/>
-                <BottomIcon title={"流水"} unicode={FontIcon.icons.bottomBar[1]}/>
-                <div className={styles.center}>记一笔</div>
-                <BottomIcon title={"投资"} unicode={FontIcon.icons.bottomBar[2]}/>
-                <BottomIcon title={"设置"} unicode={FontIcon.icons.bottomBar[3]}/>
+                {
+                    this.props.data.map((item, index, array) =>
+                        <React.Fragment key={item.label}>
+                            <BottomIcon
+                                title={item.label}
+                                unicode={item.icon}
+                                onClick={() => {
+                                    let pathname = this.props.location.pathname;
+                                    let parentPath = pathname.replace(/[^/]+$/, "");
+                                    this.props.history.push(parentPath + item.url);
+                                }}
+                            />
+                            {index === 1 && <div className={styles.center}>记一笔</div>}
+                        </React.Fragment>
+                    )
+                }
             </div>
         );
     }

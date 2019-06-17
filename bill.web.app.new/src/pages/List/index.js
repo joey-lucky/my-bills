@@ -1,10 +1,11 @@
 import * as React from "react";
 import {Flex} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
-import SlideShow from "@components/SlideShow";
+import Total from "@pages/Home/Total";
+import * as PropTypes from "prop-types";
 
 
-export default class Assert extends React.Component{
+export default class List extends React.Component{
 
     onAddClick = (event) => {
         event.stopPropagation();
@@ -17,18 +18,11 @@ export default class Assert extends React.Component{
                 direction={"column"}
             >
                 <ToolBar
-                    title={"账户"}
+                    title={"流水"}
                     showAdd={true}
                     onAddClick={this.onAddClick}
                 />
-                <SlideShow
-                    title={"净资产"}
-                    money={"109.69"}
-                    label1={"资产"}
-                    value1={"7700.65"}
-                    label2={"负债"}
-                    value2={"109.65"}
-                />
+                <Total/>
             </Flex>
         );
 

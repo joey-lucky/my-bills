@@ -35,7 +35,6 @@ export default class RouteContent extends React.Component {
 
     // 获取所有的路由
     getRoutes(routeData = [], parentPath = "") {
-        console.log(parentPath);
         if (parentPath === "/") {
             parentPath = "";
         }

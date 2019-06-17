@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import {colors, fontSizes} from "@global";
+import {fontSizes} from "@global";
+import colors from "@res/colors";
 
 export default class Text extends React.Component {
     static propTypes = {
@@ -10,13 +11,13 @@ export default class Text extends React.Component {
         ]),
         text: PropTypes.string,
         style: PropTypes.object,
-        color:PropTypes.string,
+        color: PropTypes.string,
         children: PropTypes.any,
     };
 
     render() {
         let fontSize = fontSizes[this.props.type];
-        let color = this.props.color || colors.black[this.props.type] || colors.black.text;
+        let color = this.props.color || colors[this.props.type] || colors.text;
         let style = {
             fontSize: fontSize,
             color: color,

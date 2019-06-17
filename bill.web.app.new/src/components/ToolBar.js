@@ -4,8 +4,9 @@ import Blank from "@components/Blank";
 import FontIcon from "@components/FontIcon";
 import Text from "@components/Text";
 import * as PropTypes from "prop-types";
+import {withRouter} from "react-router-dom";
 
-
+@withRouter
 export default class ToolBar extends React.Component {
     static propTypes = {
         title: PropTypes.string,
@@ -25,6 +26,9 @@ export default class ToolBar extends React.Component {
             >
                 <Blank level={1} direction={"row"}/>
                 <Blank
+                    onClick={()=>{
+                        this.props.history.goBack();
+                    }}
                     level={1}
                     direction={"row"}
                 >
