@@ -4,29 +4,29 @@ import Total from "./Total";
 import Content from "./Content";
 import BottomBar from "./BottomBar";
 import {Flex} from "antd-mobile";
-import FontIcon from "@components/FontIcon";
+import icons from "@res/icons";
 
 export default class Home extends React.Component {
     _bottomIcons = [
         {
             label: "账户",
             url: "asset",
-            icon: FontIcon.icons.xe301
+            icon: icons.xe301
         },
         {
             label: "流水",
             url: "list",
-            icon: FontIcon.icons.xe302
+            icon: icons.xe302
         },
         {
             label: "投资",
             url: "invest",
-            icon: FontIcon.icons.xe303
+            icon: icons.xe303
         },
         {
             label: "设置",
             url: "setting",
-            icon: FontIcon.icons.xe304
+            icon: icons.xe304
         },
     ];
 

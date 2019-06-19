@@ -5,6 +5,7 @@ import {Flex} from "antd-mobile";
 import Blank from "@components/Blank";
 import * as PropTypes from "prop-types";
 import colors from "@res/colors";
+import icons from "@res/icons";
 
 export default class ContentItem extends React.Component {
     static propTypes = {
@@ -59,7 +60,7 @@ export default class ContentItem extends React.Component {
                     </Flex>
                     <Blank level={2} direction={"row"}/>
                     <Text type={"text"}>
-                        <FontIcon unicode={FontIcon.icons.toolbar.right}/>
+                        <FontIcon unicode={icons.right}/>
                     </Text>
                     <Blank level={2} direction={"row"}/>
                 </Flex>

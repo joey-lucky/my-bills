@@ -11,20 +11,6 @@ export default class FontIcon extends React.Component {
         style:PropTypes.object,
     };
 
-    static icons = {
-        toolbar:{
-            right: "&#xe311;",
-            left: "&#xe312;",
-            confirm: "&#xe313;",
-            search: "&#xe314;",
-            add: "&#xe315;",
-        },
-        xe301:"&#xe301;",
-        xe302:"&#xe302;",
-        xe303:"&#xe303;",
-        xe304:"&#xe304;",
-    };
-
     render() {
         let {className="",style={}} = this.props;
         return (

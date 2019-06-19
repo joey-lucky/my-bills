@@ -23,16 +23,7 @@ export const propTypes = {
 
 
 
-/**
- * 计算是 sp * 2.5 / 100
- * tooltip 12sp 小字提示
- * 14sp（桌面端13sp） 正文/按钮文字
- * 16sp（桌面端15sp） 小标题
- * 20sp Appbar文字
- * 24sp 大标题
- * 34sp/45sp/56sp/112sp 超大号文字
- * 超大号改成 +0.2rem
- */
+
 export const fontSizes = {
     display4: "1.3rem",
     display3: "1.1rem",

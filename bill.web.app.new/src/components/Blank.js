@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import {Flex} from "antd-mobile";
+import {ReactNode} from "react";
 
 /**
  * 顶部状态栏高度：24dp
@@ -20,9 +21,11 @@ export default class Blank extends React.Component {
     static propTypes = {
         direction: PropTypes.oneOf(["row", "column"]),
         level: PropTypes.oneOf([1, 2]).isRequired,
+        style:PropTypes.object,
     };
 
     render() {
+        let propStyle = this.props.style || {};
         let size = 0.1 * this.props.level + "rem";
         let style;
         if (this.props.direction === "row") {
@@ -38,12 +41,13 @@ export default class Blank extends React.Component {
                 paddingBottom:size,
             }
         }
+        style = {...style, ...propStyle};
         return (
             <Flex
-                {...this.props}
                 style={style}
                 justify={"center"}
                 align={"center"}
+                {...this.props}
             >
                 {
                     this.props.children

@@ -83,8 +83,7 @@ const styles = {
         backgroundSize: "100% 100%",
         height: "4rem",
         width: "100%",
-        paddingBottom: "0.56rem",
-        paddingLeft: "0.65rem",
+        padding: "0.56rem",
         boxSizing: "border-box"
     }
 

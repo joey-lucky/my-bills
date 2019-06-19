@@ -12,6 +12,7 @@
 *.lock
 *.js
 !.autod.conf.js
+!ormconfig.js
 package-lock.json
 yarn.lock
 app/**/*.js

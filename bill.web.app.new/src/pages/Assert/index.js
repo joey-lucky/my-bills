@@ -2,6 +2,8 @@ import * as React from "react";
 import {Flex} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import SlideShow from "@components/SlideShow";
+import CardTypeItem from "@pages/Assert/CardTypeItem";
+import {Divider} from "@components/Divider";
 
 
 export default class Assert extends React.Component{
@@ -29,6 +31,13 @@ export default class Assert extends React.Component{
                     label2={"负债"}
                     value2={"109.65"}
                 />
+                <CardTypeItem/>
+                <Divider direction={"row"} size={"0.12rem"}/>
+                <CardTypeItem/>
+                <Divider direction={"row"} size={"0.12rem"}/>
+                <CardTypeItem/>
+                <Divider direction={"row"} size={"0.12rem"}/>
+                <CardTypeItem/>
             </Flex>
         );
 

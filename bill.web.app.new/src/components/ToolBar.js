@@ -5,6 +5,7 @@ import FontIcon from "@components/FontIcon";
 import Text from "@components/Text";
 import * as PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
+import icons from "@res/icons";
 
 @withRouter
 export default class ToolBar extends React.Component {
@@ -33,7 +34,7 @@ export default class ToolBar extends React.Component {
                     direction={"row"}
                 >
                     <Text type={"appBar"}>
-                        <FontIcon unicode={FontIcon.icons.toolbar.left}/>
+                        <FontIcon unicode={icons.left}/>
                     </Text>
                 </Blank>
                 <Text type={"appBar"} text={this.props.title || ""}/>
@@ -46,7 +47,7 @@ export default class ToolBar extends React.Component {
                         onClick={this.props.onSearchClick}
                     >
                         <Text type={"appBar"}>
-                            <FontIcon unicode={FontIcon.icons.toolbar.search}/>
+                            <FontIcon unicode={icons.search}/>
                         </Text>
                     </Blank>
                 }
@@ -58,7 +59,7 @@ export default class ToolBar extends React.Component {
                         onClick={this.props.onConfirmClick}
                     >
                         <Text type={"appBar"}>
-                            <FontIcon unicode={FontIcon.icons.toolbar.confirm}/>
+                            <FontIcon unicode={icons.confirm}/>
                         </Text>
                     </Blank>
                 }
@@ -70,7 +71,7 @@ export default class ToolBar extends React.Component {
                         onClick={this.props.onAddClick}
                     >
                         <Text type={"appBar"}>
-                            <FontIcon unicode={FontIcon.icons.toolbar.add}/>
+                            <FontIcon unicode={icons.add}/>
                         </Text>
                     </Blank>
                 }
