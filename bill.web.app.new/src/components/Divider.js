@@ -7,11 +7,15 @@ export class Divider extends React.Component {
         direction: PropTypes.oneOf(["row", "column"]),
         style: PropTypes.object,
         size: PropTypes.string,
-        color: PropTypes.string,
+        colorType:PropTypes.oneOf(["normal", "light"]),
     };
 
     calculateStyle() {
-        let {style = {}, direction = "row", size = "1px", color = colors.divider} = this.props;
+        let {style = {}, direction = "row", size = "1px", colorType} = this.props;
+        let color = colors.divider;
+        if (colorType === "light") {
+            color = colors.dividerLight;
+        }
         let myStyle ;
         if (direction === "row") {
             myStyle = {

@@ -79,6 +79,7 @@
   },
   "author": "",
   "license": "ISC",
+  "useMock": true,
   "apiHost": "http://localhost:3000/api",
   "homePage": "http://localhost:8080/app"
 }

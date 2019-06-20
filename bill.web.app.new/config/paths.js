@@ -9,6 +9,7 @@ const {
     homePage,
     apiHost,
     fileDirectory = "http://localhost:8080",
+    useMock=false,
 } = packageJson;
 const publicPath = getPath(homePage);
 const projectName = publicPath.split("/").pop();
@@ -58,6 +59,7 @@ const serverConfig = {
     port: getPort(homePage),
     apiTarget: getHost(apiHost),
     apiPath: apiPath,
+    useMock
 };
 let paths = {
     publicPath,
@@ -76,6 +78,7 @@ paths.resolveAlias = {
 };
 paths.ENV = {// 环境变量
     PUBLIC_PATH: JSON.stringify(paths.publicPath),
+    USE_MOCK: JSON.stringify(useMock),
     API_PATH: JSON.stringify(apiPath),
     FILE_PATH: JSON.stringify(fileDirectory.startsWith("http") ? fileDirectory : filePath),
     PROJECT_NAME: JSON.stringify(projectName),

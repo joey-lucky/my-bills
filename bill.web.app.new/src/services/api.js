@@ -1,6 +1,9 @@
 import {request} from '@utils/request';
 
 export const billApi = {
+    test:function(params){
+        return request('/test.json',params);
+    },
     billList:{
         getBillPageData: function (params) {
             return request('/wxapp/bill/bill-list/get-bill-page-data',params);

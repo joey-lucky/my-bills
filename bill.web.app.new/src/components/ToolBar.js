@@ -22,7 +22,7 @@ export default class ToolBar extends React.Component {
     render() {
         return (
             <Flex
-                style={{width: "100%", height: "1.35rem"}}
+                style={{width: "100%", height: "1.35rem",boxShadow:"0px -0.02rem #F5F5F5 inset"}}
                 direction={"row"}
             >
                 <Blank level={1} direction={"row"}/>

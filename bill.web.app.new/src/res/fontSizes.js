@@ -13,7 +13,7 @@ export default {
     display3: "1.1rem",
     display2: "0.9rem",
     display1: "0.7rem",
-    appBar: "0.5rem",
+    appBar: "0.52rem",
     title: "0.4rem",
     text: "0.35rem",
     tooltip: "0.3rem",

@@ -102,19 +102,27 @@ config.devServer = {
     port: port,
     publicPath: publicPath,
     historyApiFallback: {
-        rewrites: rewrites.map(item => ({
-            from: new RegExp(item.from),
-            to: item.to
-        }))
+        verbose: true,
+        rewrites: [
+            {
+                from: new RegExp("^" + publicPath),
+                to: function (context) {
+                    let pathname = context.parsedUrl.pathname;
+                    if (/[\.]/.test(pathname)) {
+                        return pathname;
+                    } else {
+                        return publicPath + pageConfig.htmlPath;
+                    }
+                }
+            },
+        ]
     },
     disableHostCheck: true,
     open: true,
     openPage: publicPath.substr(1),
     allowedHosts: [apiTarget],
     before(app) {
-        staticProxy.forEach((item) => {
-            app.use(item.from, express.static(item.to));
-        });
+        app.use("/mock", express.static(resolveApp("mock")));
     },
     proxy: {
         [apiPath]: {
@@ -123,7 +131,7 @@ config.devServer = {
             changeOrigin: true,
         },
     },
-    // useLocalIp: true,
+    useLocalIp: true,
     index: "/index.html",
 };
 

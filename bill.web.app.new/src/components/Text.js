@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import {fontSizes} from "@global";
+import fontSizes from "@res/fontSizes";
 import colors from "@res/colors";
 
 export default class Text extends React.Component {

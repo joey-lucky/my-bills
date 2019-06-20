@@ -11,6 +11,7 @@
   margin: 0;
   box-sizing: border-box;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 
@@ -20,6 +21,20 @@ html, body {
   color:rgba(0,0,0,220);
 }
 
+.my-button{
+  &:hover,&:active,&:focus{
+    outline: none;
+    background-color: rgba(0,0,0,0.05);
+  }
+}
+
+
+.fill-parent{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 #root {
   height: 100%;
   width: 100%;
@@ -27,11 +42,7 @@ html, body {
   position: relative;
 }
 
-.fill-parent{
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+
 
 /*水平布局*/
 .horizontal{
