@@ -1,9 +1,9 @@
-import {EntityRepository, FindConditions, FindOperator, getCustomRepository, getRepository} from "typeorm";
+import {EntityRepository, FindConditions, FindOperator, getRepository} from "typeorm";
 import {BdBill} from "../entity/BdBill";
 import BaseRepository from "../BaseRepository";
 import {BcUser} from "../entity/BcUser";
 import {BcBillType} from "../entity/BcBillType";
-import BcCardRepo from "./BcCardRepo";
+import {BcCard} from "../entity/BcCard";
 import moment = require("moment");
 
 interface PageInfo {
@@ -14,6 +14,7 @@ interface PageInfo {
 }
 
 interface QueryParam {
+    id?:string,
     userId?: string,
     cardId?: string,
     billTypeId?: string,
@@ -21,96 +22,107 @@ interface QueryParam {
 }
 
 export interface BdBillView {
-    id:string,
+    id: string,
     money: number,
     billDesc: string,
     dateTime: string,
     cardName: string,
-    cardUserName:string,
+    cardUserName: string,
     userName: string,
     billTypeName: string,
-    targetCardName:string,
-    targetCardUserName:string,
+    targetCardName: string,
+    targetCardUserName: string,
 }
 
 @EntityRepository(BdBill)
 export default class BdBillRepo extends BaseRepository<BdBill> {
-    async getViewPageData(pageInfo: PageInfo, params: QueryParam): Promise<[BdBillView[], PageInfo]> {
+    async getViewPageData(pageInfo: PageInfo = {}, params: QueryParam = {}): Promise<[BdBillView[], PageInfo]> {
         let {pageIndex = 1, pageSize = 15} = pageInfo;
-        let {userId, cardId, billTypeId, dateTime} = params;
         const start = (pageSize * (pageIndex - 1));
         let conditions: FindConditions<BdBill>[] = [];
-        if (userId) {
-            conditions.push({userId: userId});
+        if (params.id) {
+            conditions.push({id: params.id});
         }
-        if (cardId) {
-            conditions.push({cardId: cardId});
+        if (params.userId) {
+            conditions.push({user: await getRepository(BcUser).findOne(params.userId)});
         }
-        if (billTypeId) {
-            conditions.push({billTypeId: billTypeId});
+        if (params.cardId) {
+            conditions.push({card: await getRepository(BcCard).findOne(params.cardId)});
         }
-        if (dateTime) {
-            if (dateTime[0]) {
-                let datetimeStr = moment(dateTime[0]).format("YYYY-MM-DD HH:mm:ss");
+        if (params.billTypeId) {
+            conditions.push({billType: await getRepository(BcBillType).findOne(params.billTypeId)});
+        }
+        if (params.dateTime) {
+            if (params.dateTime[0]) {
+                let datetimeStr = moment(params.dateTime[0]).format("YYYY-MM-DD HH:mm:ss");
                 conditions.push({dateTime: new FindOperator("moreThanOrEqual", datetimeStr)});
             }
-            if (dateTime[1]) {
-                let datetimeStr = moment(dateTime[1]).format("YYYY-MM-DD HH:mm:ss");
+            if (params.dateTime[1]) {
+                let datetimeStr = moment(params.dateTime[1]).format("YYYY-MM-DD HH:mm:ss");
                 conditions.push({dateTime: new FindOperator("lessThanOrEqual", datetimeStr)});
             }
         }
         let [data, count] = await this.findAndCount({
-            relations: ["card", "user", "billType", "billTransfer"],
+            relations: [
+                "card",
+                "card.user",
+                "user",
+                "billType",
+                "billTransfer",
+                "billTransfer.targetCard",
+                "billTransfer.targetCard.user"
+            ],
             skip: start,
             take: pageSize,
             where: conditions,
             order: {
                 dateTime: "DESC"
             },
-            // loadEagerRelations:true,
         });
-        pageInfo.count = count;
-        pageInfo.pageCount = Math.ceil(count / pageInfo.pageSize);
+        let newPageInfo = {
+            pageIndex,
+            pageSize,
+            count,
+            pageCount: Math.ceil(count / pageSize)
+        };
         let viewList = await this.entityToViewList(data);
-        return [viewList, pageInfo];
+        return [viewList, newPageInfo];
     }
 
-    async entityToView(entity:BdBill):Promise<BdBillView>{
-        let view: BdBillView = {
+    async entityToView(entity: BdBill): Promise<BdBillView> {
+        let userName =
+            entity.user &&
+            entity.user.name || "";
+        let billTypeName =
+            entity.billType &&
+            entity.billType.name || "";
+        let cardName =
+            entity.card &&
+            entity.card.name || "";
+        let cardUserName =
+            entity.card &&
+            entity.card.user &&
+            entity.card.user.name || "";
+        let targetCardName =
+            entity.billTransfer &&
+            entity.billTransfer.targetCard &&
+            entity.billTransfer.targetCard.name || "";
+        let targetCardUserName =
+            entity.billTransfer &&
+            entity.billTransfer.targetCard &&
+            entity.billTransfer.targetCard.user &&
+            entity.billTransfer.targetCard.user.name || "";
+        return {
+            userName, billTypeName, cardName, cardUserName, targetCardName, targetCardUserName,
             id: entity.id,
             money: entity.money,
             billDesc: entity.billDesc,
             dateTime: entity.dateTime,
-            cardName: "",
-            cardUserName: "",
-            userName: "",
-            billTypeName: "",
-            targetCardName: "",
-            targetCardUserName: "",
         };
-        if (entity.card === null ||entity.card.user===null) {
-            let child = await getCustomRepository(BcCardRepo).findViewOne(entity.card.id);
-            view.cardName = child.name;
-            view.cardUserName = child.userName;
-        }
-        if (entity.user === null) {
-            let child = await getRepository(BcUser).findOne(entity.userId);
-            view.userName = child.name;
-        }
-        if (entity.billType === null) {
-            let child = await getRepository(BcBillType).findOne(entity.billTypeId);
-            view.billTypeName = child.name;
-        }
-        if (entity.billTransfer !== null) {
-            let child = await getCustomRepository(BcCardRepo).findViewOne(entity.billTransfer.targetCardId);
-            view.targetCardName = child.name;
-            view.targetCardUserName = child.userName;
-        }
-        return view;
     }
 
-    async entityToViewList(entities:BdBill[] = []):Promise<BdBillView[]>{
-        let views:BdBillView[] = [];
+    async entityToViewList(entities: BdBill[] = []): Promise<BdBillView[]> {
+        let views: BdBillView[] = [];
         for (let entity of entities) {
             views.push(await this.entityToView(entity));
         }

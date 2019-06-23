@@ -49,7 +49,7 @@ export function request(url, params = {}) {
             }
         } catch (e) {
             if (e.message.indexOf("token") !== -1) {
-                window.location.href = publicPath + "/login/"
+                window.location.href = publicPath + "/login"
             } else {
                 Toast.info(e.message, 1, null, true);
                 reject(e.message);

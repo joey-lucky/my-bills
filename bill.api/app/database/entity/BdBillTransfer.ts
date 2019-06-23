@@ -1,21 +1,21 @@
-import {Column, Entity, JoinColumn, OneToOne} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToOne} from "typeorm";
 import BaseEntity from "../BaseEntity";
 import {BdBill} from "./BdBill";
 import {BcCard} from "./BcCard";
 
 @Entity()
 export class BdBillTransfer extends BaseEntity {
-    @JoinColumn({name: "bill_id"})
+    @Column({name: "bill_id",length:36})
     billId: string;
 
-    @JoinColumn({name: "target_card_id"})
+    @Column({name: "target_card_id",length:36})
     targetCardId: string;
 
     @OneToOne(type => BdBill, {onDelete: "CASCADE", onUpdate: "CASCADE"})
     @JoinColumn({name: "bill_id"})
     bill: BdBill;
 
-    @OneToOne(type => BcCard)
+    @ManyToOne(type => BcCard)
     @JoinColumn({name: "target_card_id",referencedColumnName:"id"})
     targetCard: BcCard;
 }

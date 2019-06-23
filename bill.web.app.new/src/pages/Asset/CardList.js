@@ -8,10 +8,11 @@ import * as PropTypes from "prop-types";
 
 export default class CardList extends React.Component {
     static propTypes = {
-        cardData: PropTypes.arrayOf({
+        cardData: PropTypes.arrayOf(PropTypes.shape({
             name: PropTypes.string.isRequired,
+            userName: PropTypes.string.isRequired,
             balance: PropTypes.number.isRequired,
-        }),
+        })),
         cardTypeName: PropTypes.string.isRequired,
         totalBalance: PropTypes.number.isRequired,
         onItemCLick: PropTypes.func,
@@ -36,10 +37,13 @@ export default class CardList extends React.Component {
                 />
                 {
                     cardData.map((item, index) =>
-                        <React.Fragment key={cardTypeName + item.name}>
+                        <React.Fragment
+                            key={item.name+item.userName}
+                        >
                             <Card
                                 balance={item.balance}
                                 name={item.name}
+                                userName={item.userName}
                                 onClick={() => {
                                     onItemCLick(item, index, cardData);
                                 }}

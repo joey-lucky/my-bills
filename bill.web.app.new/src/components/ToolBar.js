@@ -11,6 +11,7 @@ import icons from "@res/icons";
 export default class ToolBar extends React.Component {
     static propTypes = {
         title: PropTypes.string,
+        titlePosition: PropTypes.oneOf(['start', 'end', 'center']),
         showSearch: PropTypes.bool,
         showAdd: PropTypes.bool,
         showConfirm: PropTypes.bool,
@@ -37,7 +38,14 @@ export default class ToolBar extends React.Component {
                         <FontIcon unicode={icons.left}/>
                     </Text>
                 </Blank>
-                <Text type={"appBar"} text={this.props.title || ""}/>
+                <Flex
+                    style={{flex:1,width:0}}
+                    align={"center"}
+                    justify={this.props.titlePosition ||"start"}
+                >
+                    <Text type={"appBar"} text={this.props.title || ""}/>
+                </Flex>
+
                 <Flex.Item/>
                 {
                     this.props.showSearch &&

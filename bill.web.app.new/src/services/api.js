@@ -1,5 +1,12 @@
 import {request} from '@utils/request';
 
+export const asset = {
+    groupByTypeList:function(params){
+        return request('/wxapp/asset/group-by-type-list',params);
+    },
+};
+
+
 export const billApi = {
     test:function(params){
         return request('/test.json',params);

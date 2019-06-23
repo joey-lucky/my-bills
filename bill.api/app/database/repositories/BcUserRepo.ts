@@ -1,10 +1,9 @@
-import {EntityRepository, getRepository} from "typeorm";
-import BaseRepository from "../BaseRepository";
+import {EntityRepository, getRepository, Repository} from "typeorm";
 import {BcUser} from "../entity/BcUser";
 import Assert from "../../utils/Assert";
 
 @EntityRepository(BcUser)
-export default class BcUserRepo extends BaseRepository<BcUser> {
+export default class BcUserRepo extends Repository<BcUser> {
     async login(userName = "", password = ""): Promise<BcUser> {
         let data: BcUser[] = await getRepository(BcUser).find({where: {loginName: userName,loginPassword:password}});
         Assert.isTrue(data.length > 0, "用户名或密码错误");

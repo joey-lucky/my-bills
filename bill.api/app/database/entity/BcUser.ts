@@ -1,8 +1,11 @@
-import {Column, Entity} from "typeorm";
-import BaseEntity from "../BaseEntity";
+import {Column, CreateDateColumn, Entity, JoinColumn, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import * as moment from "moment";
 
 @Entity()
-export class BcUser extends BaseEntity {
+export class BcUser{
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
+
     @Column({name:"name"})
     name: string;
 
@@ -14,4 +17,29 @@ export class BcUser extends BaseEntity {
 
     @Column({name:"pic"})
     pic: string;
+
+    @CreateDateColumn({
+        name: "create_time",
+        transformer: {
+            from: (date: Date) => moment(date).format("YYYY-MM-DD HH:mm:ss"),
+            to: (date: string) => moment(date).toDate(),
+        }
+    })
+    createTime: string;
+
+    @UpdateDateColumn({
+        name: "update_time",
+        nullable: true,
+        transformer: {
+            from: (date: Date) => date && moment(date).format("YYYY-MM-DD HH:mm:ss"),
+            to: (date: string) => date && moment(date).toDate(),
+        }
+    })
+    updateTime: string | null;
+
+    @Column({name: "create_by",length:36})
+    createBy: string;
+
+    @Column({name: "update_by",length:36,nullable:true})
+    updateBy: string | null;
 }

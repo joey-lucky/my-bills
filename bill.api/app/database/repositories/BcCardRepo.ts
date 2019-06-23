@@ -1,4 +1,4 @@
-import {EntityRepository, FindConditions, FindOneOptions, FindOperator, getRepository, ObjectID} from "typeorm";
+import {EntityRepository, FindConditions, FindOneOptions, FindOperator, getRepository} from "typeorm";
 import BaseRepository from "../BaseRepository";
 import {BcCard} from "../entity/BcCard";
 import {BcCardType} from "../entity/BcCardType";
@@ -13,7 +13,7 @@ interface QueryParams {
 }
 
 export interface BcCardView {
-    id:string;
+    id: string;
     name: string;
     userName: string;
     cardTypeName: string;
@@ -25,15 +25,15 @@ export default class BcCardRepo extends BaseRepository<BcCard> {
     /**
      * 消费类账单
      */
-    async getViewList(params: QueryParams = {}): Promise<BcCardView[]> {
+    public async getViewList(params: QueryParams = {}): Promise<BcCardView[]> {
         let conditions: FindConditions<BcCard>[] = [];
         if (params.userId) {
             conditions.push({
-                userId: params.userId
+                user: await getRepository(BcUser).findOne(params.userId)
             });
         }
         if (params.cardTypeId) {
-            conditions.push({cardTypeId: params.cardTypeId});
+            conditions.push({cardType: await getRepository(BcCardType).findOne(params.cardTypeId)});
         }
         if (params.name) {
             conditions.push({name: params.name});
@@ -42,18 +42,24 @@ export default class BcCardRepo extends BaseRepository<BcCard> {
             conditions.push({balance: params.balance});
         }
         if (params.searchText) {
-            conditions.push({name: new FindOperator("like","%"+params.searchText+"%")});
+            conditions.push({name: new FindOperator("like", "%" + params.searchText + "%")});
         }
-        let data:BcCard[] = await this.find({where: conditions});
+        let data: BcCard[] = await this.find({
+            where: conditions,
+            relations: ["cardType", "user"],
+            order:{
+                name:"ASC"
+            }
+        });
         return this.entityToViewList(data);
     }
 
-    async findViewOne(id?: string , options?: FindOneOptions<BcCard>){
+    private  async findViewOne(id?: string, options?: FindOneOptions<BcCard>) {
         let entity: BcCard = await this.findOne(id, options);
         return this.entityToView(entity);
     }
 
-    async entityToView(entity:BcCard):Promise<BcCardView>{
+    private async entityToView(entity: BcCard): Promise<BcCardView> {
         let view = {
             id: entity.id,
             name: entity.name,
@@ -61,18 +67,14 @@ export default class BcCardRepo extends BaseRepository<BcCard> {
             cardTypeName: "",
             userName: "",
         };
-        if (entity.cardType === null) {
-            let childEntity = await getRepository(BcCardType).findOne(entity.cardTypeId);
-            view.cardTypeName = childEntity.name;
-        }
-        if (entity.user === null) {
-            let childEntity = await getRepository(BcUser).findOne(entity.userId);
-            view.userName = childEntity.name;
-        }
+        let cardType = entity.cardType;
+        let user = entity.user;
+        view.cardTypeName = cardType.name;
+        view.userName = user.name;
         return view;
     }
 
-    async entityToViewList(entities:BcCard[]):Promise<BcCardView[]>{
+    private  async entityToViewList(entities: BcCard[]): Promise<BcCardView[]> {
         let views: BcCardView[] = [];
         for (let entity of entities) {
             views.push(await this.entityToView(entity));

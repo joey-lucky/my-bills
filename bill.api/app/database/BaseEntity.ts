@@ -1,7 +1,8 @@
 import * as orm from "typeorm";
-import {Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import * as moment from "moment";
-import {Application, Context} from "egg";
+import {Context} from "egg";
+import {BcUser} from "./entity/BcUser";
 
 export default class BaseEntity extends orm.BaseEntity {
     public ctx?: Context | undefined;
@@ -28,9 +29,17 @@ export default class BaseEntity extends orm.BaseEntity {
     })
     updateTime: string | null;
 
-    @Column({name: "create_by"})
+    @JoinColumn({name: "create_by"})
     createBy: string;
 
-    @Column({name: "update_by", nullable: true})
+    @JoinColumn({name: "update_by"})
     updateBy: string | null;
+
+    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @JoinColumn({name: "create_by"})
+    createByUser: BcUser|null;
+
+    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @JoinColumn({name: "update_by"})
+    updateByUser: BcUser|null;
 }

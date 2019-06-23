@@ -11,6 +11,7 @@ export default class Card extends React.Component {
     static propTypes = {
         name:PropTypes.string.isRequired,
         balance:PropTypes.number.isRequired,
+        userName:PropTypes.string.isRequired,
         onClick:PropTypes.func,
     };
 
@@ -28,14 +29,24 @@ export default class Card extends React.Component {
                     style={styles.cardIcon}
                     unicode={icons.xe401}
                 />
-                <Text
+                <Flex
                     style={styles.cardName}
-                    type={"title"}
-                    text={this.props.name}
-                />
+                    direction={"column"}
+                    align={"start"}
+                >
+                    <Text
+                        type={"title"}
+                        text={this.props.name}
+                    />
+                    <Text
+                        type={"tooltip"}
+                        text={this.props.userName}
+                    />
+                </Flex>
+
                 <Text
                     type={"text"}
-                    text={this.props.balance}
+                    text={this.props.balance+""}
                 />
                 <FontIcon
                     style={styles.rightIcon}
@@ -53,7 +64,7 @@ const styles = {
         paddingLeft:"0.54rem"
     },
     cardIcon:{
-        color: "#59C297",
+        color: "#EE7F6C",
         fontSize: fontSizes.appBar,
         marginLeft: "0.12rem",
         marginRight:"0.4rem",

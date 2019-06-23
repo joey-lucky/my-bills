@@ -1,21 +1,34 @@
 import Home from "@pages/Home";
-import Assert from "@pages/Assert";
+import Asset from "@pages/Asset";
 import Invest from "@pages/Invest";
 import List from "@pages/List";
 import Setting from "@pages/Setting";
+import Login from "@pages/Login";
+import AddBill from "@pages/AddBill";
 
 export default [
+    {
+        path: "/login",
+        component: Login,
+        name: "登录页",
+        functionCode: "login"
+    },
     {
         path: "/home",
         component: Home,
         name: "首页",
         functionCode: "home"
+    },{
+        path: "/add-bill",
+        component: AddBill,
+        name: "首页",
+        functionCode: "add-bill"
     },
     {
         path: "/asset",
-        component: Assert,
+        component: Asset,
         name: "资产",
-        functionCode: "Assert"
+        functionCode: "asset"
     },
     {
         path: "/invest",

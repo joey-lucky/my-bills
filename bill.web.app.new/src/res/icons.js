@@ -8,6 +8,8 @@ export default {
     confirm: "&#xe313;",
     search: "&#xe314;",
     add: "&#xe315;",
+    user: "&#xe316;",
+    password: "&#xe317;",
 
     xe301:"&#xe301;",
     xe302:"&#xe302;",

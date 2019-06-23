@@ -8,15 +8,6 @@ import * as moment from "moment";
 
 @Entity()
 export class BdBill extends BaseEntity {
-    @JoinColumn({name: "card_id"})
-    cardId: string;
-
-    @JoinColumn({name: "user_id"})
-    userId: string;
-
-    @JoinColumn({name: "bill_type_id"})
-    billTypeId: string;
-
     @Column({name: "money", type: "double", scale: 2})
     money: number;
 
@@ -40,7 +31,6 @@ export class BdBill extends BaseEntity {
     @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
     @JoinColumn({name: "user_id"})
     user: BcUser;
-
 
     @ManyToOne(() => BcCard, {onDelete: "SET NULL", onUpdate: "CASCADE"})
     @JoinColumn({name: "card_id"})

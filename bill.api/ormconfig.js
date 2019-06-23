@@ -1,4 +1,4 @@
-{
+module.exports = {
     "type": "mysql",
     "name": "default",
     "host": "localhost",
@@ -12,9 +12,9 @@
         "error",
         "warn",
         "info",
-        "log",
+        "log"
     ],
-    "entityPrefix":"",
+    "entityPrefix": "",
     "dateStrings": false,
     "connectTimeout": 10000,
     "acquireTimeout": 10000,
@@ -34,4 +34,4 @@
         "migrationsDir": "app/database/migration",
         "subscribersDir": "app/database/subscriber"
     }
-}
+};

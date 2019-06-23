@@ -1,4 +1,6 @@
 import {Application, Context, Controller} from "egg";
+import {getCustomRepository} from "typeorm";
+import BcCardRepo, {BcCardView} from "../../database/repositories/BcCardRepo";
 
 export default class extends Controller {
     //添加账单
@@ -15,5 +17,26 @@ export default class extends Controller {
         const data = await app.sqlExecutor.query(sql, []);
         await app.tableRowHelper.translateIds(data);
         ctx.body.data = data;
+    }
+
+    //添加账单
+    public async groupByTypeList() {
+        let data = await getCustomRepository(BcCardRepo).getViewList();
+        type CardType = { cardTypeName: string, balance: number, children: BcCardView[] };
+        let cardTypeMap: { [key: string]: CardType } = {};
+        for (let item of data) {
+            let cardTypeName = item.cardTypeName;
+            let balance = item.balance || 0;
+            if (!cardTypeMap[cardTypeName]) {
+                cardTypeMap[cardTypeName] = {
+                    cardTypeName,
+                    balance: 0,
+                    children: []
+                };
+            }
+            cardTypeMap[cardTypeName].balance += balance;
+            cardTypeMap[cardTypeName].children.push(item);
+        }
+        this.ctx.body.data = Object.values(cardTypeMap);
     }
 }

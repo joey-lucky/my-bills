@@ -8,12 +8,6 @@ export class BcCard extends BaseEntity {
     @Column({name: "name"})
     name: string;
 
-    @JoinColumn({name: "user_id"})
-    userId: string;
-
-    @JoinColumn({name: "card_type_id"})
-    cardTypeId: string;
-
     @Column({name: "balance"})
     balance: number;
 
