@@ -1,12 +1,14 @@
 import * as React from "react";
 import {Flex} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
-import SlideShow from "@components/SlideShow";
-import {Divider} from "@components/Divider";
-import {observable, toJS} from "mobx";
-import CardList from "./CardList";
+import {observable} from "mobx";
 import {asset} from "../../services/api";
 import {observer} from "mobx-react";
+import Text from "@components/Text";
+import FontIcon from "@components/FontIcon";
+import icons from "@res/icons";
+import Blank from "@components/Blank";
+import TopList from "./TopList";
 
 class AppState {
     @observable data = [];
@@ -59,46 +61,31 @@ export default class AddBill extends React.Component {
                 direction={"column"}
             >
                 <ToolBar
-                    title={"账户"}
-                    showAdd={true}
-                    onAddClick={this.onAddClick}
+                    title={"记一笔"}
+                    rightExtra={(
+                        <Blank
+                            level={1}
+                            direction={"row"}
+                            onClick={this.props.onAddClick}
+                        >
+                            <Text
+                                color={"#F6A724"}
+                                type={"appBar"}>
+
+                                <FontIcon
+                                    unicode={icons.confirm}/>
+                            </Text>
+                            <Text
+                                text={"保存"}
+                                color={"#F6A724"}
+                                type={"title"}/>
+                        </Blank>
+                    )}
                 />
-                <Flex
-                    style={styles.content}
-                    justify={"start"}
-                    align={"start"}
-                    direction={"column"}
-                >
-                    <SlideShow
-                        title={"净资产"}
-                        money={this._appState.total.total}
-                        label1={"资产"}
-                        value1={this._appState.total.asset}
-                        label2={"负债"}
-                        value2={this._appState.total.credit}
-                    />
-                    {
-                        toJS(this._appState.data).map((item, index) =>
-                            <React.Fragment key={item.cardTypeName}>
-                                <CardList
-                                    cardTypeName={item.cardTypeName}
-                                    totalBalance={item.balance}
-                                    cardData={item.children}
-                                />
-                                {
-                                    index !== this._appState.data.length &&
-                                    <Divider
-                                        direction={"row"}
-                                        size={"0.1rem"}
-                                        colorType={"light"}
-                                    />
-                                }
-                            </React.Fragment>
-                        )
-
-                    }
-
-                </Flex>
+                <TopList
+                    data={["模板","支出","收入","转账","还款","借贷","代付","报销","退款"]}
+                    onItemClick={()=>{}}
+                />
             </Flex>
         );
 

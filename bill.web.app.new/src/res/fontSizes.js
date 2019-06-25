@@ -9,11 +9,11 @@
  * 超大号改成 +0.2rem
  */
 export default {
-    display4: "1.3rem",
-    display3: "1.1rem",
-    display2: "0.9rem",
-    display1: "0.7rem",
-    appBar: "0.52rem",
+    display4: "1.2rem",
+    display3: "1.0rem",
+    display2: "0.8rem",
+    display1: "0.6rem",
+    appBar: "0.45rem",
     title: "0.4rem",
     text: "0.35rem",
     tooltip: "0.3rem",

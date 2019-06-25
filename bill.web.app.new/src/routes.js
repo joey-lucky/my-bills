@@ -21,7 +21,7 @@ export default [
     },{
         path: "/add-bill",
         component: AddBill,
-        name: "首页",
+        name: "记一笔",
         functionCode: "add-bill"
     },
     {

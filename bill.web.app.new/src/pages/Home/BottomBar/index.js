@@ -10,6 +10,11 @@ export default class BottomBar extends React.Component {
         onItemClick: PropTypes.func,
         data: PropTypes.array.isRequired,
     };
+    onAddBillClick = ()=>{
+        let pathname = this.props.location.pathname;
+        let parentPath = pathname.replace(/[^/]+$/, "");
+        this.props.history.push(parentPath + "add-bill");
+    };
 
     render() {
         return (
@@ -26,7 +31,12 @@ export default class BottomBar extends React.Component {
                                     this.props.history.push(parentPath + item.url);
                                 }}
                             />
-                            {index === 1 && <div className={styles.center}>记一笔</div>}
+                            {
+                                index === 1 &&
+                                <div
+                                    onClick={this.onAddBillClick}
+                                    className={styles.center}>记一笔</div>
+                            }
                         </React.Fragment>
                     )
                 }
