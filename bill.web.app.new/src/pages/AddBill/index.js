@@ -2,48 +2,24 @@ import * as React from "react";
 import {Flex} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import {observable} from "mobx";
-import {asset} from "../../services/api";
 import {observer} from "mobx-react";
 import Text from "@components/Text";
 import FontIcon from "@components/FontIcon";
 import icons from "@res/icons";
 import Blank from "@components/Blank";
 import TopList from "./TopList";
-
+import TemplateList from "./TemplateList";
+import AddBillContent from "./AddBillContent";
 class AppState {
-    @observable data = [];
-    @observable total = {
-        total: "0",
-        asset: "0",
-        credit: "0",//信用卡
-    };
-
     asyncLoadData() {
-        asset.groupByTypeList({}).then(d => {
-            let data= d.data || [];
-            let total = 0;
-            let asset = 0;
-            let credit = 0;
-            for (let item of data) {
-                total += item.balance;
-                if (item.balance >= 0) {
-                    asset += item.balance;
-                }else {
-                    credit+=Math.abs(item.balance);
-                }
-            }
-            this.total = {
-                total:total.toFixed(0),
-                asset:asset.toFixed(0),
-                credit:credit.toFixed(0)
-            };
-            this.data = data;
-        });
+
     }
 }
 
 @observer
 export default class AddBill extends React.Component {
+    @observable selectPosition = 1;
+
     _appState = new AppState();
 
     componentDidMount() {
@@ -71,7 +47,6 @@ export default class AddBill extends React.Component {
                             <Text
                                 color={"#F6A724"}
                                 type={"appBar"}>
-
                                 <FontIcon
                                     unicode={icons.confirm}/>
                             </Text>
@@ -83,9 +58,22 @@ export default class AddBill extends React.Component {
                     )}
                 />
                 <TopList
-                    data={["模板","支出","收入","转账","还款","借贷","代付","报销","退款"]}
-                    onItemClick={()=>{}}
+                    defaultPosition={this.selectPosition}
+                    data={["模板", "支出", "收入", "转账", "还款", "借贷", "代付", "报销", "退款"]}
+                    onItemClick={(item, index) => {
+                        this.selectPosition = index;
+                    }}
                 />
+                <div style={styles.content}>
+                    {
+                        this.selectPosition === 0 &&
+                        <TemplateList/>
+                    }
+                    {
+                        this.selectPosition !== 0 &&
+                        <AddBillContent/>
+                    }
+                </div>
             </Flex>
         );
 
@@ -98,9 +86,9 @@ const styles = {
         height: "100%",
     },
     content: {
-        height: 0,
         width: "100%",
+        height: 0,
         flex: 1,
-        overflowY: "auto"
-    }
+        backgroundColor:"#FCFCFC"
+    },
 };
