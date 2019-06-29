@@ -48,6 +48,7 @@ describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
         }
 
         it('with none params', async () => {
+            let temp = await getRepository(BcCard).find();
             let result = await getCustomRepository(BdBillRepo).getViewPageData();
             let data: BdBillView[] = result[0];
             let pageInfo = result[1];
@@ -58,7 +59,8 @@ describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
         });
 
         it('with transfer bill id', async () => {
-            let billId = (await getRepository(BdBillTransfer).find())[0].billId;
+            let transferList = await getRepository(BdBillTransfer).find({relations:["bill"]});
+            let billId =transferList[0].bill.id;
             let result = await getCustomRepository(BdBillRepo).getViewPageData({}, {id: billId});
             let item = result[0][0];
             verifyPageInfo(result[1]);

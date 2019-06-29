@@ -24,6 +24,15 @@ export class BdBill extends BaseEntity {
     })
     dateTime: string;
 
+    @Column({name: "bill_type_id",length:36,nullable:true})
+    billTypeId: string|null;
+
+    @Column({name: "user_id",length:36,nullable:true})
+    userId: string|null;
+
+    @Column({name: "card_id",length:36,nullable:true})
+    cardId: string|null;
+
     @ManyToOne(() => BcBillType, {onDelete: "SET NULL", onUpdate: "CASCADE"})
     @JoinColumn({name: "bill_type_id"})
     billType: BcBillType;

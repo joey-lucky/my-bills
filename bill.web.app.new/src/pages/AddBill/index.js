@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Flex} from "antd-mobile";
+import {Flex, Toast} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
@@ -9,25 +9,47 @@ import icons from "@res/icons";
 import Blank from "@components/Blank";
 import TopList from "./TopList";
 import TemplateList from "./TemplateList";
-import AddBillContent from "./AddBillContent";
-class AppState {
-    asyncLoadData() {
+import Bottom from "@pages/AddBill/Bottom";
+import BillEdit from "@components/BillEdit";
+import {createForm} from "rc-form";
+import {billApi} from "../../services/api";
+import moment from "moment";
 
-    }
-}
-
+@createForm()
 @observer
 export default class AddBill extends React.Component {
+    data = ["模板", "支出", "收入", "其它", "支出", "收入", "其它", "支出", "收入", "其它"];
     @observable selectPosition = 1;
-
-    _appState = new AppState();
-
-    componentDidMount() {
-        this._appState.asyncLoadData();
-    }
+    @observable value = {};
 
     onAddClick = (event) => {
         event.stopPropagation();
+    };
+
+    onSaveAgainClick = () => {
+        this.props.form.validateFields((error, values) => {
+            if (error) {
+                Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
+            } else {
+                let value = {...values.value};
+                let type = this.data[this.selectPosition];
+                value["dateTime"] = moment(value["dateTime"]).format("YYYY-MM-DD HH:mm:ss");
+                if (type !== "收入") {
+                    value["money"] = 0 - value["money"];
+                }
+                billApi.createBill({"bd_bill": [value]}).then(d => {
+                });
+            }
+        });
+    };
+
+    onSaveClick = () => {
+
+    };
+
+    onSaveTemplateClick = () => {
+
+
     };
 
     render() {
@@ -59,7 +81,7 @@ export default class AddBill extends React.Component {
                 />
                 <TopList
                     defaultPosition={this.selectPosition}
-                    data={["模板", "支出", "收入", "转账", "还款", "借贷", "代付", "报销", "退款"]}
+                    data={this.data}
                     onItemClick={(item, index) => {
                         this.selectPosition = index;
                     }}
@@ -71,9 +93,20 @@ export default class AddBill extends React.Component {
                     }
                     {
                         this.selectPosition !== 0 &&
-                        <AddBillContent/>
+                        <BillEdit
+                            {...this.props.form.getFieldProps("value")}
+                            type={this.data[this.selectPosition]}
+                        />
                     }
                 </div>
+                {
+                    this.selectPosition !== 0 &&
+                    <Bottom
+                        onSaveAgainClick={this.onSaveAgainClick}
+                        onSaveClick={this.onSaveClick}
+                        onSaveTemplateClick={this.onSaveTemplateClick}
+                    />
+                }
             </Flex>
         );
 
@@ -89,6 +122,6 @@ const styles = {
         width: "100%",
         height: 0,
         flex: 1,
-        backgroundColor:"#FCFCFC"
+        backgroundColor: "#FCFCFC"
     },
 };

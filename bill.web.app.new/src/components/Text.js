@@ -13,6 +13,7 @@ export default class Text extends React.Component {
         style: PropTypes.object,
         color: PropTypes.string,
         children: PropTypes.any,
+        onClick: PropTypes.func,
     };
 
     render() {
@@ -25,6 +26,7 @@ export default class Text extends React.Component {
         };
         return (
             <div
+                onClick={this.props.onClick}
                 style={style}
             >
                 {this.props.text}

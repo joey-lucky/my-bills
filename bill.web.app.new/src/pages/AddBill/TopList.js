@@ -16,8 +16,8 @@ export default class TopList extends React.Component {
     };
     @observable selectIndex = 0;
 
-    constructor(props,context) {
-        super(props,context);
+    constructor(props, context) {
+        super(props, context);
         this.selectIndex = props.defaultPosition || 0;
     }
 
@@ -37,7 +37,7 @@ export default class TopList extends React.Component {
                 onClick={this.bindOnItemClick(item, index, array)}
             >
                 <Text
-                    style={isSelected && styles.textSelected}
+                    style={isSelected && styles.textSelected || {}}
                     text={item}
                     type={"text"}/>
                 {
@@ -65,7 +65,6 @@ export default class TopList extends React.Component {
                     this.props.data.map(this.renderItem)
                 }
             </Flex>
-
         )
     }
 }

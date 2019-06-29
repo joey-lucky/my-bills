@@ -2,7 +2,6 @@ import {Controller} from "egg";
 import {getCustomRepository} from "typeorm";
 import BdBillRepo from "../../../database/repositories/BdBillRepo";
 import * as moment from "moment";
-import BcUserRepo from "../../../database/repositories/BcUserRepo";
 import Assert from "../../../utils/Assert";
 
 interface BillData {

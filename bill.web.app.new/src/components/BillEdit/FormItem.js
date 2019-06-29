@@ -2,13 +2,19 @@ import * as React from "react";
 import {Flex} from "antd-mobile";
 import {Divider} from "@components/Divider";
 import FontIcon from "@components/FontIcon";
-import icons from "@res/icons";
 import fontSizes from "@res/fontSizes";
 import BlankFlex from "@components/BlankFlex";
 import Text from "@components/Text";
+import * as PropTypes from "prop-types";
 
 
-export default class RemarkInput extends React.Component {
+export default class FormItem extends React.Component {
+    static propTypes = {
+        label: PropTypes.string.isRequired,
+        icon: PropTypes.string,
+        color: PropTypes.string,
+        onClick: PropTypes.func,
+    };
 
 
     render() {
@@ -16,19 +22,27 @@ export default class RemarkInput extends React.Component {
             <Flex
                 style={styles.container}
                 direction={"column"}
+                onClick={this.props.onClick}
             >
                 <Flex
                     style={styles.contentContainer}
                     direction={"row"}
                 >
                     <FontIcon
-                        style={{color: "#8880EF", fontSize: fontSizes.appBar}}
-                        unicode={icons.xe321}
+                        style={{color: this.props.color, fontSize: fontSizes.appBar}}
+                        unicode={this.props.icon}
                     />
                     <BlankFlex blankLevel={1} blankDirection={"row"}/>
-                    <Text type={"text"} text={"备注"}/>
+                    <Text type={"text"} text={this.props.label}/>
+                    <BlankFlex blankLevel={2} blankDirection={"row"}/>
+                    <Flex
+                        align={"center"}
+                        style={styles.childrenContainer}>
+                        {
+                            this.props.children
+                        }
+                    </Flex>
                 </Flex>
-
                 <Divider direction={"row"}/>
             </Flex>
         );
@@ -44,5 +58,10 @@ const styles = {
         width: "100%",
         height: 0,
         flex: 1,
+    },
+    childrenContainer: {
+        width: 0,
+        height: "100%",
+        flex: 1
     }
 };

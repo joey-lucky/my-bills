@@ -5,7 +5,7 @@ import {Flex} from "antd-mobile";
 export default class BlankFlex extends React.Component {
     static propTypes = {
         blankDirection: PropTypes.oneOf(["row", "column"]),
-        blankLevel: PropTypes.arrayOf(PropTypes.number),
+        blankLevel: PropTypes.number,
         style: PropTypes.object,
         onClick: PropTypes.func,
         direction: PropTypes.oneOf(['row', 'row-reverse', 'column', 'column-reverse']),
@@ -34,7 +34,9 @@ export default class BlankFlex extends React.Component {
     }
 
     render() {
-        let {justify = "center", align = "center", style, ...props} = this.props;
+        let {justify = "center", align = "center",...props} = this.props;
+        delete props.blankLevel;
+        delete props.blankDirection;
         return (
             <Flex
                 {...props}

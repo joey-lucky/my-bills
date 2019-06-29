@@ -2,10 +2,15 @@ import * as React from "react";
 import {Flex} from "antd-mobile";
 import fontSizes from "@res/fontSizes";
 import colors from "@res/colors";
+import * as PropTypes from "prop-types";
 
 
 export default class Bottom extends React.Component {
-
+    static propTypes = {
+        onSaveClick: PropTypes.func.isRequired,
+        onSaveTemplateClick: PropTypes.func.isRequired,
+        onSaveAgainClick: PropTypes.func.isRequired,
+    };
 
     render(){
         return (
@@ -18,6 +23,7 @@ export default class Bottom extends React.Component {
                     style={styles.save}
                     align={"center"}
                     justify={"center"}
+                    onClick={this.props.onSaveClick}
                 >
                     保存
                 </Flex>
@@ -25,6 +31,7 @@ export default class Bottom extends React.Component {
                     style={styles.other}
                     align={"center"}
                     justify={"center"}
+                    onClick={this.props.onSaveTemplateClick}
                 >
                     存为模板
                 </Flex>
@@ -32,6 +39,7 @@ export default class Bottom extends React.Component {
                     style={styles.other}
                     align={"center"}
                     justify={"center"}
+                    onClick={this.props.onSaveAgainClick}
                 >
                     再记一笔
                 </Flex>

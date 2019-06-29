@@ -6,7 +6,7 @@ import Assert from "../../../../app/utils/Assert";
 import {BcUser} from "../../../../app/database/entity/BcUser";
 import {BcCardType} from "../../../../app/database/entity/BcCardType";
 
-describe("test/app/database/repositories/BcUserRepo.test.ts", () => {
+describe("test/app/database/repositories/BcCardRepo.test.ts", () => {
     let ctx: Context;
     let repo: BcCardRepo;
 
@@ -16,7 +16,6 @@ describe("test/app/database/repositories/BcUserRepo.test.ts", () => {
         await createConnection({...options, logging: []});
         repo = getCustomRepository(BcCardRepo);
     });
-
     after(async () => {
         await getConnection().close();
     });
@@ -59,22 +58,6 @@ describe("test/app/database/repositories/BcUserRepo.test.ts", () => {
             let data = await repo.getViewList({userId: user.id});
             for (let item of data) {
                 Assert.isTrue(item.userName === user.name, "query by userId error");
-            }
-        });
-    });
-
-    describe("getGroupByUserViewList", () => {
-        it('has children ', async () => {
-            let data = await repo.getGroupByUserViewList();
-            for (let item of data) {
-                Assert.notEmpty(item.children)
-            }
-        });
-
-        it('has userName ', async () => {
-            let data = await repo.getGroupByUserViewList();
-            for (let item of data) {
-                Assert.hasText(item.userName)
             }
         });
     });

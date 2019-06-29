@@ -4,27 +4,8 @@ import {BcCard} from "../entity/BcCard";
 import {BcCardType} from "../entity/BcCardType";
 import {BcUser} from "../entity/BcUser";
 
-interface QueryParams {
-    searchText?: string;
-    name?: string;
-    userId?: string;
-    cardTypeId?: string;
-    balance?: number;
-}
-
-export interface BcCardView {
-    id: string;
-    name: string;
-    userName: string;
-    cardTypeName: string;
-    balance: number;
-}
-
 @EntityRepository(BcCard)
 export default class BcCardRepo extends BaseRepository<BcCard> {
-    /**
-     * 消费类账单
-     */
     public async getViewList(params: QueryParams = {}): Promise<BcCardView[]> {
         let conditions: FindConditions<BcCard>[] = [];
         if (params.userId) {
@@ -54,6 +35,22 @@ export default class BcCardRepo extends BaseRepository<BcCard> {
         return this.entityToViewList(data);
     }
 
+    public async getGroupByUserViewList(params: QueryParams = {}): Promise<GroupByUserCardView[]> {
+        let list= await this.getViewList(params);
+        let map:{ [key: string]: GroupByUserCardView;} = {};
+        for (let item of list) {
+            let userName = item.userName;
+            if (!map[userName]) {
+                map[userName] = {
+                    userName:userName,
+                    children:[],
+                };
+            }
+            map[userName].children.push(item);
+        }
+        return Object.values(map);
+    }
+
     private  async findViewOne(id?: string, options?: FindOneOptions<BcCard>) {
         let entity: BcCard = await this.findOne(id, options);
         return this.entityToView(entity);
@@ -81,4 +78,25 @@ export default class BcCardRepo extends BaseRepository<BcCard> {
         }
         return views;
     }
+}
+
+interface QueryParams {
+    searchText?: string;
+    name?: string;
+    userId?: string;
+    cardTypeId?: string;
+    balance?: number;
+}
+
+export interface BcCardView {
+    id: string;
+    name: string;
+    userName: string;
+    cardTypeName: string;
+    balance: number;
+}
+
+export interface GroupByUserCardView {
+    userName: string;
+    children:BcCardView[]
 }

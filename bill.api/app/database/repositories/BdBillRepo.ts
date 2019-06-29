@@ -1,42 +1,17 @@
-import {EntityRepository, FindConditions, FindOperator, getRepository} from "typeorm";
+import {DeepPartial, EntityRepository, FindConditions, FindOperator, getCustomRepository, getRepository} from "typeorm";
 import {BdBill} from "../entity/BdBill";
 import BaseRepository from "../BaseRepository";
 import {BcUser} from "../entity/BcUser";
 import {BcBillType} from "../entity/BcBillType";
 import {BcCard} from "../entity/BcCard";
 import moment = require("moment");
+import {BdBillTransfer} from "../entity/BdBillTransfer";
 
-interface PageInfo {
-    pageIndex?: number,
-    pageSize?: number,
-    pageCount?: number,
-    count?: number,
-}
 
-interface QueryParam {
-    id?:string,
-    userId?: string,
-    cardId?: string,
-    billTypeId?: string,
-    dateTime?: Date[]
-}
-
-export interface BdBillView {
-    id: string,
-    money: number,
-    billDesc: string,
-    dateTime: string,
-    cardName: string,
-    cardUserName: string,
-    userName: string,
-    billTypeName: string,
-    targetCardName: string,
-    targetCardUserName: string,
-}
 
 @EntityRepository(BdBill)
 export default class BdBillRepo extends BaseRepository<BdBill> {
-    async getViewPageData(pageInfo: PageInfo = {}, params: QueryParam = {}): Promise<[BdBillView[], PageInfo]> {
+    public async getViewPageData(pageInfo: PageInfo = {}, params: QueryParam = {}): Promise<[BdBillView[], PageInfo]> {
         let {pageIndex = 1, pageSize = 15} = pageInfo;
         const start = (pageSize * (pageIndex - 1));
         let conditions: FindConditions<BdBill>[] = [];
@@ -88,8 +63,28 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         let viewList = await this.entityToViewList(data);
         return [viewList, newPageInfo];
     }
+    //
+    // public async createBill(params : DeepPartial<BdBill>){
+    //     let entity: BdBill = this.create(params);
+    //     let targetCardId = params.targetCardId;
+    //     // let cardId = params["card_id"];
+    //     // let userId = params["user_id"];
+    //     // let targetCardId = params["target_card_id"];
+    //     // entity.billType = await getRepository(BcBillType).findOne(billTypeId);
+    //     // entity.card = await getRepository(BcCard).findOne(cardId);
+    //     // entity.user = await getRepository(BcUser).findOne(userId);
+    //     // entity.money = params["money"];
+    //     // entity.billDesc = params["bill_desc"];
+    //     // entity.dateTime = params["date_time"];
+    //     if (targetCardId) {
+    //         let billTransfer = new BdBillTransfer();
+    //         billTransfer.targetCard = await getRepository(BcCard).findOne(targetCardId);
+    //         entity.billTransfer = billTransfer;
+    //     }
+    //     await getCustomRepository(BdBillRepo).save(entity);
+    // }
 
-    async entityToView(entity: BdBill): Promise<BdBillView> {
+    public  async entityToView(entity: BdBill): Promise<BdBillView> {
         let userName =
             entity.user &&
             entity.user.name || "";
@@ -128,4 +123,32 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         }
         return views;
     }
+}
+
+interface PageInfo {
+    pageIndex?: number,
+    pageSize?: number,
+    pageCount?: number,
+    count?: number,
+}
+
+interface QueryParam {
+    id?:string,
+    userId?: string,
+    cardId?: string,
+    billTypeId?: string,
+    dateTime?: Date[]
+}
+
+export interface BdBillView {
+    id: string,
+    money: number,
+    billDesc: string,
+    dateTime: string,
+    cardName: string,
+    cardUserName: string,
+    userName: string,
+    billTypeName: string,
+    targetCardName: string,
+    targetCardUserName: string,
 }

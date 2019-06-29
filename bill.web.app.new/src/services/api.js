@@ -1,28 +1,36 @@
 import {request} from '@utils/request';
 
 export const asset = {
-    groupByTypeList:function(params){
-        return request('/wxapp/asset/group-by-type-list',params);
+    groupByTypeList: function (params) {
+        return request('/wxapp/asset/group-by-type-list', params);
     },
 };
 
-
 export const billApi = {
-    test:function(params){
-        return request('/test.json',params);
+    getConsumerList: function (params) {
+        return request('/wxapp/bill-edit/get-consumer-list', params);
     },
-    billList:{
+    createBill: function (params) {
+        return request('/wxapp/bill-edit/create-bill', params);
+    },
+    getCardListUrl: "/wxapp/bill-edit/get-card-list",
+    getBillTypeListUrl: "/wxapp/bill-edit/get-bill-type-list",
+
+    test: function (params) {
+        return request('/test.json', params);
+    },
+    billList: {
         getBillPageData: function (params) {
-            return request('/wxapp/bill/bill-list/get-bill-page-data',params);
+            return request('/wxapp/bill/bill-list/get-bill-page-data', params);
         },
         getUserInfo: function () {
-            return request('/wxapp/bill/bill-list/get-user-info',{});
+            return request('/wxapp/bill/bill-list/get-user-info', {});
         },
-        getBillEntity:function (id) {
-            return request('/wxapp/bill/bill-list/get-bill-entity',{id});
+        getBillEntity: function (id) {
+            return request('/wxapp/bill/bill-list/get-bill-entity', {id});
         }
     },
-    creditBillAdd:{
+    creditBillAdd: {
         createBill: function (params) {
             return request('/wxapp/bill/credit-bill-add/create-bill', params);
         },
@@ -30,13 +38,13 @@ export const billApi = {
             return request('/wxapp/bill/credit-bill-add/update-bill', params);
         },
         getCreditCardList: function () {
-            return request('/wxapp/bill/credit-bill-add/get-credit-card-list',{});
+            return request('/wxapp/bill/credit-bill-add/get-credit-card-list', {});
         },
         getCashCardList: function () {
             return request('/wxapp/bill/credit-bill-add/get-cash-card-list', {});
         },
     },
-    transferBillAdd:{
+    transferBillAdd: {
         createBill: function (params) {
             return request('/wxapp/bill/transfer-bill-add/create-bill', params);
         },
@@ -44,7 +52,7 @@ export const billApi = {
             return request('/wxapp/bill/transfer-bill-add/update-bill', params);
         },
         getTargetCardList: function () {
-            return request('/wxapp/bill/transfer-bill-add/get-target-card-list',{});
+            return request('/wxapp/bill/transfer-bill-add/get-target-card-list', {});
         },
         getCashCardList: function () {
             return request('/wxapp/bill/transfer-bill-add/get-cash-card-list', {});
@@ -53,7 +61,7 @@ export const billApi = {
             return request('/wxapp/bill/transfer-bill-add/get-bill-type-list', {});
         },
     },
-    incomeBillAdd:{
+    incomeBillAdd: {
         getCardList: function () {
             return request('/wxapp/bill/income-bill-add/get-card-list', {});
         },
@@ -67,7 +75,7 @@ export const billApi = {
             return request('/wxapp/bill/income-bill-add/update-bill', params);
         },
     },
-    consumeBillAdd:{
+    consumeBillAdd: {
         getCardList: function () {
             return request('/wxapp/bill/consume-bill-add/get-card-list', {});
         },

@@ -56,5 +56,7 @@ export function request(url, params = {}) {
             }
         }
     });
-    return wrapPromise(promise);
+    let resultPromise = wrapPromise(promise);
+    resultPromise.url = url;
+    return resultPromise;
 }
