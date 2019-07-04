@@ -71,7 +71,7 @@ export default class BillEdit extends React.Component {
     renderBillType(type) {
         return (
             <PickerItem
-                {...this.getFieldProps("cardTypeId", {
+                {...this.getFieldProps("billTypeId", {
                     rules: [{
                         required: true,
                         message: "请选择账单类型"

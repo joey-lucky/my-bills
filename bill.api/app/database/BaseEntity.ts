@@ -3,6 +3,7 @@ import {CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateD
 import * as moment from "moment";
 import {Context} from "egg";
 import {BcUser} from "./entity/BcUser";
+import {Column} from "typeorm";
 
 export default class BaseEntity extends orm.BaseEntity {
     public ctx?: Context | undefined;
@@ -29,17 +30,17 @@ export default class BaseEntity extends orm.BaseEntity {
     })
     updateTime: string | null;
 
-    @JoinColumn({name: "create_by"})
+    @Column({name: "create_by",length:36})
     createBy: string;
 
-    @JoinColumn({name: "update_by"})
+    @Column({name: "update_by",length:36,nullable:true})
     updateBy: string | null;
 
-    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @ManyToOne(() => BcUser, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "create_by"})
     createByUser: BcUser|null;
 
-    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @ManyToOne(() => BcUser, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "update_by"})
     updateByUser: BcUser|null;
 }

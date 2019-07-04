@@ -6,7 +6,7 @@ export default {
     appBar: "rgba(0,0,0,0.95)",
     title: "#302F2B",
     text: "#808080",
-    tooltip: "rgba(0,0,0,0.26)",
+    tooltip: "#AAAAAA",
     divider: "#C4C4C4",
     dividerLight: "#F5F5F5",
     income: "#E6543B",

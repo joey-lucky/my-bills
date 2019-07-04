@@ -3,8 +3,11 @@
  * 白色：[100% 普通文字] [70% 减淡文字] [30% 禁用状态/提示文字] [12% 分隔线]
  */
 export default {
-    right: "&#xe311;",
-    left: "&#xe312;",
+    up: "&#xe211;",
+    right: "&#xe212;",
+    down: "&#xe213;",
+    left: "&#xe214;",
+
     confirm: "&#xe313;",
     search: "&#xe314;",
     add: "&#xe315;",

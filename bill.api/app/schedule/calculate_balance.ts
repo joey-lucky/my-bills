@@ -5,7 +5,7 @@ import BcCardRepo from "../database/repositories/BcCardRepo";
 /**
  * 计算余额
  */
-export default class extends Subscription {
+export default class CalculateBalance extends Subscription {
     static get schedule() {
         return {
             interval: "30s", // 60 分钟间隔
@@ -22,6 +22,7 @@ export default class extends Subscription {
             let billMoney = billMoneyMap.get(item.id)||0;
             let transferMoney = transferBillMoneyMap.get(item.id) || 0;
             item.balance = billMoney + transferMoney;
+            item.updateBy = this.ctx.user.id;
         }
         await getCustomRepository(BcCardRepo).save(data);
         this.app.loggers.logger.info("[schedule]", "card balance refresh");

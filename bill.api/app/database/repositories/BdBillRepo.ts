@@ -63,26 +63,21 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         let viewList = await this.entityToViewList(data);
         return [viewList, newPageInfo];
     }
-    //
-    // public async createBill(params : DeepPartial<BdBill>){
-    //     let entity: BdBill = this.create(params);
-    //     let targetCardId = params.targetCardId;
-    //     // let cardId = params["card_id"];
-    //     // let userId = params["user_id"];
-    //     // let targetCardId = params["target_card_id"];
-    //     // entity.billType = await getRepository(BcBillType).findOne(billTypeId);
-    //     // entity.card = await getRepository(BcCard).findOne(cardId);
-    //     // entity.user = await getRepository(BcUser).findOne(userId);
-    //     // entity.money = params["money"];
-    //     // entity.billDesc = params["bill_desc"];
-    //     // entity.dateTime = params["date_time"];
-    //     if (targetCardId) {
-    //         let billTransfer = new BdBillTransfer();
-    //         billTransfer.targetCard = await getRepository(BcCard).findOne(targetCardId);
-    //         entity.billTransfer = billTransfer;
-    //     }
-    //     await getCustomRepository(BdBillRepo).save(entity);
-    // }
+
+    public async findOneView(id:string):Promise<BdBillView>{
+        let entity = await this.findOne(id,{
+            relations: [
+                "card",
+                "card.user",
+                "user",
+                "billType",
+                "billTransfer",
+                "billTransfer.targetCard",
+                "billTransfer.targetCard.user"
+            ],
+        });
+        return this.entityToView(entity);
+    }
 
     public  async entityToView(entity: BdBill): Promise<BdBillView> {
         let userName =

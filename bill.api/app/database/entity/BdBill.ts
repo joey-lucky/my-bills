@@ -8,7 +8,7 @@ import * as moment from "moment";
 
 @Entity()
 export class BdBill extends BaseEntity {
-    @Column({name: "money", type: "double", scale: 2})
+    @Column({name: "money", type: "decimal", scale: 2, precision: 10})
     money: number;
 
     @Column({name: "bill_desc"})
@@ -24,24 +24,24 @@ export class BdBill extends BaseEntity {
     })
     dateTime: string;
 
-    @Column({name: "bill_type_id",length:36,nullable:true})
-    billTypeId: string|null;
+    @Column({name: "bill_type_id", length: 36})
+    billTypeId: string | null;
 
-    @Column({name: "user_id",length:36,nullable:true})
-    userId: string|null;
+    @Column({name: "user_id", length: 36})
+    userId: string | null;
 
-    @Column({name: "card_id",length:36,nullable:true})
-    cardId: string|null;
+    @Column({name: "card_id", length: 36})
+    cardId: string | null;
 
-    @ManyToOne(() => BcBillType, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @ManyToOne(() => BcBillType, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "bill_type_id"})
     billType: BcBillType;
 
-    @ManyToOne(() => BcUser, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @ManyToOne(() => BcUser, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "user_id"})
     user: BcUser;
 
-    @ManyToOne(() => BcCard, {onDelete: "SET NULL", onUpdate: "CASCADE"})
+    @ManyToOne(() => BcCard, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "card_id"})
     card: BcCard;
 

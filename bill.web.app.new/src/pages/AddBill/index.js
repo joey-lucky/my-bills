@@ -27,6 +27,10 @@ export default class AddBill extends React.Component {
     };
 
     onSaveAgainClick = () => {
+       
+    };
+
+    onSaveClick = () => {
         this.props.form.validateFields((error, values) => {
             if (error) {
                 Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
@@ -41,10 +45,6 @@ export default class AddBill extends React.Component {
                 });
             }
         });
-    };
-
-    onSaveClick = () => {
-
     };
 
     onSaveTemplateClick = () => {

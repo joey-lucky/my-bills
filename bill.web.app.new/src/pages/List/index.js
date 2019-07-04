@@ -3,6 +3,8 @@ import {Flex} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import Total from "@pages/Home/Total";
 import * as PropTypes from "prop-types";
+import SlideShow from "@components/SlideShow";
+import MonthItem from "@pages/List/MonthItem";
 
 
 export default class List extends React.Component{
@@ -20,9 +22,18 @@ export default class List extends React.Component{
                 <ToolBar
                     title={"流水"}
                     showAdd={true}
+                    showSearch={true}
                     onAddClick={this.onAddClick}
                 />
-                <Total/>
+                <SlideShow
+                    title={"净资产"}
+                    money={"10000"}
+                    label1={"资产"}
+                    value1={"20000"}
+                    label2={"负债"}
+                    value2={"10000"}
+                />
+                <MonthItem income={10000} outgoing={5000} date={new Date()} defaultExpand={false}/>
             </Flex>
         );
 

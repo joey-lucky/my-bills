@@ -2,7 +2,7 @@ import {Subscription} from "egg";
 import {ForeignKeyData} from "../typings/appCache";
 import Table from "../typings/Table";
 
-export default class extends Subscription {
+export default class UpdateCache extends Subscription {
     static get schedule() {
         return {
             interval: "1m", // 1 分钟间隔
