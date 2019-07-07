@@ -7,7 +7,7 @@ import {BdBillTransfer} from "../../../../app/database/entity/BdBillTransfer";
 import {BcUser} from "../../../../app/database/entity/BcUser";
 import {BcCard} from "../../../../app/database/entity/BcCard";
 import {BcBillType} from "../../../../app/database/entity/BcBillType";
-import BcCardRepo from "../../../../app/database/repositories/BcCardRepo";
+import moment = require("moment");
 
 describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
     let ctx: Context;
@@ -16,7 +16,10 @@ describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
     before(async () => {
         ctx = app.mockContext();
         let options = await getConnectionOptions();
-        await createConnection({...options, logging: []});
+        await createConnection({
+            ...options,
+            logging: [],
+        });
         repo = getCustomRepository(BdBillRepo);
     });
     after(async () => {
@@ -48,7 +51,6 @@ describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
         }
 
         it('with none params', async () => {
-            let temp = await getRepository(BcCard).find();
             let result = await getCustomRepository(BdBillRepo).getViewPageData();
             let data: BdBillView[] = result[0];
             let pageInfo = result[1];
@@ -59,8 +61,8 @@ describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
         });
 
         it('with transfer bill id', async () => {
-            let transferList = await getRepository(BdBillTransfer).find({relations:["bill"]});
-            let billId =transferList[0].bill.id;
+            let transferList = await getRepository(BdBillTransfer).find({relations: ["bill"]});
+            let billId = transferList[0].bill.id;
             let result = await getCustomRepository(BdBillRepo).getViewPageData({}, {id: billId});
             let item = result[0][0];
             verifyPageInfo(result[1]);
@@ -95,6 +97,21 @@ describe("test/app/database/repositories/BdBillRepo.test.ts", () => {
             for (let item of result[0]) {
                 verifyView(item);
                 Assert.equal(item.billTypeName, entity.name);
+            }
+        });
+
+        it('with dateTime', async () => {
+            let result = await getCustomRepository(BdBillRepo).getViewPageData({}, {
+                dateTime: [
+                    "2019-06-01 00:00:00",
+                    "2019-06-01 23:59:59"
+                ]
+            });
+            verifyPageInfo(result[1]);
+            for (let item of result[0]) {
+                verifyView(item);
+                let datetime = moment(item.dateTime).format("YYYY-MM-DD");
+                Assert.equal("2019-06-01", datetime);
             }
         });
     });

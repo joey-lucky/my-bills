@@ -1,42 +1,13 @@
-import {DeepPartial, EntityRepository, FindConditions, FindOperator, getCustomRepository, getRepository} from "typeorm";
+import {EntityRepository} from "typeorm";
 import {BdBill} from "../entity/BdBill";
 import BaseRepository from "../BaseRepository";
-import {BcUser} from "../entity/BcUser";
-import {BcBillType} from "../entity/BcBillType";
-import {BcCard} from "../entity/BcCard";
-import moment = require("moment");
-import {BdBillTransfer} from "../entity/BdBillTransfer";
-
-
 
 @EntityRepository(BdBill)
 export default class BdBillRepo extends BaseRepository<BdBill> {
     public async getViewPageData(pageInfo: PageInfo = {}, params: QueryParam = {}): Promise<[BdBillView[], PageInfo]> {
-        let {pageIndex = 1, pageSize = 15} = pageInfo;
+        let {pageIndex = 1, pageSize = Number.MAX_SAFE_INTEGER} = pageInfo;
         const start = (pageSize * (pageIndex - 1));
-        let conditions: FindConditions<BdBill>[] = [];
-        if (params.id) {
-            conditions.push({id: params.id});
-        }
-        if (params.userId) {
-            conditions.push({user: await getRepository(BcUser).findOne(params.userId)});
-        }
-        if (params.cardId) {
-            conditions.push({card: await getRepository(BcCard).findOne(params.cardId)});
-        }
-        if (params.billTypeId) {
-            conditions.push({billType: await getRepository(BcBillType).findOne(params.billTypeId)});
-        }
-        if (params.dateTime) {
-            if (params.dateTime[0]) {
-                let datetimeStr = moment(params.dateTime[0]).format("YYYY-MM-DD HH:mm:ss");
-                conditions.push({dateTime: new FindOperator("moreThanOrEqual", datetimeStr)});
-            }
-            if (params.dateTime[1]) {
-                let datetimeStr = moment(params.dateTime[1]).format("YYYY-MM-DD HH:mm:ss");
-                conditions.push({dateTime: new FindOperator("lessThanOrEqual", datetimeStr)});
-            }
-        }
+        let where = this.queryParamsToWhere(params);
         let [data, count] = await this.findAndCount({
             relations: [
                 "card",
@@ -49,7 +20,7 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
             ],
             skip: start,
             take: pageSize,
-            where: conditions,
+            where: where,
             order: {
                 dateTime: "DESC"
             },
@@ -64,8 +35,28 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         return [viewList, newPageInfo];
     }
 
-    public async findOneView(id:string):Promise<BdBillView>{
-        let entity = await this.findOne(id,{
+    public async getViewList(params: QueryParam = {}):Promise<BdBillView[]> {
+        let where = this.queryParamsToWhere(params);
+        let data = await this.find({
+            relations: [
+                "card",
+                "card.user",
+                "user",
+                "billType",
+                "billTransfer",
+                "billTransfer.targetCard",
+                "billTransfer.targetCard.user"
+            ],
+            where: where,
+            order: {
+                dateTime: "DESC"
+            },
+        });
+        return await this.entityToViewList(data);
+    }
+
+    public async findOneView(id: string): Promise<BdBillView> {
+        let entity = await this.findOne(id, {
             relations: [
                 "card",
                 "card.user",
@@ -79,7 +70,7 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         return this.entityToView(entity);
     }
 
-    public  async entityToView(entity: BdBill): Promise<BdBillView> {
+    public async entityToView(entity: BdBill): Promise<BdBillView> {
         let userName =
             entity.user &&
             entity.user.name || "";
@@ -102,21 +93,61 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
             entity.billTransfer.targetCard &&
             entity.billTransfer.targetCard.user &&
             entity.billTransfer.targetCard.user.name || "";
+        let targetCardId =
+            entity.billTransfer &&
+            entity.billTransfer.targetCard &&
+            entity.billTransfer.targetCard.id || "";
+        let bdBill = {...entity};
+        delete bdBill.user;
+        delete bdBill.billType;
+        delete bdBill.card;
+        delete bdBill.billTransfer;
         return {
-            userName, billTypeName, cardName, cardUserName, targetCardName, targetCardUserName,
-            id: entity.id,
-            money: entity.money,
-            billDesc: entity.billDesc,
-            dateTime: entity.dateTime,
+            ...bdBill,
+            userName,
+            billTypeName,
+            cardName,
+            cardUserName,
+            targetCardName,
+            targetCardUserName,
+            targetCardId
         };
     }
 
-    async entityToViewList(entities: BdBill[] = []): Promise<BdBillView[]> {
+    private async entityToViewList(entities: BdBill[] = []): Promise<BdBillView[]> {
         let views: BdBillView[] = [];
         for (let entity of entities) {
             views.push(await this.entityToView(entity));
         }
         return views;
+    }
+
+    private queryParamsToWhere(params) {
+        let where = " 1 = 1 ";
+        if (params.id) {
+            where += ` and BdBill.id = '${params.id}'`;
+        }
+        if (params.userId) {
+            where += ` and BdBill.user_id = '${params.userId}'`;
+        }
+        if (params.cardId) {
+            where += ` and BdBill.card_id = '${params.cardId}'`;
+        }
+        if (params.billTypeId) {
+            where += ` and BdBill.bill_type_id = '${params.billTypeId}'`;
+        }
+        if (params.dateTime) {
+            if (params.dateTime.length >= 1) {
+                let time = params.dateTime[0];
+                where += ` and BdBill.date_time >= str_to_date('${time}','%Y-%m-%d %H:%i:%s')`;
+
+            }
+            if (params.dateTime.length >= 2) {
+                let time = params.dateTime[1];
+                where += ` and BdBill.date_time <= str_to_date('${time}','%Y-%m-%d %H:%i:%s')`;
+            }
+        }
+        return where;
     }
 }
 
@@ -128,11 +159,12 @@ interface PageInfo {
 }
 
 interface QueryParam {
-    id?:string,
+    id?: string,
     userId?: string,
     cardId?: string,
     billTypeId?: string,
-    dateTime?: Date[]
+    dateTime?: string[],
+    money?: number[]
 }
 
 export interface BdBillView {
@@ -146,4 +178,8 @@ export interface BdBillView {
     billTypeName: string,
     targetCardName: string,
     targetCardUserName: string,
+    billTypeId: string;
+    userId: string;
+    cardId: string;
+    targetCardId: string;
 }

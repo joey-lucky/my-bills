@@ -8,7 +8,7 @@ import * as moment from "moment";
 
 @Entity()
 export class BdBill extends BaseEntity {
-    @Column({name: "money", type: "decimal", scale: 2, precision: 10})
+    @Column({name: "money", type: "double"})
     money: number;
 
     @Column({name: "bill_desc"})
@@ -18,7 +18,7 @@ export class BdBill extends BaseEntity {
         name: "date_time",
         type: "datetime",
         transformer: {
-            from: (date: Date) => moment(date).format("YYYY-MM-DD HH:mm:ss"),
+            from: (date: Date) =>moment(date).format("YYYY-MM-DD HH:mm:ss"),
             to: (date: string) => moment(date).toDate(),
         }
     })

@@ -5,6 +5,7 @@ import List from "@pages/List";
 import Setting from "@pages/Setting";
 import Login from "@pages/Login";
 import AddBill from "@pages/AddBill";
+import EditBill from "@pages/EditBill";
 
 export default [
     {
@@ -39,6 +40,11 @@ export default [
         path: "/list",
         component: List,
         functionCode: "home"
+    },
+    {
+        path: "/edit-bill",
+        component: EditBill,
+        functionCode: "EditBill"
     },
     {
         path: "/setting",

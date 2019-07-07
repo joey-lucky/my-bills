@@ -24,9 +24,10 @@ export default class MonthItem extends React.Component {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         let {date, income, outgoing} = nextProps;
+        let dateMoment = moment(date);
         return {
-            month: moment(date).format("M月"),
-            year: moment(date).format("YYYY年"),
+            month: dateMoment.format("M月"),
+            year: dateMoment.format("YYYY年"),
             surplus: (income - outgoing).toFixed(2)
         };
     }
@@ -122,13 +123,17 @@ const styles = {
         marginTop: "0.1rem",
         ...commonStyles.tooltip
     },
-    moneyContainer: {
+    billDescContainer: {
         width: 0,
         flex: 1,
     },
     surplus: {
         paddingLeft: "0.1rem",
         ...commonStyles.tooltip
+    },
+    moneyContainer:{
+      width:0,
+      flex:1,
     },
     income: {
         color: colors.income,

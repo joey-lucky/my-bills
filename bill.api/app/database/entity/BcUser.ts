@@ -1,8 +1,10 @@
 import {Column, CreateDateColumn, Entity, JoinColumn, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import * as moment from "moment";
+import * as orm from "typeorm";
+import Assert from "../../utils/Assert";
 
 @Entity()
-export class BcUser{
+export class BcUser extends orm.BaseEntity{
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
@@ -42,4 +44,6 @@ export class BcUser{
 
     @Column({name: "update_by",length:36,nullable:true})
     updateBy: string | null;
+
+
 }

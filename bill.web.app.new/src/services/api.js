@@ -6,6 +6,24 @@ export const asset = {
     },
 };
 
+export const billListApi = {
+    getMonthStatList: function (params) {
+        return request('/wxapp/bill-list/get-month-stat-list', params);
+    },
+    getBillList: function (params) {
+        return request('/wxapp/bill-list/get-bill-list', params);
+    },
+    createBill: function (params) {
+        return request('/wxapp/bill-list/create-bill', params);
+    },
+    updateBill: function (params) {
+        return request('/wxapp/bill-list/update-bill', params);
+    },
+    deleteBill: function (params) {
+        return request('/wxapp/bill-list/update-bill', params);
+    },
+};
+
 export const billApi = {
     getConsumerList: function (params) {
         return request('/wxapp/bill-edit/get-consumer-list', params);

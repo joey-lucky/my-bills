@@ -16,14 +16,17 @@ import MoneyInput from "./MoneyInput";
     }
 })
 export default class BillEdit extends React.Component {
+    static INCOME = "收入";
+    static OUTGOING = "支出";
+    static TRANSFER = "转账";
     static propTypes = {
         value: PropTypes.object,
         onChange: PropTypes.func,
-        type: PropTypes.oneOf(["支出", "收入", "其它"])
-    };
-
-    onAddClick = (event) => {
-        event.stopPropagation();
+        // type: PropTypes.oneOf([
+        //     this.INCOME,
+        //     this.OUTGOING,
+        //     this.TRANSFER,
+        // ])
     };
 
     getFieldProps = (id, opt = {}) => {
@@ -33,7 +36,7 @@ export default class BillEdit extends React.Component {
     };
 
     renderCard(type) {
-        let needTarget = type === "其它";
+        let needTarget = type === BillEdit.TRANSFER;
         let cardParams = {};
         let targetCardParams = {};
         return (
@@ -113,9 +116,9 @@ export default class BillEdit extends React.Component {
 
     renderMoney(type) {
         let color = {
-            "支出": colors.outgoing,
-            "收入": colors.income,
-            "其它": colors.title,
+            [BillEdit.OUTGOING]: colors.outgoing,
+            [BillEdit.INCOME]: colors.income,
+            [BillEdit.TRANSFER]: colors.title,
         };
         return (
             <MoneyInput

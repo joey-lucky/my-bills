@@ -8,7 +8,7 @@ export class BcCard extends BaseEntity {
     @Column({name: "name"})
     name: string;
 
-    @Column({name: "balance", type: "decimal", scale: 2,precision:10})
+    @Column({name: "balance", type: "double"})
     balance: number;
 
     @Column({name: "user_id", length: 36})

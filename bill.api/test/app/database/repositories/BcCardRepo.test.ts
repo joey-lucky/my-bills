@@ -78,4 +78,27 @@ describe("test/app/database/repositories/BcUserRepo.test.ts", () => {
             }
         });
     });
+
+    describe("calculateBalance", () => {
+        it('balance not all zero', async () => {
+            await repo.calculateBalance();
+            let data = await repo.find();
+            let isAllZero = true;
+            for (let item of data) {
+                if (isAllZero && item.balance !== 0) {
+                    isAllZero = false;
+                }
+            }
+            Assert.isTrue(!isAllZero)
+        });
+
+        it('not null field (updateTime,updateBy)', async () => {
+            await repo.calculateBalance();
+            let data = await repo.find();
+            for (let item of data) {
+                Assert.hasText(item.updateTime);
+                Assert.hasText(item.updateBy);
+            }
+        });
+    });
 });
