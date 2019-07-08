@@ -137,14 +137,12 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
             where += ` and BdBill.bill_type_id = '${params.billTypeId}'`;
         }
         if (params.dateTime) {
-            if (params.dateTime.length >= 1) {
-                let time = params.dateTime[0];
-                where += ` and BdBill.date_time >= str_to_date('${time}','%Y-%m-%d %H:%i:%s')`;
-
+            let [start,end] = params.dateTime;
+            if (start) {
+                where += ` and BdBill.date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
             }
-            if (params.dateTime.length >= 2) {
-                let time = params.dateTime[1];
-                where += ` and BdBill.date_time <= str_to_date('${time}','%Y-%m-%d %H:%i:%s')`;
+            if (end) {
+                where += ` and BdBill.date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
             }
         }
         return where;

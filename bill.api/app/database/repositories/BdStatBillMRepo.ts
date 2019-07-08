@@ -10,6 +10,34 @@ function formatPointValue(value: number) {
 
 @EntityRepository(BdStatBillM)
 export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
+    public async getGroupByMonthData(params: { dateTime: string[] }): Promise<GroupByMonthView[]> {
+        let where = "where 1 = 1 ";
+        if (params.dateTime) {
+            let [start,end] = params.dateTime;
+            if (start) {
+                where += ` and t.date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
+            }
+            if (end) {
+                where += ` and t.date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
+            }
+        }
+        //language=MySQL
+        let sql = "select date_format(t.date_time, '%Y-%m-%d %H:%i:%s') as dateTime,\n" +
+            "       sum(t.outgoing) as outgoing,\n" +
+            "       sum(t.income) as income,\n" +
+            "       sum(t.surplus) as surplus\n" +
+            "from bd_stat_bill_m t\n " + where +
+            "group by t.date_time\n" +
+            "order by t.date_time desc";
+        let data = await getConnection().query(sql);
+        for (let item of data) {
+            item.outgoing = formatPointValue(item.outgoing);
+            item.income = formatPointValue(item.income);
+            item.surplus = formatPointValue(item.surplus);
+        }
+        return data;
+    }
+
     public async generate() {
         let dateList = await getDateList();
         let userList = await getCustomRepository(BcUserRepo).find();
@@ -50,7 +78,7 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
             } else {
                 entity.outgoing = formatPointValue(Math.abs(money));
             }
-            entity.surplus = formatPointValue( entity.income - entity.outgoing);
+            entity.surplus = formatPointValue(entity.income - entity.outgoing);
         }
         let entities = [...groupByDateMap.values()];
         await this.delete({});
@@ -79,29 +107,11 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
             }
         }
     }
-
-    public async getGroupByMonthData():Promise<GroupByMonthView[]> {
-        //language=MySQL
-        let sql = "select date_format(t.date_time, '%Y-%m-%d %H:%i:%s') as dateTime,\n" +
-            "       sum(t.outgoing) outgoing,\n" +
-            "       sum(t.income) income,\n" +
-            "       sum(t.surplus) surplus\n" +
-            "from bd_stat_bill_m t\n" +
-            "group by t.date_time\n" +
-            "order by t.date_time desc";
-        let data = await getConnection().query(sql);
-        for (let item of data) {
-            item.outgoing = formatPointValue(item.outgoing);
-            item.income = formatPointValue(item.income);
-            item.surplus = formatPointValue(item.surplus);
-        }
-        return data;
-    }
 }
 
 interface GroupByMonthView {
-    outgoing:number;
-    income:number;
-    surplus:number;
-    dateTime:string;
+    outgoing: number;
+    income: number;
+    surplus: number;
+    dateTime: string;
 }

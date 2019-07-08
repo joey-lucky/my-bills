@@ -5,7 +5,7 @@ import SlideShow from "@components/SlideShow";
 import MonthItem from "@pages/List/MonthItem";
 import DayItem from "@pages/List/DayItem";
 import {observer} from "mobx-react";
-import {action, observable, toJS} from "mobx";
+import {action, observable, runInAction, toJS} from "mobx";
 import {billListApi} from "../../services/api";
 import moment from "moment";
 import "./index.less"
@@ -14,13 +14,14 @@ const VIEW_TYPE = ["MONTH", "BILL"];
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1.id !== row2.id,
+        rowHasChanged: (row1, row2) => row1.key !== row2.key,
     });
     @observable isLoading = false;
 
     //按月份分组
     monthRows = [];
     billRows = [];
+
 
     asyncLoadMonthStatList() {
         this.isLoading = true;
@@ -30,79 +31,128 @@ class AppState {
                 let data = d.data || [];
                 let billRows = [];
                 data.forEach((item, index) => {
-                    let id = item.dateTime;
-                    item.date = moment(item.dateTime).toDate();
-                    item.id = id;
-                    item.viewType = VIEW_TYPE[0];
+                    this.completeMonthField(item);
                     billRows.push([]);
                 });
                 this.monthRows = data;
                 this.billRows = billRows;
                 this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
                 this.isLoading = false;
+                console.log(this.monthRows);
             })
             .catch(error => {
                 this.isLoading = false;
             });
     }
 
-    asyncChangeExpandState(month, expand = false) {
+    asyncUpdateMonthData(month) {
         this.isLoading = true;
-        new Promise(async (resolve, reject) => {
-            try {
-                let index = this.monthRows.findIndex(item => item.dateTime === month);
-                this.monthRows[index].expand = expand;
-                let itemBillRows = this.billRows[index];
-                if (expand && itemBillRows.length === 0) {
-                    //展开
-                    let startMonth = month;
-                    let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
-                    let params = {
-                        dateTime: [startMonth, endMonth],
-                    };
-                    let d = await billListApi.getBillList(params);
-                    itemBillRows = d.data || [];
-                    let currDayStr = null;
-                    itemBillRows.forEach(item => {
-                        //将字符串时间转成Date对象
-                        item.date = moment(item.dateTime).toDate();
-                        let dayStr = moment(item.dateTime).format("YYYY-MM-DD");
-                        if (currDayStr !== dayStr) {
-                            item.showDate = true;
-                            currDayStr = dayStr;
-                        }
-                        item.viewType = VIEW_TYPE[1];
-                    });
-                    if (itemBillRows[0]) {
-                        itemBillRows[0].showDate = true;
-                    }
-                    this.billRows[index] = itemBillRows;
-                }
-                let data = [];
-                this.monthRows.forEach((item, index) => {
-                    data.push(item);
-                    if (item.expand) {
-                        data.push(...this.billRows[index]);
-                    }
-                });
-                resolve(data);
-            } catch (e) {
-                reject(e);
-            }
-        }).then(data => {
+        this.updateMonthData(month).then(data => {
             this.isLoading = false;
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
         }).catch(reason => {
             this.isLoading = false;
         });
+    }
 
+    @action
+    asyncChangeExpandState(month, expand = false) {
+        this.isLoading = true;
+        this.changeExpandState(month, expand)
+            .then(data => {
+                runInAction(() => {
+                    this.isLoading = false;
+                    this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
+                });
+            }).catch(reason => {
+            this.isLoading = false;
+        });
+    }
 
+    // 补充月记录字段
+    completeMonthField(item = {}) {
+        let id = item.dateTime;
+        item.date = moment(item.dateTime).toDate();
+        item.id = id;
+        item.viewType = VIEW_TYPE[0];
+        item.key = id + Date.now();
+        return item;
+    }
+
+    // 补充账单字段
+    completeBillListField(rows = []) {
+        let currDayStr = null;
+        rows.forEach(item => {
+            //将字符串时间转成Date对象
+            item.date = moment(item.dateTime).toDate();
+            item.key = item.id + (item.updateTime || "");
+            let dayStr = moment(item.dateTime).format("YYYY-MM-DD");
+            if (currDayStr !== dayStr) {
+                item.showDate = true;
+                currDayStr = dayStr;
+            }
+            item.viewType = VIEW_TYPE[1];
+        });
+        return rows;
+    }
+
+    //获取数据
+    calculateListViewData() {
+        let data = [];
+        this.monthRows.forEach((item, index) => {
+            data.push(item);
+            if (item.expand) {
+                data.push(...this.billRows[index]);
+            }
+        });
+        console.log(this.monthRows);
+        return data;
+    }
+
+    async updateMonthData(month) {
+        let index = this.monthRows.findIndex(item => item.dateTime === month);
+
+        let startMonth = month;
+        let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
+        let params = {
+            dateTime: [startMonth, endMonth],
+        };
+
+        //更新月数据
+        let monthItem = (await billListApi.getMonthStatList(params)).data[0];
+        this.completeMonthField(monthItem);
+        monthItem.expand = true;
+        this.monthRows[index] = monthItem;
+
+        let billList = (await billListApi.getBillList()).data || [];
+        this.billRows[index] = this.completeBillListField(billList);
+        return this.calculateListViewData();
+    }
+
+    async changeExpandState(month, expand = false) {
+        let index = this.monthRows.findIndex(item => item.dateTime === month);
+        console.log(index);
+        this.monthRows[index].expand = expand;
+        let billList = this.billRows[index];
+        if (expand && billList.length === 0) {
+            //展开
+            let startMonth = month;
+            let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
+            let params = {
+                dateTime: [startMonth, endMonth],
+            };
+            let d = await billListApi.getBillList(params);
+            billList = d.data || [];
+            this.billRows[index] = this.completeBillListField(billList);
+        }
+        return this.calculateListViewData();
     }
 }
 
 @observer
 export default class List extends React.Component {
     _appState = new AppState();
+    _cacheSelectItem;
 
     componentDidMount() {
         this._appState.asyncLoadMonthStatList();
@@ -156,15 +206,13 @@ export default class List extends React.Component {
     };
 
     onItemClick = (item) => {
+        this._cacheSelectItem = item;
         let pathname = this.props.location.pathname;
-        let parentPath = pathname.replace(/[^/]+$/, "");
-        let url = parentPath + "edit-bill?id=" + item.id;
-        console.log(url);
+        let url = pathname + "/edit-bill?id=" + item.id;
         this.props.history.push(url);
     };
 
     render() {
-        console.log("render", toJS(this._appState.listViewDataSource));
         return (
             <Flex
                 style={styles.container}
@@ -188,7 +236,7 @@ export default class List extends React.Component {
                     ref={(e) => {
                         this._listView = e
                     }}
-                    renderHeader={()=>
+                    renderHeader={() =>
                         <SlideShow
                             title={"净资产"}
                             money={"10000"}
@@ -207,12 +255,28 @@ export default class List extends React.Component {
         );
 
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        let {pathname} = this.props.location;
+        let {path} = this.props.match;
+        let {pathname: nextPathname} = prevProps.location;
+        if (pathname !== nextPathname && pathname === path) {//地址发生变化，且为当前地址，说明是跳转后返回
+            let monthDate = this._cacheSelectItem && this._cacheSelectItem.date || new Date();
+            let month = moment(monthDate).format("YYYY-MM-01 00:00:00");
+            this._appState.asyncUpdateMonthData(month)
+        }
+    }
 }
+
 
 const styles = {
     container: {
         width: "100%",
-        height: "100%"
+        height: "100%",
+        position: "absolute",
+        backgroundColor: "white",
+        top: 0,
+        left: 0,
     },
     content: {
         width: "100%",

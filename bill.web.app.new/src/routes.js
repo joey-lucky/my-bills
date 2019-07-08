@@ -19,7 +19,8 @@ export default [
         component: Home,
         name: "首页",
         functionCode: "home"
-    },{
+    },
+    {
         path: "/add-bill",
         component: AddBill,
         name: "记一笔",
@@ -42,7 +43,7 @@ export default [
         functionCode: "home"
     },
     {
-        path: "/edit-bill",
+        path: "/list/edit-bill",
         component: EditBill,
         functionCode: "EditBill"
     },

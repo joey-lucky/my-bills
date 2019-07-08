@@ -23,6 +23,10 @@ class AppState {
         return this.billType === BillEdit.TRANSFER;
     }
 
+    get isIncome(){
+        return this.billType === BillEdit.INCOME;
+    }
+
     asyncLoadEntity(id = "") {
         billListApi.getBillList({id: id}).then(d => {
             let entity = d.data && d.data[0] || {};
@@ -77,22 +81,15 @@ export default class EditBill extends React.Component {
                 Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
             } else {
                 let value = {...values.value};
-                let type = this.data[this.selectPosition];
                 value["dateTime"] = moment(value["dateTime"]).format("YYYY-MM-DD HH:mm:ss");
-                if (type !== "收入") {
+                if (this._appState.isIncome) {
                     value["money"] = 0 - value["money"];
                 }
-                billListApi.updateBill({"bd_bill": [value]}).then(d => {
+                billListApi.updateBill({"bd_bill": [{...this._appState.entity,...value}]}).then(d => {
                     this.props.history.goBack();
                 });
             }
         });
-    };
-
-    onChangeToTransferBillClick = (event) => {
-        event.stopPropagation();
-        let params = RouteUtils.getQueryObject(props.location);
-        let id = params.id;
     };
 
     render() {
@@ -146,6 +143,10 @@ const styles = {
     container: {
         width: "100%",
         height: "100%",
+        position:"absolute",
+        backgroundColor:"white",
+        top:0,
+        left:0,
     },
     content: {
         width: "100%",

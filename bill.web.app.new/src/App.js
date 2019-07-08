@@ -5,6 +5,7 @@ import {createBrowserHistory} from "history";
 import {publicPath} from "./global";
 import RouteContent from "@components/routes/RouteContent";
 import routes from "./routes";
+import {Route} from "react-router";
 
 
 let browserHistory = createBrowserHistory({
@@ -18,12 +19,29 @@ export default class App extends React.Component {
         return (
             <LocaleProvider >
                 <Router history={browserHistory}>
-                    <div style={{width:"100%",height:"100%",backgroundColor:"white"}}>
-                        <RouteContent childRouteData={routes}/>
+                    <div style={styles.container}>
+                        {
+                            routes.map(item=>
+                                <Route
+                                    key={item.path}
+                                    path={item.path}
+                                    component={item.component}
+                                />
+                            )
+                        }
                     </div>
                 </Router>
             </LocaleProvider>
 
         );
+    }
+}
+
+const styles = {
+    container:{
+        width: "100%",
+        height:"100%",
+        backgroundColor: "white",
+        position:"relative"
     }
 }

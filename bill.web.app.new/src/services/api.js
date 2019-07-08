@@ -20,7 +20,7 @@ export const billListApi = {
         return request('/wxapp/bill-list/update-bill', params);
     },
     deleteBill: function (params) {
-        return request('/wxapp/bill-list/update-bill', params);
+        return request('/wxapp/bill-list/delete-bill', params);
     },
 };
 
