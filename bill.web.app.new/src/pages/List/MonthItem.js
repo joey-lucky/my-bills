@@ -7,12 +7,6 @@ import fontSizes from "@res/fontSizes";
 import * as PropTypes from "prop-types";
 import moment from "moment";
 
-function merge(obj) {
-
-
-}
-
-
 export default class MonthItem extends React.Component {
     static propTypes = {
         date: PropTypes.objectOf(Date).isRequired,
@@ -88,7 +82,7 @@ export default class MonthItem extends React.Component {
                         <div>{this.props.income}</div>
                         <div style={styles.division}>|</div>
                         <div style={styles.outgoing}>支出</div>
-                        <div>{this.props.income}</div>
+                        <div>{this.props.outgoing}</div>
                     </Flex>
                 </Flex>
                 <FontIcon

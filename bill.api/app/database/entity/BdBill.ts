@@ -1,10 +1,21 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToOne} from "typeorm";
+import {
+    AfterInsert,
+    AfterRemove,
+    AfterUpdate,
+    Column,
+    Entity,
+    getCustomRepository,
+    JoinColumn,
+    ManyToOne,
+    OneToOne
+} from "typeorm";
 import BaseEntity from "../BaseEntity";
 import {BcUser} from "./BcUser";
 import {BcBillType} from "./BcBillType";
 import {BcCard} from "./BcCard";
 import {BdBillTransfer} from "./BdBillTransfer";
 import * as moment from "moment";
+import BdStatBillMRepo from "../repositories/BdStatBillMRepo";
 
 @Entity()
 export class BdBill extends BaseEntity {

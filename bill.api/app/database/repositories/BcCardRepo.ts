@@ -76,7 +76,7 @@ export default class BcCardRepo extends BaseRepository<BcCard> {
         let billMoneyMap: Map<string, number> = await getBillMoneyStatMap();
         let transferBillMoneyMap: Map<string, number> = await getTransferBillMoneyStatMap();
         let data = await getCustomRepository(BcCardRepo).find();
-        let adminUser = await getCustomRepository(BcUserRepo).getAdminUser();
+        let adminUser = await BcUser.getAdminUser();
         for (let item of data) {
             let billMoney = billMoneyMap.get(item.id) || 0;
             let transferMoney = transferBillMoneyMap.get(item.id) || 0;

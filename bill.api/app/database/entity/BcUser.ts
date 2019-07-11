@@ -1,4 +1,13 @@
-import {Column, CreateDateColumn, Entity, JoinColumn, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    AfterLoad,
+    AfterRemove,
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import * as moment from "moment";
 import * as orm from "typeorm";
 import Assert from "../../utils/Assert";
@@ -46,4 +55,19 @@ export class BcUser extends orm.BaseEntity{
     updateBy: string | null;
 
 
+    @AfterLoad()
+    afterLoad():void{
+        delete this.loginPassword;
+        delete this.loginName;
+    }
+
+    public static async  getAdminUser(): Promise<BcUser> {
+        let data = await BcUser.find({
+            where: {
+                loginName: "hqy"
+            }
+        });
+        Assert.notEmpty(data, "admin is null");
+        return data[0];
+    }
 }

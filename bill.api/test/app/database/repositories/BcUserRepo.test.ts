@@ -1,64 +1,23 @@
 import {app} from "egg-mock/bootstrap";
 import {Context} from "egg";
-import {createConnection, getConnection, getConnectionOptions, getCustomRepository, getRepository} from "typeorm";
-import BcCardRepo from "../../../../app/database/repositories/BcCardRepo";
-import Assert from "../../../../app/utils/Assert";
-import {BcUser} from "../../../../app/database/entity/BcUser";
-import {BcCardType} from "../../../../app/database/entity/BcCardType";
+import {createConnection, getConnection, getConnectionOptions, getCustomRepository} from "typeorm";
+import BcUserRepo from "../../../../app/database/repositories/BcUserRepo";
 
-describe("test/app/database/repositories/BcCardRepo.test.ts", () => {
+describe("test/app/database/repositories/BcUserRepo.test.ts", () => {
     let ctx: Context;
-    let repo: BcCardRepo;
+    let repo: BcUserRepo;
 
     before(async () => {
         ctx = app.mockContext();
         let options = await getConnectionOptions();
         await createConnection({...options, logging: []});
-        repo = getCustomRepository(BcCardRepo);
+        repo = getCustomRepository(BcUserRepo);
     });
     after(async () => {
         await getConnection().close();
     });
 
     describe("getViewList", () => {
-        it('with none params', async () => {
-            let data = await repo.getViewList();
-            for (let item of data) {
-                Assert.hasText(item.id, "id is null");
-                Assert.hasText(item.name, "name is null");
-                Assert.hasText(item.cardTypeName, "cardTypeName is null");
-                Assert.hasText(item.userName, "userName is null");
-            }
-        });
 
-        it('with name', async () => {
-            let data = await repo.getViewList({name: "支付宝"});
-            for (let item of data) {
-                Assert.isTrue(item.name === "支付宝", "query by name error");
-            }
-        });
-
-        it('with searchText', async () => {
-            let data = await repo.getViewList({searchText: "支"});
-            for (let item of data) {
-                Assert.isTrue(item.name.indexOf("支") !== -1, "query by name error");
-            }
-        });
-
-        it('with cardTypeId', async () => {
-            let cardType = (await getRepository(BcCardType).find())[0];
-            let data = await repo.getViewList({cardTypeId: cardType.id});
-            for (let item of data) {
-                Assert.isTrue(item.cardTypeName === cardType.name, "query by cardTypeId error");
-            }
-        });
-
-        it('with userId', async () => {
-            let user = (await getRepository(BcUser).find())[0];
-            let data = await repo.getViewList({userId: user.id});
-            for (let item of data) {
-                Assert.isTrue(item.userName === user.name, "query by userId error");
-            }
-        });
     });
 });

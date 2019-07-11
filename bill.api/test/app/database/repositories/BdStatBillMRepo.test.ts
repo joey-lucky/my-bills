@@ -57,8 +57,20 @@ describe("test/app/database/repositories/BdStatBillMRepo.test.ts", () => {
             for (let item of data) {
                 let surplus = item.income - item.outgoing;
                 surplus = Math.round(surplus * 100) / 100;
-                Assert.equal(surplus, item.surplus);
+                if (surplus !== item.surplus) {
+                    Assert.equal(surplus, item.surplus);
+                }
             }
+        });
+    });
+    describe("generateOneMonth", () => {
+        it('month date change', async () => {
+            let one  = await repo.findOne();
+            let id = one.id; //判断这个id的数据不见了即可
+            await repo.generateOneMonth(one.dateTime);
+            let data = await repo.find();
+            let findIndex = data.findIndex(item => item.id === id);
+            Assert.isTrue(findIndex === -1);
         });
     });
 });

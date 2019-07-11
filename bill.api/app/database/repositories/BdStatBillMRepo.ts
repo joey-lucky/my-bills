@@ -2,7 +2,8 @@ import {EntityRepository, getConnection, getCustomRepository} from "typeorm";
 import BaseRepository from "../BaseRepository";
 import {BdStatBillM} from "../entity/BdStatBillM";
 import BcUserRepo from "./BcUserRepo";
-import moment = require("moment");
+import * as moment from "moment";
+import {BcUser} from "../entity/BcUser";
 
 function formatPointValue(value: number) {
     return Math.round(value * 100) / 100;
@@ -13,7 +14,7 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
     public async getGroupByMonthData(params: { dateTime: string[] }): Promise<GroupByMonthView[]> {
         let where = "where 1 = 1 ";
         if (params.dateTime) {
-            let [start,end] = params.dateTime;
+            let [start, end] = params.dateTime;
             if (start) {
                 where += ` and t.date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
             }
@@ -38,74 +39,57 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
         return data;
     }
 
-    public async generate() {
-        let dateList = await getDateList();
-        let userList = await getCustomRepository(BcUserRepo).find();
-        let adminUser = await getCustomRepository(BcUserRepo).getAdminUser();
-        let groupByDateMap: Map<string, BdStatBillM> = new Map();
-        for (let date of dateList) {
-            let datetime = moment(date).format("YYYY-MM-DD HH:mm:ss");
-            for (let user of userList) {
-                let key = user.id + datetime;
-                let entity = new BdStatBillM();
-                entity.surplus = 0;
-                entity.income = 0;
-                entity.outgoing = 0;
-                entity.userId = user.id;
-                entity.createBy = adminUser.id;
-                entity.dateTime = datetime;
-                groupByDateMap.set(key, entity);
+    public async generateOneMonth(datetime){
+        let mom = moment(datetime);
+        let start = mom.format("YYYY-MM-01 00:00:00");
+        let end = mom.add(1, "M").add(1, "s").format("YYYY-MM-DD HH:mm:ss");
+        await getCustomRepository(BdStatBillMRepo).generate([start,end]);
+    }
+
+    public async generate(dateTime?: [string, string]) {
+        let where = "";
+        let deleteWhere = "";
+        if (dateTime) {
+            let [start, end] = dateTime;
+            if (start) {
+                where += ` and t.date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
+                deleteWhere += ` and date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
+            }
+            if (end) {
+                where += ` and t.date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
+                deleteWhere += ` and date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
             }
         }
+
         //language=MySQL
-        let sql = "select ROUND(sum(t.money), 2) as money,\n" +
-            "       DATE_FORMAT(t.date_time, '%Y-%m') as date_time,\n" +
+        let sql = "select ROUND(sum(t.money), 2)                                            as surplus,\n" +
+            "       round(sum(case when t.money >= 0 then t.money else 0 end), 2)     as income,\n" +
+            "       round(sum(case when t.money < 0 then abs(t.money) else 0 end), 2) as outgoing,\n" +
+            "       DATE_FORMAT(t.date_time, '%Y-%m')                                 as date_time,\n" +
             "       t.user_id\n" +
             "from bd_bill t\n" +
             "       left join bc_bill_type t1 on t1.id = t.bill_type_id\n" +
             "where 1 = 1\n" +
-            "  and t1.type <> '0'\n" +
-            "group by DATE_FORMAT(t.date_time, '%Y-%m'), t.money >= 0, t.user_id\n" +
-            "order by DATE_FORMAT(t.date_time, '%Y-%m') asc";
+            "  and t1.type <> '0'\n" + where +
+            "group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id\n";
         let data = await getConnection().query(sql);
+        let adminUser = await BcUser.getAdminUser();
+        let entities = [];
         for (let item of data) {
-            let {money, date_time: datetime, user_id: userId} = item;
-            datetime += "-01 00:00:00";
-            let key = userId + datetime;
-            let entity = groupByDateMap.get(key);
-            if (money >= 0) {
-                entity.income = formatPointValue(money);
-            } else {
-                entity.outgoing = formatPointValue(Math.abs(money));
-            }
-            entity.surplus = formatPointValue(entity.income - entity.outgoing);
+            let dateTime = item["date_time"] + "-01 00:00:00";
+            let entity = new BdStatBillM();
+            entity.createBy = adminUser.id;
+            entity.dateTime = dateTime;
+            entity.income = item["income"];
+            entity.outgoing = item["outgoing"];
+            entity.surplus = item["surplus"];
+            entity.userId = item["user_id"];
+            entities.push(entity);
         }
-        let entities = [...groupByDateMap.values()];
-        await this.delete({});
-        await this.save(entities);
-
-        async function getDateList(): Promise<Date[]> {
-            //language=MySQL
-            let sql = "select max(bd_bill.date_time) as max_date,\n" +
-                "       min(bd_bill.date_time) as min_date\n" +
-                "from bd_bill\n";
-            let data = await getConnection().query(sql);
-            if (data[0]) {
-                let result = [];
-                let {max_date: maxDate, min_date: minDate} = data[0];
-                let maxMonth = moment(moment(maxDate).format("YYYY-MM"));
-                let currMonth = moment(moment(minDate).format("YYYY-MM"));
-                let unix = maxMonth.unix();
-                while (currMonth.unix() <= unix) {
-                    let date = currMonth.toDate();
-                    result.push(date);
-                    currMonth = currMonth.add(1, "M");
-                }
-                return result;
-            } else {
-                return [];
-            }
-        }
+        let deleteSql = "delete from bd_stat_bill_m  where 1=1 " + deleteWhere;
+        await BdStatBillM.query(deleteSql);
+        await BdStatBillM.save(entities);
+        console.log(await this.getGroupByMonthData({dateTime}))
     }
 }
 

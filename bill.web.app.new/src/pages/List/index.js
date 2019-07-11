@@ -14,7 +14,7 @@ const VIEW_TYPE = ["MONTH", "BILL"];
 
 class AppState {
     @observable listViewDataSource = new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1.key !== row2.key,
+        rowHasChanged: (row1, row2) => row1 !== row2,
     });
     @observable isLoading = false;
 
@@ -124,7 +124,7 @@ class AppState {
         monthItem.expand = true;
         this.monthRows[index] = monthItem;
 
-        let billList = (await billListApi.getBillList()).data || [];
+        let billList = (await billListApi.getBillList(params)).data || [];
         this.billRows[index] = this.completeBillListField(billList);
         return this.calculateListViewData();
     }

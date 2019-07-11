@@ -6,14 +6,16 @@ import Assert from "../../../../app/utils/Assert";
 import {BcUser} from "../../../../app/database/entity/BcUser";
 import {BcCardType} from "../../../../app/database/entity/BcCardType";
 
-describe("test/app/database/repositories/BcUserRepo.test.ts", () => {
+describe("test/app/database/repositories/BcCardRepo.test.ts", () => {
     let ctx: Context;
     let repo: BcCardRepo;
 
     before(async () => {
         ctx = app.mockContext();
         let options = await getConnectionOptions();
-        await createConnection({...options, logging: []});
+        await createConnection({...options,
+            logging: []
+        });
         repo = getCustomRepository(BcCardRepo);
     });
 

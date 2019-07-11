@@ -1,9 +1,18 @@
 import * as orm from "typeorm";
-import {CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    AfterInsert,
+    BeforeInsert, BeforeUpdate,
+    CreateDateColumn,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import * as moment from "moment";
 import {Context} from "egg";
 import {BcUser} from "./entity/BcUser";
 import {Column} from "typeorm";
+import {InsertEvent} from "typeorm";
 
 export default class BaseEntity extends orm.BaseEntity {
     public ctx?: Context | undefined;
@@ -43,4 +52,19 @@ export default class BaseEntity extends orm.BaseEntity {
     @ManyToOne(() => BcUser, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "update_by"})
     updateByUser: BcUser|null;
+
+    @BeforeInsert()
+    async completeCreateBy() {
+        if (!this.createBy) {
+            this.createBy = (await BcUser.getAdminUser()).id;
+        }
+        return this;
+    }
+
+    @BeforeUpdate()
+    async completeUpdateBy() {
+        if (!this.updateBy) {
+            this.updateBy = (await BcUser.getAdminUser()).id;
+        }
+    }
 }
