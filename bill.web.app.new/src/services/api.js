@@ -24,15 +24,22 @@ export const billListApi = {
     },
 };
 
-export const billApi = {
+
+export const addBillApi = {
+    getBillTemplateList: function (params) {
+        return request('/wxapp/add-bill/get-bill-template-list', params);
+    },
+
     getConsumerList: function (params) {
-        return request('/wxapp/bill-edit/get-consumer-list', params);
+        return request('/wxapp/add-bill/get-consumer-list', params);
     },
+
+
     createBill: function (params) {
-        return request('/wxapp/bill-edit/create-bill', params);
+        return request('/wxapp/add-bill/create-bill', params);
     },
-    getCardListUrl: "/wxapp/bill-edit/get-card-list",
-    getBillTypeListUrl: "/wxapp/bill-edit/get-bill-type-list",
+    getCardListUrl: "/wxapp/add-bill/get-card-list",
+    getBillTypeListUrl: "/wxapp/add-bill/get-bill-type-list",
 
     test: function (params) {
         return request('/test.json', params);

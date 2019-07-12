@@ -5,6 +5,7 @@ import {BdBillTransfer} from "../database/entity/BdBillTransfer";
 
 export default class BillEditService extends Service {
 
+    //创建账单
     public async createBill(params: DeepPartial<BdBill>):Promise<BdBill> {
         let userId = this.ctx.user.id;
         let targetCardId = params["targetCardId"];
@@ -26,4 +27,6 @@ export default class BillEditService extends Service {
         });
         return bill;
     }
+
+
 }

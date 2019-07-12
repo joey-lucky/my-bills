@@ -4,7 +4,7 @@ import {createForm} from "rc-form";
 import moment from "moment";
 import * as PropTypes from "prop-types";
 import colors from "@res/colors";
-import {billApi} from "../../services/api";
+import {addBillApi} from "../../services/api";
 import DateItem from "./DateItem";
 import PickerItem from "./PickerItem";
 import InputItem from "./InputItem";
@@ -52,7 +52,7 @@ export default class BillEdit extends React.Component {
                     cols={2}
                     parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
                     label={needTarget ? "转出" : "账户"}
-                    url={billApi.getCardListUrl}
+                    url={addBillApi.getCardListUrl}
                     params={cardParams}
                 />
                 {
@@ -62,7 +62,7 @@ export default class BillEdit extends React.Component {
                         cols={2}
                         parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
                         label={"转入"}
-                        url={billApi.getCardListUrl}
+                        url={addBillApi.getCardListUrl}
                         params={targetCardParams}
                     />
                 }
@@ -84,7 +84,7 @@ export default class BillEdit extends React.Component {
                 cols={2}
                 parse={{id: "typeName", name: "typeName", children: {id: "id", name: "name"}}}
                 label={"类型"}
-                url={billApi.getBillTypeListUrl}
+                url={addBillApi.getBillTypeListUrl}
             />
         );
     }

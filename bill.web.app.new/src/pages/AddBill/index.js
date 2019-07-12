@@ -12,7 +12,7 @@ import TemplateList from "./TemplateList";
 import Bottom from "@pages/AddBill/Bottom";
 import BillEdit from "@components/BillEdit";
 import {createForm} from "rc-form";
-import {billApi} from "../../services/api";
+import {addBillApi} from "../../services/api";
 import moment from "moment";
 
 @createForm()
@@ -27,7 +27,7 @@ export default class AddBill extends React.Component {
     };
 
     onSaveAgainClick = () => {
-       
+
     };
 
     onSaveClick = () => {
@@ -41,7 +41,7 @@ export default class AddBill extends React.Component {
                 if (type !== "收入") {
                     value["money"] = 0 - value["money"];
                 }
-                billApi.createBill({"bd_bill": [value]}).then(d => {
+                addBillApi.createBill({"bd_bill": [value]}).then(d => {
                 });
             }
         });
