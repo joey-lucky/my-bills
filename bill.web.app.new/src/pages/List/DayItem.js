@@ -5,27 +5,31 @@ import icons from "@res/icons";
 import colors from "@res/colors";
 import * as PropTypes from "prop-types";
 import moment from "moment";
+
 export default class DayItem extends React.Component {
     static propTypes = {
-        date: PropTypes.objectOf(Date).isRequired,
-        money: PropTypes.number.isRequired,
-        billDesc: PropTypes.string.isRequired,
-        cardName: PropTypes.string.isRequired,
-        billTypeName: PropTypes.string.isRequired,
-        showDate:PropTypes.bool,
+        data:PropTypes.shape({
+            money: PropTypes.number.isRequired,
+            billDesc: PropTypes.string.isRequired,
+            dateTime: PropTypes.string.isRequired,
+            cardName: PropTypes.string.isRequired,
+            cardUserName: PropTypes.string.isRequired,
+            billTypeName: PropTypes.string.isRequired,
+            billTypeTypeName: PropTypes.string.isRequired,
+        }),
+        showDate: PropTypes.bool,
         onClick: PropTypes.func.isRequired,
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let {date, money = 0} = nextProps;
-        let dateMoment = moment(date);
+        let {dateTime, money = 0} = nextProps.data;
+        let dateMoment = moment(dateTime);
         dateMoment.locale('zh-cn');
         return {
             day: dateMoment.format("DD"),
             week: dateMoment.format("ddd"),
             time: dateMoment.format("HH:mm"),
             money: money.toFixed(2),
-            isIncome: money > 0
         };
     }
 
@@ -36,7 +40,6 @@ export default class DayItem extends React.Component {
             week: "",
             time: "",
             money: "",
-            isIncome: false,
         };
     }
 
@@ -48,13 +51,13 @@ export default class DayItem extends React.Component {
     };
 
     render() {
-        let {day, week, time, isIncome, money} = this.state;
-        let {billDesc, cardName, billTypeName,showDate} = this.props;
+        let {day, week, time, money} = this.state;
+        let {showDate,data} =  this.props;
+        let {billDesc, cardName, billTypeName,cardUserName, billTypeTypeName} = data;
         return (
             <Flex
                 style={styles.container}
-                onClick={(event)=>{
-                    console.log("onClick");
+                onClick={(event) => {
                     this.props.onClick && this.props.onClick()
                 }}
             >
@@ -70,11 +73,11 @@ export default class DayItem extends React.Component {
                         align={"start"}
                     >
                         {
-                            showDate&&
+                            showDate &&
                             <div style={commonStyles.title}>{day}</div>
                         }
                         {
-                            showDate&&
+                            showDate &&
                             <div style={styles.week}>{week}</div>
                         }
                     </Flex>
@@ -95,10 +98,14 @@ export default class DayItem extends React.Component {
                         >
                             <div>{time}</div>
                             <div style={styles.division}>·</div>
-                            <div>{cardName}</div>
+                            <div>{cardUserName+"  ·  "+cardName}</div>
                         </Flex>
                     </Flex>
-                    <div style={isIncome ? styles.incomeMoney : styles.outgoingMoney}>{money}</div>
+                    <div
+                        style={{...styles.money, color: colors.getMoneyColor(billTypeTypeName)}}
+                    >
+                        {money}
+                    </div>
                 </Flex>
             </Flex>
         );
@@ -147,14 +154,8 @@ const styles = {
     division: {
         padding: "0 0.1rem"
     },
-    incomeMoney: {
+    money:{
         ...commonStyles.title,
         paddingRight: "0.54rem",
-        color: colors.income,
-    },
-    outgoingMoney: {
-        ...commonStyles.title,
-        paddingRight: "0.54rem",
-        color: colors.outgoing,
-    },
+    }
 };

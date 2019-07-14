@@ -1,7 +1,7 @@
 import {
     AfterInsert,
     AfterRemove,
-    AfterUpdate,
+    AfterUpdate, BeforeInsert,
     Column,
     Entity,
     getCustomRepository,
@@ -15,7 +15,7 @@ import {BcBillType} from "./BcBillType";
 import {BcCard} from "./BcCard";
 import {BdBillTransfer} from "./BdBillTransfer";
 import * as moment from "moment";
-import BdStatBillMRepo from "../repositories/BdStatBillMRepo";
+import Assert from "../../utils/Assert";
 
 @Entity()
 export class BdBill extends BaseEntity {
@@ -58,4 +58,14 @@ export class BdBill extends BaseEntity {
 
     @OneToOne(type => BdBillTransfer, (transfer) => transfer.bill)
     billTransfer: BdBillTransfer | null;
+
+    @BeforeInsert()
+     validField(){
+        Assert.hasText(this.billDesc, "备注为空");
+        Assert.hasText(this.billTypeId, "账单类型为空");
+        Assert.hasText(this.userId, "用户为空");
+        Assert.hasText(this.dateTime, "时间为空");
+        Assert.hasText(this.dateTime, "时间为空");
+        Assert.isTrue(this.money!==0, "金额为0");
+    }
 }

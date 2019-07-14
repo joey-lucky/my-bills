@@ -21,7 +21,7 @@ export default class CardList extends React.Component {
 
     render() {
         let {cardTypeName, totalBalance = 0, cardData = [], onItemCLick} = this.props;
-        let title = `${cardTypeName} ${totalBalance > 0 ? "资产" : "负债"} ${Math.abs(totalBalance)}`;
+        let title = `${cardTypeName} ${totalBalance > 0 ? "资产" : "负债"} ${Math.abs(totalBalance).toFixed(2)}`;
         return (
             <Flex
                 style={styles.container}

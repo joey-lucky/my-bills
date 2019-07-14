@@ -90,8 +90,8 @@ export default class PickerItem extends React.Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let nextValue = nextProps.value;
-        if (nextValue) {//value存在。
+        if ("value" in nextProps) {//value存在。
+            let nextValue = nextProps.value;
             let {data, lastValue} = prevState;
             if (lastValue !== nextValue) {
                 let index = findIndexListWithValue(data, nextValue);
@@ -118,7 +118,6 @@ export default class PickerItem extends React.Component {
     }
 
     componentDidMount() {
-        console.log("componentDidMount",this.props);
         this.asyncLoadData(this.props).then((data = []) => {
             let {lastValue} = this.state;
             let index = findIndexListWithValue(data, lastValue);
@@ -242,11 +241,10 @@ export default class PickerItem extends React.Component {
             !PickerItem.isEqual(this.props, prevProps, "params");
         let dataChange = !PickerItem.isEqual(this.props, prevProps, "data");
         if (dataChange || requestChange) {
-            console.log("componentDidUpdate",this.props);
-            console.log("componentDidUpdate",prevProps);
             this.asyncLoadData(this.props).then((data = []) => {
-                let {values} = this.state;
-                let index = findIndexListWithValues(data, values);
+                let {lastValue} = this.state;
+                let index = findIndexListWithValue(data, lastValue);
+                let values = getValues(data, index);
                 this.setState({
                     data: data,
                     selectIndex: index,

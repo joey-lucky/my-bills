@@ -9,33 +9,45 @@ import colors from "@res/colors";
 
 export default class TemplateItem extends React.Component {
     static propTypes = {
-        billDesc: PropTypes.string.isRequired,
-        cardName: PropTypes.string.isRequired,
-        cardUserName: PropTypes.string.isRequired,
-        billTypeName: PropTypes.string.isRequired,
+        data: PropTypes.shape({
+            billDesc: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            cardName: PropTypes.string.isRequired,
+            cardUserName: PropTypes.string.isRequired,
+            billTypeName: PropTypes.string.isRequired,
+            billTypeTypeName: PropTypes.string.isRequired,
+            targetCardName: PropTypes.string,
+        }),
+        onClick: PropTypes.func.isRequired,
     };
 
-
     render() {
-        let {billDesc, billTypeName, cardUserName, cardName} = this.props;
-        let detail = billTypeName + "  " + cardUserName + " · " + cardName;
+        let {billDesc, name,billTypeName, cardUserName,targetCardName, cardName,billTypeTypeName} = this.props.data;
+        let detail = cardUserName + "  ·  " + cardName;
+        if (targetCardName) {
+            detail += "-" + targetCardName;
+        }
         return (
             <Flex
                 style={styles.container}
                 direction={"row"}
                 justify={"center"}
+                onClick={this.props.onClick}
             >
                 <FontIcon
-                    style={styles.cardIcon}
+                    style={{...styles.cardIcon,color:colors.getMoneyColor(billTypeTypeName)}}
                     unicode={icons.xe401}
                 />
                 <Flex
                     style={styles.content}
                     direction={"column"}
+                    align={"start"}
                 >
-                    <div style={commonStyles.title}>{billDesc}</div>
+                    <div style={commonStyles.title}>{name}</div>
+                    <div style={styles.detail}>{billTypeName}</div>
                     <div style={styles.detail}>{detail}</div>
                 </Flex>
+                <div style={styles.detail}>{billDesc}</div>
                 <FontIcon
                     style={styles.rightIcon}
                     unicode={icons.right}/>
@@ -57,7 +69,7 @@ const commonStyles = {
 const styles = {
     container: {
         width: "100%",
-        height: "1.9rem",
+        height: "2.1rem",
         paddingLeft: "0.5rem"
     },
     cardIcon: {

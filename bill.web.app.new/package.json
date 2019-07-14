@@ -16,7 +16,7 @@
     "@types/prop-types": "^15.5.3",
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0",
-    "@types/react-router-dom": "^4.3.1",
+    "@types/react-router-dom": "^4.3.4",
     "@types/webpack": "^4.4.4",
     "@types/webpack-dev-server": "^3.1.1",
     "autoprefixer": "^9.4.8",
@@ -73,7 +73,7 @@
     "rc-form": "^2.4.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "react-router-dom": "^4.2.2",
+    "react-router-dom": "^5.0.1",
     "react-sticky": "^6.0.3",
     "screenfull": "^4.0.1"
   },

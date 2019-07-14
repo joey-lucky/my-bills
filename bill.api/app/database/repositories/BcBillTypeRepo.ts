@@ -42,20 +42,12 @@ export default class BcBillTypeRepo extends BaseRepository<BcBillType> {
     }
 
     private async entityToView(entity: BcBillType): Promise<View> {
-        let view: View = {
+        return {
             id: entity.id,
             name: entity.name,
             sort: entity.sort,
-            typeName: ""
+            typeName: entity.typeName
         };
-        if (entity.type === "-1") {
-            view.typeName = "支出";
-        } else if (entity.type === "1") {
-            view.typeName = "收入";
-        } else {
-            view.typeName = "其它";
-        }
-        return view;
     }
 
     private async entityToViewList(entities: BcBillType[]): Promise<View[]> {

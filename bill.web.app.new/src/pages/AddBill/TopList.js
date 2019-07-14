@@ -10,24 +10,17 @@ import {observable} from "mobx";
 @observer
 export default class TopList extends React.Component {
     static propTypes = {
-        defaultPosition: PropTypes.number.isRequired,
+        position: PropTypes.number.isRequired,
         data: PropTypes.array.isRequired,
         onItemClick: PropTypes.func.isRequired,
     };
-    @observable selectIndex = 0;
-
-    constructor(props, context) {
-        super(props, context);
-        this.selectIndex = props.defaultPosition || 0;
-    }
 
     bindOnItemClick = (item, index, array) => () => {
-        this.selectIndex = index;
         this.props.onItemClick(item, index, array);
     };
 
     renderItem = (item, index, array) => {
-        let isSelected = this.selectIndex === index;
+        let isSelected = this.props.position === index;
         return (
             <Flex
                 key={item}

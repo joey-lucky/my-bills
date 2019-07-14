@@ -16,13 +16,12 @@ export default class DateItem extends React.Component {
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let nextValue = nextProps.value;
-        if (nextValue) {//value存在。
-            let time = nextValue.getTime();
+        if ("value" in nextProps && nextProps.value) {//value存在。
+            let time = nextProps.value.getTime();
             let prevTime = prevState.value && prevState.value.getTime() || 0;
             if (time !== prevTime) {
                 return {
-                    value: nextValue
+                    value: nextProps.value
                 };
             }
         }

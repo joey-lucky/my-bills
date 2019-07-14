@@ -6,19 +6,16 @@ import fontSizes from "@res/fontSizes";
 export default class MoneyInput extends React.Component {
     static propTypes = {
         onChange: PropTypes.any,
-        value: PropTypes.objectOf(Date),
-        defaultValue: PropTypes.string,
+        value: PropTypes.number,
+        defaultValue: PropTypes.number,
         color: PropTypes.string,
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let nextValue = nextProps.value;
-        if (nextValue) {//value存在。
-            if (nextValue !== prevState.value) {
-                return {
-                    value: nextValue
-                };
-            }
+        if ("value" in nextProps && nextProps.value !== prevState.value) {//value存在。
+            return {
+                value: nextProps.value
+            };
         }
         return null;
     }
@@ -30,14 +27,21 @@ export default class MoneyInput extends React.Component {
         };
     }
 
-    onChange = (value) => {
+    onChange = (event) => {
+        let value = event.target.value || "";
         if (value !== this.state.value) {
-            if (!this.props.value) {
+            if (/^(([0]?)|(0\.[0-9]*)|([1-9][0-9]*[\.]?[0-9]*))$/.test(value)) {
+                if ("value" in this.props) {
+                    this.setState({
+                        value: value
+                    });
+                }
+                this.props.onChange && this.props.onChange(value);
+            } else {
                 this.setState({
-                    value: value
+                    value: this.state.value
                 });
             }
-            this.props.onChange && this.props.onChange(value);
         }
     };
 
@@ -48,15 +52,16 @@ export default class MoneyInput extends React.Component {
             color: this.props.color,
             borderBottom: "0.04rem solid " + this.props.color
         };
+
         return (
             <Flex style={styles.container}>
                 <input
                     value={value}
+                    onChange={this.onChange}
                     style={style}
                     placeholder={""}
-                    type={"number"}
-                    min={0}
-                    onChange={this.onChange}
+                    // type={"number"}
+                    // min={0}
                 />
             </Flex>
         );

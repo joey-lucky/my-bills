@@ -29,9 +29,8 @@ describe("test/app/service/BillEdit.test.ts", () => {
 
     describe("createBill",()=>{
         it("normal bill", async () => {
-            let time = Date.now();
             let params: any = {
-                billDesc: time,
+                billDesc: "测试billDesc",
                 cardId: await DatabaseUtilsTest.getCardId(),
                 billTypeId: await DatabaseUtilsTest.getBillTypeId(),
                 dateTime: await DatabaseUtilsTest.getDatetime(),
@@ -42,9 +41,8 @@ describe("test/app/service/BillEdit.test.ts", () => {
             Assert.isTrue(!data.targetCardName)
         });
         it("transfer bill", async () => {
-            let time = Date.now();
             let params: any = {
-                billDesc: time,
+                billDesc: "测试billDesc",
                 cardId: await DatabaseUtilsTest.getCardId(),
                 billTypeId: await DatabaseUtilsTest.getBillTypeId(),
                 dateTime: await DatabaseUtilsTest.getDatetime(),

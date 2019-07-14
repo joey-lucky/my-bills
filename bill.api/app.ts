@@ -24,7 +24,7 @@ class MyCustomLogger implements TypeOrmLogger {
     logQueryError(error: string, query: string, parameters?: any[], queryRunner?: QueryRunner): any {
         const sql = query + (parameters && parameters.length ? " -- PARAMETERS: " + this.stringifyParams(parameters) : "");
         this.app.loggers.logger.error("[database]","query failed: " + sql);
-        this.app.loggers.logger.errorg("[database]",`error:`, error);
+        this.app.loggers.logger.error("[database]",`error:`, error);
     }
 
     logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner): any {

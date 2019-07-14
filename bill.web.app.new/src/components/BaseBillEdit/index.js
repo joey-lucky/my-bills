@@ -1,42 +1,30 @@
 import * as React from "react";
 import {Flex} from "antd-mobile";
-import {createForm} from "rc-form";
 import moment from "moment";
 import * as PropTypes from "prop-types";
 import colors from "@res/colors";
-import {addBillApi} from "../../services/api";
+import {baseBillEditApi} from "../../services/api";
 import DateItem from "./DateItem";
 import PickerItem from "./PickerItem";
 import InputItem from "./InputItem";
 import MoneyInput from "./MoneyInput";
+import strings from "@res/strings";
 
-@createForm({
-    onValuesChange: (props, changedValues, allValues) => {
-        props.onChange && props.onChange(allValues);
-    }
-})
-export default class BillEdit extends React.Component {
-    static INCOME = "收入";
-    static OUTGOING = "支出";
-    static TRANSFER = "转账";
+export default class BaseBillEdit extends React.Component {
+    static TRANSFER = "其它";
+
     static propTypes = {
         value: PropTypes.object,
         onChange: PropTypes.func,
-        // type: PropTypes.oneOf([
-        //     this.INCOME,
-        //     this.OUTGOING,
-        //     this.TRANSFER,
-        // ])
+        style: PropTypes.object,
     };
 
     getFieldProps = (id, opt = {}) => {
-        let {value = {}} = this.props;
-        opt.initialValue = value[id];
         return this.props.form.getFieldProps(id, opt);
     };
 
     renderCard(type) {
-        let needTarget = type === BillEdit.TRANSFER;
+        let needTarget = type === strings.other;
         let cardParams = {};
         let targetCardParams = {};
         return (
@@ -52,7 +40,7 @@ export default class BillEdit extends React.Component {
                     cols={2}
                     parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
                     label={needTarget ? "转出" : "账户"}
-                    url={addBillApi.getCardListUrl}
+                    url={baseBillEditApi.getCardListUrl}
                     params={cardParams}
                 />
                 {
@@ -62,7 +50,7 @@ export default class BillEdit extends React.Component {
                         cols={2}
                         parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
                         label={"转入"}
-                        url={addBillApi.getCardListUrl}
+                        url={baseBillEditApi.getCardListUrl}
                         params={targetCardParams}
                     />
                 }
@@ -81,10 +69,11 @@ export default class BillEdit extends React.Component {
                     }],
                     initialValue: "51585e30-2cfb-11e9-b803-2fb0ad7f2291"
                 })}
-                cols={2}
+                url={baseBillEditApi.getBillTypeListUrl}
+                params={{typeName:type}}
                 parse={{id: "typeName", name: "typeName", children: {id: "id", name: "name"}}}
+                cols={2}
                 label={"类型"}
-                url={addBillApi.getBillTypeListUrl}
             />
         );
     }
@@ -108,28 +97,32 @@ export default class BillEdit extends React.Component {
     renderInput(type) {
         return (
             <InputItem
-                {...this.getFieldProps("billDesc")}
+                {...this.getFieldProps("billDesc", {
+                    rules: [{
+                        required: true,
+                        message: "请输入账单备注"
+                    }],
+                })}
                 label={"备注"}
             />
         );
     }
 
     renderMoney(type) {
-        let color = {
-            [BillEdit.OUTGOING]: colors.outgoing,
-            [BillEdit.INCOME]: colors.income,
-            [BillEdit.TRANSFER]: colors.title,
-        };
         return (
             <MoneyInput
-                {...this.getFieldProps("money")}
-                color={color[type]}
+                {...this.getFieldProps("money", {
+                    rules: [{
+                        required: true,
+                        message: "请输入金额"
+                    }],
+                })}
+                color={colors.getMoneyColor(type)}
             />
         );
     }
 
-    render() {
-        let {type} = this.props;
+    renderContent(type) {
         return (
             <Flex
                 style={styles.container}

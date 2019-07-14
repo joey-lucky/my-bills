@@ -1,11 +1,9 @@
 import React from "react";
-import {Router} from "react-router-dom";
-import {LocaleProvider} from "antd-mobile";
+import {Route, Router} from "react-router-dom";
+import {LocaleProvider, Toast} from "antd-mobile";
 import {createBrowserHistory} from "history";
 import {publicPath} from "./global";
-import RouteContent from "@components/routes/RouteContent";
 import routes from "./routes";
-import {Route} from "react-router";
 
 
 let browserHistory = createBrowserHistory({
@@ -15,6 +13,7 @@ let browserHistory = createBrowserHistory({
 });
 export default class App extends React.Component {
     render() {
+        Toast.SHORT = 1;
         const {match} = this.props;
         return (
             <LocaleProvider >
@@ -38,10 +37,10 @@ export default class App extends React.Component {
 }
 
 const styles = {
-    container:{
+    container: {
         width: "100%",
-        height:"100%",
+        height: "100%",
         backgroundColor: "white",
-        position:"relative"
+        position: "relative"
     }
-}
+};

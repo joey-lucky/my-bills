@@ -31,9 +31,9 @@ class AppState {
                 }
             }
             this.total = {
-                total:total.toFixed(0),
-                asset:asset.toFixed(0),
-                credit:credit.toFixed(0)
+                total:total.toFixed(2),
+                asset:asset.toFixed(2),
+                credit:credit.toFixed(2)
             };
             this.data = data;
         });

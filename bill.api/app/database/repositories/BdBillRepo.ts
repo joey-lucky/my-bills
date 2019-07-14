@@ -77,6 +77,12 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         let billTypeName =
             entity.billType &&
             entity.billType.name || "";
+        let billTypeType =
+            entity.billType &&
+            entity.billType.type || "";
+        let billTypeTypeName =
+            entity.billType &&
+            entity.billType.typeName || "";
         let cardName =
             entity.card &&
             entity.card.name || "";
@@ -105,6 +111,8 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         return {
             ...bdBill,
             userName,
+            billTypeType,
+            billTypeTypeName,
             billTypeName,
             cardName,
             cardUserName,
@@ -180,4 +188,6 @@ export interface BdBillView {
     userId: string;
     cardId: string;
     targetCardId: string;
+    billTypeType:string;
+    billTypeTypeName:string;
 }

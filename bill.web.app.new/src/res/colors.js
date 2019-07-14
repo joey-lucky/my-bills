@@ -2,6 +2,9 @@
  * 黑色：[87% 普通文字] [54% 减淡文字] [26% 禁用状态/提示文字] [12% 分隔线]
  * 白色：[100% 普通文字] [70% 减淡文字] [30% 禁用状态/提示文字] [12% 分隔线]
  */
+
+import strings from "@res/strings";
+
 export default {
     appBar: "rgba(0,0,0,0.95)",
     title: "#302F2B",
@@ -31,4 +34,13 @@ export default {
     black7: "rgba(0,0,0,0.7)",
     black8: "rgba(0,0,0,0.8)",
     black9: "rgba(0,0,0,0.9)",
+
+    getMoneyColor(billTypeTypeName) {
+        let color = {
+            [strings.outgoing]: this.outgoing,
+            [strings.income]: this.income,
+            [strings.other]: this.title,
+        };
+        return color[billTypeTypeName];
+    }
 };

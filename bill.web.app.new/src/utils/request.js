@@ -51,8 +51,8 @@ export function request(url, params = {}) {
             if (e.message.indexOf("token") !== -1) {
                 window.location.href = publicPath + "/login"
             } else {
-                Toast.info(e.message, 1, null, true);
-                reject(e.message);
+                Toast.fail(e.message, Toast.SHORT, null, true);
+                reject(e);
             }
         }
     });

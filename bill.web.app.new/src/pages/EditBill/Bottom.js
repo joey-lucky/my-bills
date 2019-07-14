@@ -7,7 +7,6 @@ import * as PropTypes from "prop-types";
 export default class Bottom extends React.Component {
     static propTypes = {
         onSaveClick: PropTypes.func.isRequired,
-        onChangeToTransferBillClick: PropTypes.func.isRequired,
         onDeleteClick: PropTypes.func.isRequired,
         isTransferBill: PropTypes.bool,
     };

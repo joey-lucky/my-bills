@@ -1,7 +1,6 @@
 import {EntityRepository, getConnection, getCustomRepository} from "typeorm";
 import BaseRepository from "../BaseRepository";
 import {BdStatBillM} from "../entity/BdStatBillM";
-import BcUserRepo from "./BcUserRepo";
 import * as moment from "moment";
 import {BcUser} from "../entity/BcUser";
 
@@ -89,7 +88,6 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
         let deleteSql = "delete from bd_stat_bill_m  where 1=1 " + deleteWhere;
         await BdStatBillM.query(deleteSql);
         await BdStatBillM.save(entities);
-        console.log(await this.getGroupByMonthData({dateTime}))
     }
 }
 

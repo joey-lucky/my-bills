@@ -1,7 +1,6 @@
 import * as React from "react";
-import {Flex, Toast} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
-import {observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {observer} from "mobx-react";
 import Text from "@components/Text";
 import FontIcon from "@components/FontIcon";
@@ -9,105 +8,96 @@ import icons from "@res/icons";
 import Blank from "@components/Blank";
 import TopList from "./TopList";
 import TemplateList from "./TemplateList";
-import Bottom from "@pages/AddBill/Bottom";
-import BillEdit from "@components/BillEdit";
-import {createForm} from "rc-form";
-import {addBillApi} from "../../services/api";
-import moment from "moment";
+import BaseBillEdit from "@components/BaseBillEdit";
+import AddBillContent from "@pages/AddBill/AddBillContent";
+import CacheRouterContainer from "@components/CacheRouterContainer";
 
-@createForm()
+class AppState {
+    data = ["模板", "支出", "收入", "其它"];
+    @observable billTypeTypeName = this.data[1];
+
+    @computed
+    get selectPosition() {
+        return this.data.findIndex(item => item === this.billTypeTypeName);
+    }
+}
+
 @observer
-export default class AddBill extends React.Component {
-    data = ["模板", "支出", "收入", "其它", "支出", "收入", "其它", "支出", "收入", "其它"];
-    @observable selectPosition = 1;
-    @observable value = {};
+export default class AddBill extends BaseBillEdit {
+    _appState = new AppState();
+    _billEditRef = null;
 
     onAddClick = (event) => {
-        event.stopPropagation();
+        console.log("onAddClick");
+        this._billEditRef.onSaveClick(event);
     };
 
-    onSaveAgainClick = () => {
-
+    @action
+    onTemplateItemClick = (item, index) => {
+        this._billEditRef.changeValue(item);
+        this._appState.billTypeTypeName = item.billTypeTypeName;
     };
 
-    onSaveClick = () => {
-        this.props.form.validateFields((error, values) => {
-            if (error) {
-                Toast.info(Object.values(error)[0].errors[0].message, 2, null, false);
-            } else {
-                let value = {...values.value};
-                let type = this.data[this.selectPosition];
-                value["dateTime"] = moment(value["dateTime"]).format("YYYY-MM-DD HH:mm:ss");
-                if (type !== "收入") {
-                    value["money"] = 0 - value["money"];
-                }
-                addBillApi.createBill({"bd_bill": [value]}).then(d => {
-                });
-            }
-        });
+    onTopItemClick = (item, index) => {
+        this._appState.billTypeTypeName = item;
     };
 
-    onSaveTemplateClick = () => {
-
-
-    };
+    renderRightSave() {
+        return (
+            <Blank
+                level={1}
+                direction={"row"}
+                onClick={this.onAddClick}
+            >
+                <Text
+                    color={"#F6A724"}
+                    type={"appBar"}>
+                    <FontIcon
+                        unicode={icons.confirm}/>
+                </Text>
+                <Text
+                    text={"保存"}
+                    color={"#F6A724"}
+                    type={"title"}/>
+            </Blank>
+        );
+    }
 
     render() {
+        let {selectPosition, billTypeTypeName} = this._appState;
         return (
-            <Flex
+            <CacheRouterContainer
                 style={styles.container}
                 direction={"column"}
             >
                 <ToolBar
                     title={"记一笔"}
-                    rightExtra={(
-                        <Blank
-                            level={1}
-                            direction={"row"}
-                            onClick={this.props.onAddClick}
-                        >
-                            <Text
-                                color={"#F6A724"}
-                                type={"appBar"}>
-                                <FontIcon
-                                    unicode={icons.confirm}/>
-                            </Text>
-                            <Text
-                                text={"保存"}
-                                color={"#F6A724"}
-                                type={"title"}/>
-                        </Blank>
-                    )}
+                    rightExtra={selectPosition !== 0 && this.renderRightSave()}
                 />
                 <TopList
-                    defaultPosition={this.selectPosition}
-                    data={this.data}
-                    onItemClick={(item, index) => {
-                        this.selectPosition = index;
-                    }}
+                    position={selectPosition}
+                    data={this._appState.data}
+                    onItemClick={this.onTopItemClick}
                 />
+
                 <div style={styles.content}>
+                    <AddBillContent
+                        {...this.props}
+                        visible={selectPosition !== 0}
+                        billTypeTypeName={billTypeTypeName}
+                        wrappedComponentRef={(ref) => {
+                            this._billEditRef = ref;
+                        }}
+                    />
                     {
-                        this.selectPosition === 0 &&
-                        <TemplateList/>
-                    }
-                    {
-                        this.selectPosition !== 0 &&
-                        <BillEdit
-                            {...this.props.form.getFieldProps("value")}
-                            type={this.data[this.selectPosition]}
+                        selectPosition === 0 &&
+                        <TemplateList
+                            onItemClick={this.onTemplateItemClick}
                         />
                     }
+
                 </div>
-                {
-                    this.selectPosition !== 0 &&
-                    <Bottom
-                        onSaveAgainClick={this.onSaveAgainClick}
-                        onSaveClick={this.onSaveClick}
-                        onSaveTemplateClick={this.onSaveTemplateClick}
-                    />
-                }
-            </Flex>
+            </CacheRouterContainer>
         );
 
     }

@@ -19,7 +19,7 @@ export default class Home extends React.Component {
             icon: icons.xe302
         },
         {
-            label: "投资",
+            label: "统计",
             url: "invest",
             icon: icons.xe303
         },

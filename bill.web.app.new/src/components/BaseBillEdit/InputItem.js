@@ -8,19 +8,15 @@ export default class InputItem extends React.Component {
     static propTypes = {
         label: PropTypes.string.isRequired,
         onChange: PropTypes.any,
-        value: PropTypes.objectOf(Date),
+        value: PropTypes.string,
         defaultValue: PropTypes.string,
-        mode: PropTypes.oneOf(['datetime', 'date', 'year', 'month', 'time'])
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let nextValue = nextProps.value;
-        if (nextValue) {//value存在。
-            if (nextValue !== prevState.value) {
-                return {
-                    value: nextValue
-                };
-            }
+        if ("value" in nextProps && nextProps.value !== prevState.value) {//value存在。
+            return {
+                value: nextProps.value
+            };
         }
         return null;
     }
@@ -32,7 +28,8 @@ export default class InputItem extends React.Component {
         };
     }
 
-    onChange = (value) => {
+    onChange = (event) => {
+        let value = event.target.value || "";
         if (value !== this.state.value) {
             if (!this.props.value) {
                 this.setState({
@@ -62,6 +59,7 @@ export default class InputItem extends React.Component {
                         style={styles.input}
                         onChange={this.onChange}
                         value={value}
+                        type={"text"}
                     />
                 </Flex>
             </FormItem>

@@ -38,7 +38,6 @@ class AppState {
                 this.billRows = billRows;
                 this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
                 this.isLoading = false;
-                console.log(this.monthRows);
             })
             .catch(error => {
                 this.isLoading = false;
@@ -84,7 +83,6 @@ class AppState {
         let currDayStr = null;
         rows.forEach(item => {
             //将字符串时间转成Date对象
-            item.date = moment(item.dateTime).toDate();
             item.key = item.id + (item.updateTime || "");
             let dayStr = moment(item.dateTime).format("YYYY-MM-DD");
             if (currDayStr !== dayStr) {
@@ -105,7 +103,6 @@ class AppState {
                 data.push(...this.billRows[index]);
             }
         });
-        console.log(this.monthRows);
         return data;
     }
 
@@ -131,7 +128,6 @@ class AppState {
 
     async changeExpandState(month, expand = false) {
         let index = this.monthRows.findIndex(item => item.dateTime === month);
-        console.log(index);
         this.monthRows[index].expand = expand;
         let billList = this.billRows[index];
         if (expand && billList.length === 0) {
@@ -159,19 +155,21 @@ export default class List extends React.Component {
     }
 
     onAddClick = (event) => {
-
+        event.stopPropagation();
+        let path = this.props.match.path + "/add-bill";
+        this.props.history.push(path);
     };
 
-    @action
-    onSelectOnlyOwn = (selected) => {
-        // //选中状态改变后，需要重新加载数据
-        // this._appState.resetCacheAndPage();
-        // this._appState.selectOnlyMe = selected;
-        // this._appState.asyncLoadData();
-        if (this._listView) {
-            this._listView.scrollTo(0, 0);
-        }
-    };
+    // @action
+    // onSelectOnlyOwn = (selected) => {
+    //     // //选中状态改变后，需要重新加载数据
+    //     this._appState.resetCacheAndPage();
+    //     this._appState.selectOnlyMe = selected;
+    //     this._appState.asyncLoadData();
+    //     if (this._listView) {
+    //         this._listView.scrollTo(0, 0);
+    //     }
+    // };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         if (rowData.viewType === VIEW_TYPE[0]) {
@@ -188,15 +186,10 @@ export default class List extends React.Component {
                 />
             );
         } else {
-            let {date, money, billDesc, cardName, billTypeName, showDate} = rowData;
             return (
                 <DayItem
-                    date={date}
-                    money={money}
-                    billDesc={billDesc}
-                    cardName={cardName}
-                    billTypeName={billTypeName}
-                    showDate={showDate}
+                    data={rowData}
+                    showDate={rowData.showDate}
                     onClick={() => {
                         this.onItemClick(rowData);
                     }}
