@@ -6,6 +6,7 @@ import Setting from "@pages/Setting";
 import Login from "@pages/Login";
 import AddBill from "@pages/AddBill";
 import EditBill from "@pages/EditBill";
+import SubList from "@pages/SubList";
 
 export default [
     {
@@ -33,9 +34,21 @@ export default [
         functionCode: "asset"
     },
     {
+        path: "/asset/sub-list",
+        component: SubList,
+        name: "资产",
+        functionCode: "sub-list"
+    },
+    {
         path: "/invest",
         component: Invest,
         functionCode: "home"
+    },
+    {
+        path: "/invest/sub-list",
+        component: SubList,
+        name: "资产",
+        functionCode: "sub-list"
     },
     {
         path: "/list",

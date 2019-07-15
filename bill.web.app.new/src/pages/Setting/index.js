@@ -2,8 +2,6 @@ import * as React from "react";
 import {Flex} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import Total from "@pages/Home/Total";
-import * as PropTypes from "prop-types";
-
 
 export default class Setting extends React.Component{
 

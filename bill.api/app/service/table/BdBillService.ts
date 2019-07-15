@@ -67,4 +67,11 @@ export default class BdBillService extends Service {
         const params: any = this.ctx.request.queryObjects;
         this.ctx.body.data = await getCustomRepository(BdBillRepo).getViewList(params);
     }
+
+    async getPageData() {
+        const {pageInfo,...params} = this.ctx.request.queryObjects;
+        let result = await getCustomRepository(BdBillRepo).getViewPageData(pageInfo, params);
+        this.ctx.body.data = result[0];
+        this.ctx.body.pageInfo = result[1];
+    }
 }

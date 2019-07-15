@@ -26,6 +26,11 @@ export const billListApi = {
         return request('/wxapp/pages/bill-list/get-bill-list', params);
     },
 };
+export const subBillListApi = {
+    getBillPageData: function (params) {
+        return request('/wxapp/pages/sub-bill-list/get-bill-page-data', params);
+    },
+};
 
 export const baseBillEditApi = {
     getCardListUrl: "/wxapp/pages/base-bill-edit/get-card-list",

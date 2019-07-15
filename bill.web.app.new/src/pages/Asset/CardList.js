@@ -15,7 +15,7 @@ export default class CardList extends React.Component {
         })),
         cardTypeName: PropTypes.string.isRequired,
         totalBalance: PropTypes.number.isRequired,
-        onItemCLick: PropTypes.func,
+        onItemCLick: PropTypes.func.isRequired,
     };
 
 
@@ -38,7 +38,7 @@ export default class CardList extends React.Component {
                 {
                     cardData.map((item, index) =>
                         <React.Fragment
-                            key={item.name+item.userName}
+                            key={item.name + item.userName}
                         >
                             <Card
                                 balance={item.balance}

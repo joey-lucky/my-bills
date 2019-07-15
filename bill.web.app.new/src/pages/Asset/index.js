@@ -18,7 +18,7 @@ class AppState {
 
     asyncLoadData() {
         asset.groupByTypeList({}).then(d => {
-            let data= d.data || [];
+            let data = d.data || [];
             let total = 0;
             let asset = 0;
             let credit = 0;
@@ -26,14 +26,14 @@ class AppState {
                 total += item.balance;
                 if (item.balance >= 0) {
                     asset += item.balance;
-                }else {
-                    credit+=Math.abs(item.balance);
+                } else {
+                    credit += Math.abs(item.balance);
                 }
             }
             this.total = {
-                total:total.toFixed(2),
-                asset:asset.toFixed(2),
-                credit:credit.toFixed(2)
+                total: total.toFixed(2),
+                asset: asset.toFixed(2),
+                credit: credit.toFixed(2)
             };
             this.data = data;
         });
@@ -84,6 +84,12 @@ export default class Assert extends React.Component {
                                     cardTypeName={item.cardTypeName}
                                     totalBalance={item.balance}
                                     cardData={item.children}
+                                    onItemCLick={(item) => {
+                                        let name = item.userName + "  ·  " + item.name;
+                                        let path = this.props.match.path;
+                                        let cardId = item.id;
+                                        this.props.history.push(`${path}/sub-list?name=${name}&cardId=${cardId}`);
+                                    }}
                                 />
                                 {
                                     index !== this._appState.data.length &&

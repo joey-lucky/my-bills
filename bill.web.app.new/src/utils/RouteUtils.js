@@ -10,7 +10,7 @@ export class RouteUtils {
         splits.forEach(item => {
             let entry = item.split("=");
             let key = entry[0];
-            let value = entry[1];
+            let value = decodeURI(entry[1]);
             try {
                 let isJSON = /(^[\[][\s\S]*[\]]$)|(^[\{][\s\S]*[\}]$)/;
                 if (isJSON.test(value)) {
