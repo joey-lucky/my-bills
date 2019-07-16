@@ -5,6 +5,7 @@ import Content from "./Content";
 import BottomBar from "./BottomBar";
 import {Flex} from "antd-mobile";
 import icons from "@res/icons";
+import CacheRouterContainer from "@components/CacheRouterContainer";
 
 export default class Home extends React.Component {
     _bottomIcons = [
@@ -32,7 +33,7 @@ export default class Home extends React.Component {
 
     render() {
         return (
-            <Flex
+            <CacheRouterContainer
                 style={{width: "100%", height: "100%"}}
                 direction={"column"}
             >
@@ -40,7 +41,7 @@ export default class Home extends React.Component {
                 <Total/>
                 <Content/>
                 <BottomBar data={this._bottomIcons}/>
-            </Flex>
+            </CacheRouterContainer>
         );
 
     }

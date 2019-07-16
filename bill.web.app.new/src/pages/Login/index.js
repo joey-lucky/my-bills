@@ -10,6 +10,7 @@ import colors from "@res/colors";
 import {createForm} from 'rc-form';
 import {safeController} from "../../services/api";
 import {setToken} from "@utils/request";
+import CacheRouterContainer from "@components/CacheRouterContainer";
 
 @createForm()
 export default class Login extends React.Component {
@@ -31,7 +32,7 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            <Flex
+            <CacheRouterContainer
                 style={{width: "100%", height: "100%"}}
                 direction={"column"}
             >
@@ -79,7 +80,7 @@ export default class Login extends React.Component {
                 >
                     登录
                 </Flex>
-            </Flex>
+            </CacheRouterContainer>
         );
 
     }

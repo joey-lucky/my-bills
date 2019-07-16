@@ -1,7 +1,9 @@
-import {Column, Entity, getConnection, JoinColumn, ManyToOne} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne} from "typeorm";
 import BaseEntity from "../BaseEntity";
 import {BcUser} from "./BcUser";
 import * as moment from "moment";
+import {BcBillType} from "./BcBillType";
+import {BcCard} from "./BcCard";
 
 @Entity()
 export class BdStatBillM extends BaseEntity {
@@ -28,8 +30,21 @@ export class BdStatBillM extends BaseEntity {
     @Column({name: "user_id", length: 36, comment: "用户id"})
     userId: string;
 
+    @Column({name: "card_id", length: 36, comment: "用户id"})
+    cardId: string;
+
+    @Column({name: "bill_type_id", length: 36, comment: "用户id"})
+    billTypeId: string;
+
     @ManyToOne(() => BcUser, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "user_id"})
     user: BcUser;
 
+    @ManyToOne(() => BcBillType, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
+    @JoinColumn({name: "bill_type_id"})
+    billType: BcBillType;
+
+    @ManyToOne(() => BcCard, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
+    @JoinColumn({name: "card_id"})
+    card: BcCard;
 }

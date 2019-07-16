@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import {Flex} from "antd-mobile";
+import {withRouter} from "react-router-dom";
 
+@withRouter
 export default class CacheRouterContainer extends React.Component {
     static propTypes = {
         style: PropTypes.object,
@@ -11,13 +13,20 @@ export default class CacheRouterContainer extends React.Component {
         align: PropTypes.oneOf(['start', 'center', 'end', 'baseline', 'stretch']),
     };
 
+    constructor(props) {
+        super(props);
+        let path = props.match.path;
+        this.state = {
+            zIndex: 10 + path.split("/").length
+        };
+    }
 
     render() {
         let {style={},...props} = this.props;
         return (
             <Flex
                 {...props}
-                style={{...styles.container,...style}}
+                style={{...styles.container,...style,zIndex:this.state.zIndex}}
             >
                 {
                     this.props.children
@@ -33,6 +42,5 @@ const styles = {
         backgroundColor:"white",
         top:0,
         left:0,
-        zIndex:10
     }
 };

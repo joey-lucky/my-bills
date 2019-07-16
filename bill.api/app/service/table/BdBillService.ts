@@ -63,9 +63,8 @@ export default class BdBillService extends Service {
         this.ctx.body.message = "删除成功";
     }
 
-    async getList() {
-        const params: any = this.ctx.request.queryObjects;
-        this.ctx.body.data = await getCustomRepository(BdBillRepo).getViewList(params);
+    async getList(params):Promise<any[]> {
+        return await getCustomRepository(BdBillRepo).getViewList(params)
     }
 
     async getPageData() {

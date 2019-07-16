@@ -22,10 +22,16 @@ export const billListApi = {
     getMonthStatList: function (params) {
         return request('/wxapp/pages/bill-list/get-month-stat-list', params);
     },
+
+    getSumStatList: function (params) {
+        return request('/wxapp/pages/bill-list/get-sum-stat-list', params);
+    },
+
     getBillList: function (params) {
         return request('/wxapp/pages/bill-list/get-bill-list', params);
     },
 };
+
 export const subBillListApi = {
     getBillPageData: function (params) {
         return request('/wxapp/pages/sub-bill-list/get-bill-page-data', params);

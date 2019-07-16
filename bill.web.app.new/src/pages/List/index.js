@@ -9,6 +9,8 @@ import {action, observable, runInAction, toJS} from "mobx";
 import {billListApi} from "../../services/api";
 import moment from "moment";
 import "./index.less"
+import {RouteUtils} from "@utils/RouteUtils";
+import CacheRouterContainer from "@components/CacheRouterContainer";
 
 const VIEW_TYPE = ["MONTH", "BILL"];
 
@@ -16,56 +18,106 @@ class AppState {
     @observable listViewDataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
     });
+    @observable activityIndicatorState = {
+        text: "加载中",
+        animating: false,
+    };
     @observable isLoading = false;
+    @observable totalData = {
+        income:"0",
+        outgoing:"0",
+        surplus:"0",
+    };
+    toolBarTitle = "";
+    queryParams = {};
 
     //按月份分组
     monthRows = [];
     billRows = [];
 
-
-    asyncLoadMonthStatList() {
-        this.isLoading = true;
-        this.listViewDataSource = this.listViewDataSource.cloneWithRows([]);
-        billListApi.getMonthStatList()
-            .then(d => {
-                let data = d.data || [];
-                let billRows = [];
-                data.forEach((item, index) => {
-                    this.completeMonthField(item);
-                    billRows.push([]);
-                });
-                this.monthRows = data;
-                this.billRows = billRows;
-                this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
-                this.isLoading = false;
-            })
-            .catch(error => {
-                this.isLoading = false;
+    @action
+    async loadMonthStatList() {
+        try{
+            this.activityIndicatorState.animating = true;
+            let result = await billListApi.getMonthStatList(this.queryParams);
+            let sumResult = await billListApi.getSumStatList(this.queryParams);
+            let data =result.data || [];
+            let billRows = [];
+            data.forEach((item, index) => {
+                this.completeMonthField(item);
+                billRows.push([]);
             });
-    }
+            let sumData = sumResult.data && sumResult.data[0] || {};
 
-    asyncUpdateMonthData(month) {
-        this.isLoading = true;
-        this.updateMonthData(month).then(data => {
-            this.isLoading = false;
+            this.monthRows = data;
+            this.billRows = billRows;
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
-        }).catch(reason => {
-            this.isLoading = false;
-        });
+            this.totalData = {
+                outgoing: sumData.outgoing,
+                income: sumData.income,
+                surplus: sumData.surplus,
+            };
+            this.activityIndicatorState.animating = false;
+        }catch (e) {
+            this.activityIndicatorState.animating = false;
+        }
     }
 
     @action
-    asyncChangeExpandState(month, expand = false) {
-        this.isLoading = true;
-        this.changeExpandState(month, expand)
-            .then(data => {
-                runInAction(() => {
-                    this.isLoading = false;
-                    this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
-                });
-            }).catch(reason => {
-            this.isLoading = false;
-        });
+    async changeExpandState(month, expand = false) {
+        try{
+            this.activityIndicatorState.animating = true;
+            let index = this.monthRows.findIndex(item => item.dateTime === month);
+            this.monthRows[index].expand = expand;
+            let billList = this.billRows[index];
+            if (expand && billList.length === 0) {
+                //展开
+                let startMonth = month;
+                let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
+                let params = {
+                    ...this.queryParams,
+                    dateTime: [startMonth, endMonth],
+                };
+                let d = await billListApi.getBillList(params);
+                billList = d.data || [];
+                this.billRows[index] = this.completeBillListField(billList);
+            }
+            let data = this.calculateListViewData();
+            this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
+            this.activityIndicatorState.animating = false;
+        }catch (e) {
+            this.activityIndicatorState.animating = false;
+        }
+
+    }
+
+    //更新单月数据
+    async loadOneMonthData(month) {
+        try{
+            this.activityIndicatorState.animating = true;
+            let index = this.monthRows.findIndex(item => item.dateTime === month);
+
+            let startMonth = month;
+            let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
+            let params = {
+                ...this.queryParams,
+                dateTime: [startMonth, endMonth],
+            };
+
+            //更新月数据
+            let monthItem = (await billListApi.getMonthStatList(params)).data[0];
+            this.completeMonthField(monthItem);
+            monthItem.expand = true;
+            this.monthRows[index] = monthItem;
+
+            let billList = (await billListApi.getBillList(params)).data || [];
+            this.billRows[index] = this.completeBillListField(billList);
+            let data =  this.calculateListViewData();
+            this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
+            this.activityIndicatorState.animating = false;
+        }catch (e) {
+            this.activityIndicatorState.animating = false;
+        }
     }
 
     // 补充月记录字段
@@ -105,44 +157,6 @@ class AppState {
         });
         return data;
     }
-
-    async updateMonthData(month) {
-        let index = this.monthRows.findIndex(item => item.dateTime === month);
-
-        let startMonth = month;
-        let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
-        let params = {
-            dateTime: [startMonth, endMonth],
-        };
-
-        //更新月数据
-        let monthItem = (await billListApi.getMonthStatList(params)).data[0];
-        this.completeMonthField(monthItem);
-        monthItem.expand = true;
-        this.monthRows[index] = monthItem;
-
-        let billList = (await billListApi.getBillList(params)).data || [];
-        this.billRows[index] = this.completeBillListField(billList);
-        return this.calculateListViewData();
-    }
-
-    async changeExpandState(month, expand = false) {
-        let index = this.monthRows.findIndex(item => item.dateTime === month);
-        this.monthRows[index].expand = expand;
-        let billList = this.billRows[index];
-        if (expand && billList.length === 0) {
-            //展开
-            let startMonth = month;
-            let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
-            let params = {
-                dateTime: [startMonth, endMonth],
-            };
-            let d = await billListApi.getBillList(params);
-            billList = d.data || [];
-            this.billRows[index] = this.completeBillListField(billList);
-        }
-        return this.calculateListViewData();
-    }
 }
 
 @observer
@@ -150,8 +164,15 @@ export default class List extends React.Component {
     _appState = new AppState();
     _cacheSelectItem;
 
+    constructor(props, context) {
+        super(props, context);
+        let {name = "流水",...params} = RouteUtils.getQueryObject(props.location);
+        this._appState.toolBarTitle = name;
+        this._appState.queryParams = params || {};
+    }
+
     componentDidMount() {
-        this._appState.asyncLoadMonthStatList();
+        this._appState.loadMonthStatList().then();
     }
 
     onAddClick = (event) => {
@@ -160,16 +181,16 @@ export default class List extends React.Component {
         this.props.history.push(path);
     };
 
-    // @action
-    // onSelectOnlyOwn = (selected) => {
-    //     // //选中状态改变后，需要重新加载数据
-    //     this._appState.resetCacheAndPage();
-    //     this._appState.selectOnlyMe = selected;
-    //     this._appState.asyncLoadData();
-    //     if (this._listView) {
-    //         this._listView.scrollTo(0, 0);
-    //     }
-    // };
+    onItemClick = (item) => {
+        this._cacheSelectItem = item;
+        let pathname = this.props.location.pathname;
+        let url = pathname + "/edit-bill?id=" + item.id;
+        this.props.history.push(url);
+    };
+
+    onExpandChange = (dateTime,expand) => {
+        this._appState.changeExpandState(dateTime, expand).then();
+    };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         if (rowData.viewType === VIEW_TYPE[0]) {
@@ -181,7 +202,7 @@ export default class List extends React.Component {
                     date={date}
                     defaultExpand={expand}
                     onExpandChange={(expand) => {
-                        this._appState.asyncChangeExpandState(dateTime, expand);
+                        this.onExpandChange(dateTime, expand);
                     }}
                 />
             );
@@ -198,27 +219,20 @@ export default class List extends React.Component {
         }
     };
 
-    onItemClick = (item) => {
-        this._cacheSelectItem = item;
-        let pathname = this.props.location.pathname;
-        let url = pathname + "/edit-bill?id=" + item.id;
-        this.props.history.push(url);
-    };
-
     render() {
+        const {totalData,activityIndicatorState} = this._appState;
         return (
-            <Flex
+            <CacheRouterContainer
                 style={styles.container}
                 direction={"column"}
             >
                 <ActivityIndicator
-                    text={"加载中..."}
-                    animating={this._appState.isLoading}
+                    {...toJS(activityIndicatorState)}
                     toast={true}
                     size={"large"}
                 />
                 <ToolBar
-                    title={"流水"}
+                    title={this._appState.toolBarTitle}
                     showAdd={true}
                     showSearch={true}
                     onAddClick={this.onAddClick}
@@ -232,11 +246,11 @@ export default class List extends React.Component {
                     renderHeader={() =>
                         <SlideShow
                             title={"净资产"}
-                            money={"10000"}
-                            label1={"资产"}
-                            value1={"20000"}
-                            label2={"负债"}
-                            value2={"10000"}
+                            money={totalData.surplus}
+                            label1={"收入"}
+                            value1={totalData.income}
+                            label2={"支出"}
+                            value2={totalData.outgoing}
                         />
                     }
                     dataSource={toJS(this._appState.listViewDataSource)}
@@ -244,19 +258,19 @@ export default class List extends React.Component {
                     initialListSize={15}
                     pageSize={15}
                 />
-            </Flex>
+            </CacheRouterContainer>
         );
 
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState,snapshot) {
         let {pathname} = this.props.location;
         let {path} = this.props.match;
         let {pathname: nextPathname} = prevProps.location;
         if (pathname !== nextPathname && pathname === path) {//地址发生变化，且为当前地址，说明是跳转后返回
             let monthDate = this._cacheSelectItem && this._cacheSelectItem.date || new Date();
             let month = moment(monthDate).format("YYYY-MM-01 00:00:00");
-            this._appState.asyncUpdateMonthData(month)
+            this._appState.loadOneMonthData(month).then();
         }
     }
 }

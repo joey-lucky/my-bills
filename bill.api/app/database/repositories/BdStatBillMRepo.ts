@@ -10,17 +10,8 @@ function formatPointValue(value: number) {
 
 @EntityRepository(BdStatBillM)
 export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
-    public async getGroupByMonthData(params: { dateTime: string[] }): Promise<GroupByMonthView[]> {
-        let where = "where 1 = 1 ";
-        if (params.dateTime) {
-            let [start, end] = params.dateTime;
-            if (start) {
-                where += ` and t.date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
-            }
-            if (end) {
-                where += ` and t.date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
-            }
-        }
+    public async getGroupByMonthData(params: QueryParams = {}): Promise<GroupByMonthView[]> {
+        let where = this.parseToWhereString(params);
         //language=MySQL
         let sql = "select date_format(t.date_time, '%Y-%m-%d %H:%i:%s') as dateTime,\n" +
             "       sum(t.outgoing) as outgoing,\n" +
@@ -38,11 +29,27 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
         return data;
     }
 
-    public async generateOneMonth(datetime){
+    public async getSumData(params: QueryParams = {}): Promise<GroupByMonthView[]> {
+        let where = this.parseToWhereString(params);
+        //language=MySQL
+        let sql = "select  sum(t.outgoing) as outgoing,\n" +
+            "       sum(t.income) as income,\n" +
+            "       sum(t.surplus) as surplus\n" +
+            "from bd_stat_bill_m t\n " + where;
+        let data = await getConnection().query(sql);
+        for (let item of data) {
+            item.outgoing = formatPointValue(item.outgoing);
+            item.income = formatPointValue(item.income);
+            item.surplus = formatPointValue(item.surplus);
+        }
+        return data;
+    }
+
+    public async generateOneMonth(datetime) {
         let mom = moment(datetime);
         let start = mom.format("YYYY-MM-01 00:00:00");
         let end = mom.add(1, "M").add(1, "s").format("YYYY-MM-DD HH:mm:ss");
-        await getCustomRepository(BdStatBillMRepo).generate([start,end]);
+        await getCustomRepository(BdStatBillMRepo).generate([start, end]);
     }
 
     public async generate(dateTime?: [string, string]) {
@@ -59,18 +66,19 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
                 deleteWhere += ` and date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
             }
         }
-
         //language=MySQL
         let sql = "select ROUND(sum(t.money), 2)                                            as surplus,\n" +
             "       round(sum(case when t.money >= 0 then t.money else 0 end), 2)     as income,\n" +
             "       round(sum(case when t.money < 0 then abs(t.money) else 0 end), 2) as outgoing,\n" +
             "       DATE_FORMAT(t.date_time, '%Y-%m')                                 as date_time,\n" +
+            "       t.bill_type_id,\n" +
+            "       t.card_id,\n" +
             "       t.user_id\n" +
             "from bd_bill t\n" +
             "       left join bc_bill_type t1 on t1.id = t.bill_type_id\n" +
             "where 1 = 1\n" +
-            "  and t1.type <> '0'\n" + where +
-            "group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id\n";
+            "  and t1.type <> '0'\n" +
+            "group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id, t.bill_type_id, t.card_id\n";
         let data = await getConnection().query(sql);
         let adminUser = await BcUser.getAdminUser();
         let entities = [];
@@ -83,12 +91,40 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
             entity.outgoing = item["outgoing"];
             entity.surplus = item["surplus"];
             entity.userId = item["user_id"];
+            entity.billTypeId = item["bill_type_id"];
+            entity.cardId = item["card_id"];
             entities.push(entity);
         }
         let deleteSql = "delete from bd_stat_bill_m  where 1=1 " + deleteWhere;
         await BdStatBillM.query(deleteSql);
         await BdStatBillM.save(entities);
     }
+
+    private parseToWhereString(params:QueryParams={}){
+        let where = "where 1 = 1 ";
+        if (params.dateTime) {
+            let [start, end] = params.dateTime;
+            if (start) {
+                where += ` and t.date_time >= str_to_date('${start}','%Y-%m-%d %H:%i:%s')`;
+            }
+            if (end) {
+                where += ` and t.date_time <= str_to_date('${end}','%Y-%m-%d %H:%i:%s')`;
+            }
+        }
+        if (params.cardId) {
+            where += ` and t.card_id = '${params.cardId}'`;
+        }
+        if (params.billTypeId) {
+            where += ` and t.bill_type_id = '${params.billTypeId}'`;
+        }
+        return where;
+    }
+}
+
+interface QueryParams{
+    dateTime?: string[];
+    cardId?: string;
+    billTypeId?: string
 }
 
 interface GroupByMonthView {

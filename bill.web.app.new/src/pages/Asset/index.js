@@ -7,6 +7,7 @@ import {observable, toJS} from "mobx";
 import CardList from "./CardList";
 import {asset} from "../../services/api";
 import {observer} from "mobx-react";
+import CacheRouterContainer from "@components/CacheRouterContainer";
 
 class AppState {
     @observable data = [];
@@ -52,9 +53,16 @@ export default class Assert extends React.Component {
         event.stopPropagation();
     };
 
+    onItemClick = (item, index) => {
+        let name = item.userName + "  ·  " + item.name;
+        let path = this.props.match.path;
+        let cardId = item.id;
+        this.props.history.push(`${path}/list?name=${name}&cardId=${cardId}`);
+    };
+
     render() {
         return (
-            <Flex
+            <CacheRouterContainer
                 style={styles.container}
                 direction={"column"}
             >
@@ -85,10 +93,7 @@ export default class Assert extends React.Component {
                                     totalBalance={item.balance}
                                     cardData={item.children}
                                     onItemCLick={(item) => {
-                                        let name = item.userName + "  ·  " + item.name;
-                                        let path = this.props.match.path;
-                                        let cardId = item.id;
-                                        this.props.history.push(`${path}/sub-list?name=${name}&cardId=${cardId}`);
+                                        this.onItemClick(item, index);
                                     }}
                                 />
                                 {
@@ -105,7 +110,7 @@ export default class Assert extends React.Component {
                     }
 
                 </Flex>
-            </Flex>
+            </CacheRouterContainer>
         );
 
     }

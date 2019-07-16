@@ -8,7 +8,7 @@ import AddBill from "@pages/AddBill";
 import EditBill from "@pages/EditBill";
 import SubList from "@pages/SubList";
 
-export default [
+let bottomRoutes = [
     {
         path: "/login",
         component: Login,
@@ -22,22 +22,10 @@ export default [
         functionCode: "home"
     },
     {
-        path:"/add-bill",
-        component: AddBill,
-        name: "记一笔",
-        functionCode: "add-bill"
-    },
-    {
         path: "/asset",
         component: Asset,
         name: "资产",
         functionCode: "asset"
-    },
-    {
-        path: "/asset/sub-list",
-        component: SubList,
-        name: "资产",
-        functionCode: "sub-list"
     },
     {
         path: "/invest",
@@ -45,29 +33,32 @@ export default [
         functionCode: "home"
     },
     {
-        path: "/invest/sub-list",
-        component: SubList,
-        name: "资产",
-        functionCode: "sub-list"
-    },
-    {
-        path: "/list",
-        component: List,
-        functionCode: "home"
-    },
-    {
-        path: "/list/edit-bill",
-        component: EditBill,
-        functionCode: "EditBill"
-    },
-    {
-        path: "/list/add-bill",
-        component: AddBill,
-        functionCode: "EditBill"
-    },
-    {
         path: "/setting",
         component: Setting,
         functionCode: "home"
     },
+];
+
+const listBill =  {
+    path: ["/asset/list","/list"],
+    component: List,
+    name: "资产",
+    functionCode: "sub-list"
+};
+
+const addBill = {
+    path: [...listBill.path.map(item => item + "/add-bill"),"/add-bill"],
+    component: AddBill,
+    name: "记一笔",
+    functionCode: "add-bill"
+};
+
+const editBill = {
+    path: listBill.path.map(item => item + "/edit-bill"),
+    component: EditBill,
+    functionCode: "EditBill"
+};
+
+export default [
+    ...bottomRoutes,listBill,addBill,editBill
 ];

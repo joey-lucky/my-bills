@@ -11,6 +11,7 @@ import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
 import colors from "@res/colors";
 import BillItem from "@pages/SubList/BillItem";
+import CacheRouterContainer from "@components/CacheRouterContainer";
 
 const VIEW_TYPE = ["header", "item"];
 
@@ -146,7 +147,7 @@ export default class SubList extends React.Component {
     render() {
         let {activityIndicatorState,toolBarName} = this._appState;
         return (
-            <Flex
+            <CacheRouterContainer
                 style={styles.container}
                 direction={"column"}
             >
@@ -181,7 +182,7 @@ export default class SubList extends React.Component {
                     onEndReached={this.onEndReached}
                     pageSize={15}
                 />
-            </Flex>
+            </CacheRouterContainer>
         );
 
     }

@@ -1,22 +1,12 @@
 import {app} from "egg-mock/bootstrap";
 import {Context} from "egg";
-import {
-    createConnection,
-    DeepPartial,
-    getConnection,
-    getConnectionOptions,
-    getCustomRepository,
-    getRepository
-} from "typeorm";
+import {createConnection, DeepPartial, getConnection, getConnectionOptions, getCustomRepository} from "typeorm";
 import Assert from "../../../../app/utils/Assert";
-import BdBillRepo, {BdBillView} from "../../../../app/database/repositories/BdBillRepo";
-import {BdBillTransfer} from "../../../../app/database/entity/BdBillTransfer";
+import BdBillRepo from "../../../../app/database/repositories/BdBillRepo";
 import {BcUser} from "../../../../app/database/entity/BcUser";
-import {BcCard} from "../../../../app/database/entity/BcCard";
-import {BcBillType} from "../../../../app/database/entity/BcBillType";
-import moment = require("moment");
 import {BdBill} from "../../../../app/database/entity/BdBill";
 import {BdBillTemplate, BdBillTemplateView} from "../../../../app/database/entity/BdBillTemplate";
+import * as moment from "moment";
 
 describe("test/app/database/repositories/BdBillTemplate.test.ts", () => {
     let ctx: Context;
@@ -36,27 +26,27 @@ describe("test/app/database/repositories/BdBillTemplate.test.ts", () => {
     });
 
 
-
     describe("save", () => {
         it('random save', async () => {
             let data = await BdBill.find();
             let index = Math.floor(Math.random() * data.length);
             let bill = data[index];
-            let params:DeepPartial<BdBillTemplate> = JSON.parse(JSON.stringify(bill));
+            let params: DeepPartial<BdBillTemplate> = JSON.parse(JSON.stringify(bill));
             let admin = await BcUser.getAdminUser();
             params.userId = admin.id;
             params.createBy = admin.id;
             params.id = "ceshi" + Date.now();
+            params.name = "测试" + moment().format("YYYY-MM-DD");
             let entity = BdBillTemplate.create(params);
             await entity.save();
-            let list  =await BdBillTemplate.find({where:{id: params.id}})
+            let list = await BdBillTemplate.find({where: {id: params.id}});
             Assert.notEmpty(list);
         });
     });
 
     describe("getViewList", () => {
         it('view structure', async () => {
-            function verifyView(item:BdBillTemplateView) {
+            function verifyView(item: BdBillTemplateView) {
                 Assert.hasText(item.id, "id is null");
                 Assert.hasText(item.billDesc, "billDesc is null");
                 Assert.hasText(item.cardName, "cardName is null");
@@ -66,8 +56,9 @@ describe("test/app/database/repositories/BdBillTemplate.test.ts", () => {
                 Assert.hasText(item.billTypeType, "billTypeType is null");
                 Assert.hasText(item.billTypeTypeName, "billTypeTypeName is null");
             }
+
             let admin = await BcUser.getAdminUser();
-            let data = await BdBillTemplate.getViewList({userId:admin.id});
+            let data = await BdBillTemplate.getViewList({userId: admin.id});
             for (let item of data) {
                 verifyView(item);
             }
