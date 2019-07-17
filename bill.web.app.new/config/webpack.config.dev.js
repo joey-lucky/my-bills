@@ -78,7 +78,6 @@ let config = {
         }),
         new HtmlWebpackPlugin({
             PUBLIC_PATH: publicPath,
-            // chunks: [pageConfig],
             inject: true,
             filename: pageConfig.htmlPath,
             template: paths.resolveApp(pageConfig.htmlTemplate)

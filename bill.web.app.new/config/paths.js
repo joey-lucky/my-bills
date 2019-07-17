@@ -45,12 +45,12 @@ const getServerStaticProxy = () => {
 
 const version = "v" + moment().format("YYYYMMDDHHmmss");
 const pageConfig = {
-    jsPath: `js/${version}.index.js`,
-    cssPath: `css/${version}.[id].index.css`,
-    imagePath: "img/[hash].[ext]",
-    fontsPath: "fonts/[hash].[ext]",
-    htmlPath: `index.html`,
-    htmlTemplate: "public/index.html",
+    jsPath: `js/${version}.js`,
+    cssPath: `css/${version}.[id].css`,
+    imagePath: "image/[name].[hash].[ext]",
+    fontsPath: "font/[name].[hash].[ext]",
+    htmlPath: `view/index.html`,
+    htmlTemplate: "src/index.html",
     entry: "src/index.js",
 };
 const serverConfig = {
