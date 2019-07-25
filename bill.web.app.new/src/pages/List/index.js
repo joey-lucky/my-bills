@@ -7,6 +7,7 @@ import DayItem from "@pages/List/DayItem";
 import {observer} from "mobx-react";
 import {action, observable, runInAction, toJS} from "mobx";
 import {billListApi} from "../../services/api";
+import Bottom from "./Bottom";
 import moment from "moment";
 import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
@@ -258,6 +259,7 @@ export default class List extends React.Component {
                     initialListSize={15}
                     pageSize={15}
                 />
+                <Bottom/>
             </CacheRouterContainer>
         );
 

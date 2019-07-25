@@ -100,10 +100,10 @@ export default class BaseBillEdit extends React.Component {
                 {...this.getFieldProps("billDesc", {
                     rules: [{
                         required: true,
-                        message: "请输入账单备注"
+                        message: "请输入账单明细"
                     }],
                 })}
-                label={"备注"}
+                label={"明细"}
             />
         );
     }

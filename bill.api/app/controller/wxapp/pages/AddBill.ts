@@ -16,7 +16,7 @@ export default class extends Controller {
     //保存模板
     public async createBillTemplate() {
         let params: DeepPartial<BdBillTemplate> = this.ctx.request.queryObjects["data"][0];
-        params.userId = (await BcUser.getAdminUser()).id;
+        params.userId = this.ctx.user.id;
         let entity = BdBillTemplate.create(params);
         await entity.save();
         this.ctx.body.message = "保存成功";

@@ -6,7 +6,6 @@ import Setting from "@pages/Setting";
 import Login from "@pages/Login";
 import AddBill from "@pages/AddBill";
 import EditBill from "@pages/EditBill";
-import SubList from "@pages/SubList";
 
 let bottomRoutes = [
     {
