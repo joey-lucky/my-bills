@@ -7,15 +7,15 @@ import * as PropTypes from "prop-types";
 
 export default class SlideShow extends React.Component {
     static propTypes = {
-        title: PropTypes.string.isRequired,
-        money: PropTypes.string.isRequired,
-        label1:PropTypes.string.isRequired,
-        label2:PropTypes.string.isRequired,
-        value1:PropTypes.string.isRequired,
-        value2:PropTypes.string.isRequired,
-        text: PropTypes.string,
+        title: PropTypes.any.isRequired,
+        money: PropTypes.any.isRequired,
+        label1:PropTypes.any.isRequired,
+        label2:PropTypes.any.isRequired,
+        value1:PropTypes.any.isRequired,
+        value2:PropTypes.any.isRequired,
+        text: PropTypes.any,
         style: PropTypes.object,
-        color: PropTypes.string,
+        color: PropTypes.any,
         children: PropTypes.any,
     };
 

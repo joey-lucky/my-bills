@@ -6,11 +6,13 @@ import icons from "@res/icons";
 import FontIcon from "@components/FontIcon";
 import colors from "@res/colors";
 import fontSizes from "@res/fontSizes";
-import useRemoteDataState from "@utils/useRemoteDataState";
 import {useState} from "react";
+import RemoteData from "@state/RemoteData";
 
-export default function TablePicker(props) {
-    const {data,idList,nameList,changeValue} = useRemoteDataState(props,{idKey:"value",nameKey:"label"});
+const remoteData = new RemoteData({idKey: "value", nameKey: "label"});
+
+export default function RemoteDataPicker(props) {
+    let {data,idList,nameList,changeValue} = remoteData.getState(props);
     const [visible,setVisible] = useState(false);
 
     const onVisibleChange = (currVisible) => {
@@ -21,7 +23,7 @@ export default function TablePicker(props) {
 
     const onPickerChange = (values) => {
         let value = [...values].pop();
-        if (!"value" in props) {
+        if (!("value" in props)) {
             changeValue(value);
         }
         props.onChange && props.onChange(value);
@@ -31,7 +33,6 @@ export default function TablePicker(props) {
         e.stopPropagation();
         setVisible(true);
     };
-
     return (
         <React.Fragment>
             <Picker
@@ -44,7 +45,7 @@ export default function TablePicker(props) {
                 onChange={onPickerChange}
             />
             <Flex
-                style={{width: "100%", height: "100%",backgroundColor:"grey"}}
+                {...props}
                 direction={"row"}
                 align={"center"}
                 onClick={onClick}
@@ -72,18 +73,22 @@ export default function TablePicker(props) {
     );
 }
 
-TablePicker.propTypes = {
-    label: PropTypes.string.isRequired,
+RemoteDataPicker.propTypes = {
+    value: PropTypes.string,
+    defaultValue: PropTypes.string,
+    url: PropTypes.string,
+    parse: PropTypes.oneOfType([
+        PropTypes.shape({
+            id: PropTypes.string,
+            name: PropTypes.string,
+            children: PropTypes.any,
+        }),
+        PropTypes.func
+    ]),
+    params: PropTypes.any,
+    extra: PropTypes.array,
+    data: PropTypes.array,
+    label: PropTypes.string,
     cols: PropTypes.number,
     onChange: PropTypes.any,
-    value: PropTypes.any,
-    url: PropTypes.any,
-    parse: PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-        children: PropTypes.any,
-    }),
-    params: PropTypes.any,
-    data: PropTypes.any,
 };
-

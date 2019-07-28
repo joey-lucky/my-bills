@@ -26,4 +26,5 @@ export default {
     xe402:"&#xe402;",
 
     xe501:"&#xe501;",
+    xe502:"&#xe502;",
 };

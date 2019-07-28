@@ -156,7 +156,6 @@ export default class PickerItem extends React.Component {
                 let {value} = this.props;
                 //获取数据，初始化为默认值
                 let index = PickerItem.findIndex(data, value);
-                console.log(index);
                 this.setState({
                     data: data,
                     selectIndex: index

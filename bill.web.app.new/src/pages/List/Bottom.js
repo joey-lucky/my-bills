@@ -3,16 +3,20 @@ import {Flex} from "antd-mobile";
 import fontSizes from "@res/fontSizes";
 import colors from "@res/colors";
 import * as PropTypes from "prop-types";
-import {baseBillEditApi} from "../../services/api";
-import TablePicker from "@components/TablePicker";
-import PickerItem from "@components/BaseBillEdit/PickerItem";
+import {billListApi} from "../../services/api";
+import RemoteDataPicker from "@components/RemoteDataPicker";
+import FontIcon from "@components/FontIcon";
+import icons from "@res/icons";
+import createForm from "rc-form/es/createForm";
 
-
+@createForm({
+    onValuesChange:(props,changeValues,allValues)=>{
+        props.onChange(allValues);
+    }
+})
 export default class Bottom extends React.Component {
     static propTypes = {
-        onSaveClick: PropTypes.func.isRequired,
-        onSaveTemplateClick: PropTypes.func.isRequired,
-        onSaveAgainClick: PropTypes.func.isRequired,
+        onChange:PropTypes.func
     };
 
     render(){
@@ -21,13 +25,24 @@ export default class Bottom extends React.Component {
                 style={styles.container}
                 direction={"row"}
                 align={"center"}
-                justify={"around"}
             >
-                <TablePicker
-                    cols={2}
-                    parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
-                    url={baseBillEditApi.getCardListUrl}
-                />
+                <Flex
+                    style={{height:"100%",width:"120px"}}
+                    direction={"row"}
+                    justify={"center"}
+                    align={"center"}
+                >
+                    <RemoteDataPicker
+                        {...this.props.form.getFieldProps("userId")}
+                        defaultValue={""}
+                        extra={[{id:"",name:"全部"}]}
+                        cols={1}
+                        url={billListApi.getUserListUrl}
+                    />
+                    <FontIcon
+                        unicode={icons.xe502}
+                    />
+                </Flex>
             </Flex>
         );
     }
@@ -36,7 +51,9 @@ export default class Bottom extends React.Component {
 const styles = {
     container: {
         width: "100%",
-        height: "1.45rem"
+        height: "1.45rem",
+        borderTop:"1px solid #F5F5F5",
+        fontSize:"0.4rem"
     },
     save: {
         height: "1.17rem",

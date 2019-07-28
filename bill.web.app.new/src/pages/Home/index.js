@@ -38,8 +38,10 @@ export default class Home extends React.Component {
                 direction={"column"}
             >
                 <ToolBar title={"默认账本"}/>
-                <Total/>
-                <Content/>
+                <Flex direction={"column"} style={{width:"100%",height:0,flex:1,overflowY:"auto"}}>
+                    <Total/>
+                    <Content/>
+                </Flex>
                 <BottomBar data={this._bottomIcons}/>
             </CacheRouterContainer>
         );

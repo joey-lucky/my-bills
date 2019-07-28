@@ -28,7 +28,6 @@ export default class AddBill extends BaseBillEdit {
     _billEditRef = null;
 
     onAddClick = (event) => {
-        console.log("onAddClick");
         this._billEditRef.onSaveClick(event);
     };
 

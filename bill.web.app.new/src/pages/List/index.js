@@ -1,11 +1,11 @@
 import * as React from "react";
-import {ActivityIndicator, Flex, ListView} from "antd-mobile";
+import {ActivityIndicator, ListView} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import SlideShow from "@components/SlideShow";
 import MonthItem from "@pages/List/MonthItem";
 import DayItem from "@pages/List/DayItem";
 import {observer} from "mobx-react";
-import {action, observable, runInAction, toJS} from "mobx";
+import {action, observable, toJS} from "mobx";
 import {billListApi} from "../../services/api";
 import Bottom from "./Bottom";
 import moment from "moment";
@@ -25,9 +25,9 @@ class AppState {
     };
     @observable isLoading = false;
     @observable totalData = {
-        income:"0",
-        outgoing:"0",
-        surplus:"0",
+        income: "0",
+        outgoing: "0",
+        surplus: "0",
     };
     toolBarTitle = "";
     queryParams = {};
@@ -38,11 +38,11 @@ class AppState {
 
     @action
     async loadMonthStatList() {
-        try{
+        try {
             this.activityIndicatorState.animating = true;
             let result = await billListApi.getMonthStatList(this.queryParams);
             let sumResult = await billListApi.getSumStatList(this.queryParams);
-            let data =result.data || [];
+            let data = result.data || [];
             let billRows = [];
             data.forEach((item, index) => {
                 this.completeMonthField(item);
@@ -59,14 +59,14 @@ class AppState {
                 surplus: sumData.surplus,
             };
             this.activityIndicatorState.animating = false;
-        }catch (e) {
+        } catch (e) {
             this.activityIndicatorState.animating = false;
         }
     }
 
     @action
     async changeExpandState(month, expand = false) {
-        try{
+        try {
             this.activityIndicatorState.animating = true;
             let index = this.monthRows.findIndex(item => item.dateTime === month);
             this.monthRows[index].expand = expand;
@@ -86,7 +86,7 @@ class AppState {
             let data = this.calculateListViewData();
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
             this.activityIndicatorState.animating = false;
-        }catch (e) {
+        } catch (e) {
             this.activityIndicatorState.animating = false;
         }
 
@@ -94,7 +94,7 @@ class AppState {
 
     //更新单月数据
     async loadOneMonthData(month) {
-        try{
+        try {
             this.activityIndicatorState.animating = true;
             let index = this.monthRows.findIndex(item => item.dateTime === month);
 
@@ -113,10 +113,10 @@ class AppState {
 
             let billList = (await billListApi.getBillList(params)).data || [];
             this.billRows[index] = this.completeBillListField(billList);
-            let data =  this.calculateListViewData();
+            let data = this.calculateListViewData();
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
             this.activityIndicatorState.animating = false;
-        }catch (e) {
+        } catch (e) {
             this.activityIndicatorState.animating = false;
         }
     }
@@ -167,7 +167,7 @@ export default class List extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        let {name = "流水",...params} = RouteUtils.getQueryObject(props.location);
+        let {name = "流水", ...params} = RouteUtils.getQueryObject(props.location);
         this._appState.toolBarTitle = name;
         this._appState.queryParams = params || {};
     }
@@ -189,7 +189,7 @@ export default class List extends React.Component {
         this.props.history.push(url);
     };
 
-    onExpandChange = (dateTime,expand) => {
+    onExpandChange = (dateTime, expand) => {
         this._appState.changeExpandState(dateTime, expand).then();
     };
 
@@ -221,7 +221,7 @@ export default class List extends React.Component {
     };
 
     render() {
-        const {totalData,activityIndicatorState} = this._appState;
+        const {totalData, activityIndicatorState} = this._appState;
         return (
             <CacheRouterContainer
                 style={styles.container}
@@ -259,13 +259,19 @@ export default class List extends React.Component {
                     initialListSize={15}
                     pageSize={15}
                 />
-                <Bottom/>
+                <Bottom onChange={(values) => {
+                    this._appState.queryParams = {
+                        ...this._appState.queryParams,
+                        ...values
+                    };
+                    this._appState.loadMonthStatList().then();
+                }}/>
             </CacheRouterContainer>
         );
 
     }
 
-    componentDidUpdate(prevProps, prevState,snapshot) {
+    componentDidUpdate(prevProps, prevState, snapshot) {
         let {pathname} = this.props.location;
         let {path} = this.props.match;
         let {pathname: nextPathname} = prevProps.location;

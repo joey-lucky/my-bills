@@ -52,7 +52,6 @@ class AppState {
                 let dateMoment = moment(bill.dateTime);
                 let day = dateMoment.format("YYYYMMDD");
                 if (currDay !== day) {
-                    console.log(day);
                     if (result.length > 0) {
                         result[result.length - 1].showDivider = false;
                     }

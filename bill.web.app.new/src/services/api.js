@@ -30,6 +30,7 @@ export const billListApi = {
     getBillList: function (params) {
         return request('/wxapp/pages/bill-list/get-bill-list', params);
     },
+    getUserListUrl: "/wxapp/pages/bill-list/get-user-list",
 };
 
 export const subBillListApi = {

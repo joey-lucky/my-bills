@@ -4,6 +4,7 @@ import {LocaleProvider, Toast} from "antd-mobile";
 import {createBrowserHistory} from "history";
 import {publicPath} from "./global";
 import routes from "./routes";
+import {Redirect} from "react-router";
 
 
 let browserHistory = createBrowserHistory({
@@ -28,6 +29,7 @@ export default class App extends React.Component {
                                 />
                             )
                         }
+                        <Redirect to={"/home"}/>
                     </div>
                 </Router>
             </LocaleProvider>

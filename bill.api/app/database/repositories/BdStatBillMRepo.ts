@@ -117,6 +117,9 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
         if (params.billTypeId) {
             where += ` and t.bill_type_id = '${params.billTypeId}'`;
         }
+        if (params.userId) {
+            where += ` and t.user_id = '${params.userId}'`;
+        }
         return where;
     }
 }
@@ -124,6 +127,7 @@ export default class BdStatBillMRepo extends BaseRepository<BdStatBillM> {
 interface QueryParams{
     dateTime?: string[];
     cardId?: string;
+    userId?: string;
     billTypeId?: string
 }
 
