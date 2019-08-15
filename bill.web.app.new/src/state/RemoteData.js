@@ -2,6 +2,11 @@ import {useEffect, useState} from "react";
 import {request} from "@utils/request";
 import * as PropTypes from "prop-types";
 
+/**
+ * 1、自动根据 url params 从服务器获取数据。
+ * 2、自动解析数据成 {id,name} 格式
+ * 3、自动解析数据成指定的数据 如{label,value}
+ */
 export default function RemoteData(options) {
     let {idKey = "id", nameKey = "name"} = options;
 
@@ -21,48 +26,6 @@ export default function RemoteData(options) {
         extra: PropTypes.array,
         data: PropTypes.array,
     };
-
-    function findIndexListWithValue(rows = [], currValue, fatherIndex = []) {
-        for (let i = 0; i < rows.length; i++) {
-            let item = rows[i];
-            if (item.children && item.children.length > 0) {
-                let itemFatherIndex = [...fatherIndex, i];
-                let findResult = findIndexListWithValue(item.children, currValue, itemFatherIndex);
-                if (findResult.length > itemFatherIndex.length) {
-                    return findResult;
-                }
-            } else {
-                if (item[idKey] === currValue) {
-                    return [...fatherIndex, i];
-                }
-            }
-        }
-        return fatherIndex;
-    }
-
-    function getIdList(rows = [], indexList = []) {
-        let currRows = rows;
-        let list = [];
-        for (let i = 0; i < indexList.length; i++) {
-            let index = indexList[i];
-            let item = currRows[index] || {};
-            list.push(item[idKey]);
-            currRows = item.children || [];
-        }
-        return list;
-    }
-
-    function getNameList(rows = [], indexList = []) {
-        let currRows = rows;
-        let list = [];
-        for (let i = 0; i < indexList.length; i++) {
-            let index = indexList[i];
-            let item = currRows[index] || {};
-            list.push(item[nameKey]);
-            currRows = item.children || [];
-        }
-        return list;
-    }
 
     //将id name 转换成对应的字段
     function parseFormData(rows = []) {
@@ -103,20 +66,16 @@ export default function RemoteData(options) {
     function getState(props) {
         const [data, setData] = useState([]);
         const [value, setValue] = useState(props.value || props.defaultValue);
-        const [idList, setIdList] = useState([]);
-        const [nameList, setNameList] = useState([]);
-        const [indexList, setIndexList] = useState([]);
 
         const changeValue = (targetValue) => {
-            let indexList = findIndexListWithValue(data, targetValue);
-            let idList = getIdList(data, indexList);
-            let nameList = getNameList(data, indexList);
-            setIdList(idList);
-            setNameList(nameList);
-            setIndexList(indexList);
+            // let indexList = findIndexListWithValue(data, targetValue);
+            // let idList = getIdList(data, indexList);
+            // let nameList = getNameList(data, indexList);
+            // setIdList(idList);
+            // setNameList(nameList);
+            // setIndexList(indexList);
             setValue(targetValue);
         };
-
 
         //说明value存在
         useEffect(() => {
@@ -125,27 +84,20 @@ export default function RemoteData(options) {
 
         useEffect(
             () => {
-                let {url, parse, params, data: propData, extra = []} = props;
-
+                let {url, parse, params, extra = []} = props;
                 async function loadData() {
-                    if (propData) {
-                        return propData;
-                    } else {
+                    if (url) {
                         let d = await request(url, params);
                         let data = d.data || [];
                         return parseRemoteData(data, parse);
+                    } else {
+                        return [];
                     }
                 }
 
                 loadData().then((rows = []) => {
                     let allData = [...extra, ...rows];
                     allData = parseFormData(allData);
-                    let indexList = findIndexListWithValue(allData, value);
-                    let idList = getIdList(allData, indexList);
-                    let nameList = getNameList(allData, indexList);
-                    setIdList(idList);
-                    setNameList(nameList);
-                    setIndexList(indexList);
                     setData(allData);
                 });
             },
@@ -153,7 +105,6 @@ export default function RemoteData(options) {
                 props.url,
                 JSON.stringify(props.parse),
                 JSON.stringify(props.params),
-                JSON.stringify(props.data),
                 JSON.stringify(props.extra)
             ]
         );
@@ -161,15 +112,63 @@ export default function RemoteData(options) {
         return {
             data,
             value,
-            idList,
-            nameList,
-            indexList,
             changeValue
         };
     }
 
+    function parseData(value, data) {
+        function findIndexListWithValue(rows = [], currValue, fatherIndex = []) {
+            for (let i = 0; i < rows.length; i++) {
+                let item = rows[i];
+                if (item.children && item.children.length > 0) {
+                    let itemFatherIndex = [...fatherIndex, i];
+                    let findResult = findIndexListWithValue(item.children, currValue, itemFatherIndex);
+                    if (findResult.length > itemFatherIndex.length) {
+                        return findResult;
+                    }
+                } else {
+                    if (item[idKey] === currValue) {
+                        return [...fatherIndex, i];
+                    }
+                }
+            }
+            return fatherIndex;
+        }
+
+        function getIdList(rows = [], indexList = []) {
+            let currRows = rows;
+            let list = [];
+            for (let i = 0; i < indexList.length; i++) {
+                let index = indexList[i];
+                let item = currRows[index] || {};
+                list.push(item[idKey]);
+                currRows = item.children || [];
+            }
+            return list;
+        }
+
+        function getNameList(rows = [], indexList = []) {
+            let currRows = rows;
+            let list = [];
+            for (let i = 0; i < indexList.length; i++) {
+                let index = indexList[i];
+                let item = currRows[index] || {};
+                list.push(item[nameKey]);
+                currRows = item.children || [];
+            }
+            return list;
+        }
+
+        let indexList = findIndexListWithValue(data, value);
+        let idList = getIdList(data, indexList);
+        let nameList = getNameList(data, indexList);
+        return {
+            indexList, idList, nameList
+        }
+    }
+
     return {
-        getState, propsTypes
+        getState, propsTypes,parseData
     }
 }
 

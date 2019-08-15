@@ -27,8 +27,18 @@ function wrapPromise(promise, timeout = 10000) {
     return allPromise;
 }
 
-const getToken = () => window.localStorage.getItem(publicPath + "_token");
+export const getToken = () => window.localStorage.getItem(publicPath + "_token");
 export const setToken = (token) => window.localStorage.setItem(publicPath + "_token", token);
+
+let errorHandler = function () {
+
+
+};
+
+export function setErrorHander(handler) {
+    errorHandler = handler;
+}
+
 
 export function request(url, params = {}) {
     params = {_token: getToken(), ...params};
@@ -48,12 +58,9 @@ export function request(url, params = {}) {
                 throw new Error(message);
             }
         } catch (e) {
-            if (e.message.indexOf("token") !== -1) {
-                window.location.href = publicPath + "/login"
-            } else {
-                Toast.fail(e.message, Toast.SHORT, null, true);
-                reject(e);
-            }
+            errorHandler(e);
+            Toast.fail(e.message, Toast.SHORT, null, true);
+            reject(e);
         }
     });
     let resultPromise = wrapPromise(promise);

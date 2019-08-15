@@ -9,10 +9,11 @@ import fontSizes from "@res/fontSizes";
 import {useState} from "react";
 import RemoteData from "@state/RemoteData";
 
-const remoteData = new RemoteData({idKey: "value", nameKey: "label"});
+const {getState,parseData} = new RemoteData({idKey: "value", nameKey: "label"});
 
 export default function RemoteDataPicker(props) {
-    let {data,idList,nameList,changeValue} = remoteData.getState(props);
+    let {data,changeValue,value} = getState(props);
+    let {idList,nameList,indexList} = parseData(value, data);
     const [visible,setVisible] = useState(false);
 
     const onVisibleChange = (currVisible) => {

@@ -12,6 +12,7 @@ import moment from "moment";
 import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
 import CacheRouterContainer from "@components/CacheRouterContainer";
+import {getItem} from "@global";
 
 const VIEW_TYPE = ["MONTH", "BILL"];
 
@@ -193,6 +194,14 @@ export default class List extends React.Component {
         this._appState.changeExpandState(dateTime, expand).then();
     };
 
+    onBottomChange = (values) => {
+        this._appState.queryParams = {
+            ...this._appState.queryParams,
+            ...values
+        };
+        this._appState.loadMonthStatList().then();
+    };
+
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         if (rowData.viewType === VIEW_TYPE[0]) {
             let {income, outgoing, date, expand = false, dateTime} = rowData;
@@ -259,13 +268,7 @@ export default class List extends React.Component {
                     initialListSize={15}
                     pageSize={15}
                 />
-                <Bottom onChange={(values) => {
-                    this._appState.queryParams = {
-                        ...this._appState.queryParams,
-                        ...values
-                    };
-                    this._appState.loadMonthStatList().then();
-                }}/>
+                <Bottom onChange={this.onBottomChange}/>
             </CacheRouterContainer>
         );
 
@@ -282,7 +285,6 @@ export default class List extends React.Component {
         }
     }
 }
-
 
 const styles = {
     container: {
