@@ -45,7 +45,7 @@ class AppState {
             } else {
                 let saveData = {...values};
                 saveData["dateTime"] = moment(saveData["dateTime"]).format("YYYY-MM-DD HH:mm:ss");
-                if (billTypeTypeName === "支出") {
+                if (billTypeTypeName !== "收入") {
                     saveData["money"] = 0 - saveData["money"];
                 }
                 this.activityIndicatorState.text = "保存账单...";
@@ -81,7 +81,7 @@ export default class AddBillContent extends BaseBillEdit {
     onSaveAgainClick = (event) => {
         event.stopPropagation();
         this.props.form.validateFields((error, values) => {
-            this._appState.saveBill(error, values).then();
+            this._appState.saveBill(error, values,this.props.billTypeTypeName).then();
         });
     };
 

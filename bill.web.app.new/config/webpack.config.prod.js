@@ -8,14 +8,14 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 
 let {pageConfig, publicPath, buildPath, ENV, resolveAlias, resolveApp} = paths;
-
+let cdnPath = "http://cdn.hjoey.com" + publicPath;
 let config = {
     devtool: false,
     mode: "production",
     entry: resolveApp(pageConfig.entry),
     output: {
         path: paths.resolveApp(buildPath),
-        publicPath: publicPath,
+        publicPath: cdnPath,
         filename: pageConfig.jsPath,
     },
     resolve: {
@@ -62,7 +62,7 @@ let config = {
                 test: /\.(jpe?g|png|gif|svg)$/,
                 loader: "file-loader",
                 options: {
-                    publicPath: publicPath,
+                    publicPath: cdnPath,
                     name: pageConfig.imagePath,
                 },
             },
@@ -70,7 +70,7 @@ let config = {
                 test: /\.(eot|woff2|woff|ttf)$/,
                 loader: "file-loader",
                 options: {
-                    publicPath: publicPath,
+                    publicPath: cdnPath,
                     name: pageConfig.fontsPath,
                 },
             }

@@ -58,7 +58,7 @@ class AppState {
                     id: this.entity.id,
                 };
                 saveData["dateTime"] = moment(saveData["dateTime"]).format("YYYY-MM-DD HH:mm:ss");
-                if (this.billTypeTypeName === "支出") {
+                if (this.billTypeTypeName !== "收入") {
                     saveData["money"] = 0 - saveData["money"];
                 }
                 this.activityIndicatorState.text = "保存账单...";
