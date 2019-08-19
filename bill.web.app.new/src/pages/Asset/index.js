@@ -7,7 +7,6 @@ import {observable, toJS} from "mobx";
 import CardList from "./CardList";
 import {asset} from "../../services/api";
 import {observer} from "mobx-react";
-import CacheRouterContainer from "@components/CacheRouterContainer";
 
 class AppState {
     @observable data = [];
@@ -62,7 +61,7 @@ export default class Assert extends React.Component {
 
     render() {
         return (
-            <CacheRouterContainer
+            <Flex
                 style={styles.container}
                 direction={"column"}
             >
@@ -110,7 +109,7 @@ export default class Assert extends React.Component {
                     }
 
                 </Flex>
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }

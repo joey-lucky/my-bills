@@ -6,12 +6,13 @@ import Text from "@components/Text";
 import * as PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
 import icons from "@res/icons";
+import fontSizes from "@res/fontSizes";
 
 @withRouter
 export default class ToolBar extends React.Component {
     static propTypes = {
         title: PropTypes.string,
-        rightExtra:PropTypes.any,
+        rightExtra: PropTypes.any,
         showSearch: PropTypes.bool,
         showAdd: PropTypes.bool,
         showConfirm: PropTypes.bool,
@@ -23,12 +24,12 @@ export default class ToolBar extends React.Component {
     render() {
         return (
             <Flex
-                style={{width: "100%", height: "1.35rem",boxShadow:"0px -0.02rem #F5F5F5 inset"}}
+                style={{width: "100%", height: "1.5rem", boxShadow: "0px -0.02rem #F5F5F5 inset"}}
                 direction={"row"}
             >
                 <Blank level={1} direction={"row"}/>
                 <Blank
-                    onClick={()=>{
+                    onClick={() => {
                         this.props.history.goBack();
                     }}
                     level={1}
@@ -45,42 +46,41 @@ export default class ToolBar extends React.Component {
                 }
                 {
                     this.props.showSearch &&
-                    <Blank
-                        level={1}
-                        direction={"row"}
+                    <FontIcon
                         onClick={this.props.onSearchClick}
-                    >
-                        <Text type={"appBar"}>
-                            <FontIcon unicode={icons.search}/>
-                        </Text>
-                    </Blank>
+                        style={styles.icon}
+                        unicode={icons.search}
+                    />
                 }
                 {
                     this.props.showConfirm &&
-                    <Blank
-                        level={1}
-                        direction={"row"}
+                    <FontIcon
                         onClick={this.props.onConfirmClick}
-                    >
-                        <Text type={"appBar"}>
-                            <FontIcon unicode={icons.confirm}/>
-                        </Text>
-                    </Blank>
+                        style={styles.icon}
+                        unicode={icons.confirm}
+                    />
                 }
                 {
                     this.props.showAdd &&
-                    <Blank
-                        level={1}
-                        direction={"row"}
+                    <FontIcon
                         onClick={this.props.onAddClick}
-                    >
-                        <Text type={"appBar"}>
-                            <FontIcon unicode={icons.add}/>
-                        </Text>
-                    </Blank>
+                        style={styles.icon}
+                        unicode={icons.add}
+                    />
                 }
                 <Blank level={2} direction={"row"}/>
             </Flex>
         );
     }
 }
+
+const styles = {
+    icon: {
+        fontSize: fontSizes.display2,
+        padding: "0 0.2rem",
+        height: "100%",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center"
+    }
+};

@@ -27,17 +27,20 @@ export default class Bottom extends React.Component {
                 align={"center"}
             >
                 <Flex
-                    style={{height:"100%",width:"120px"}}
+                    style={{height:"100%"}}
                     direction={"row"}
                     justify={"center"}
                     align={"center"}
                 >
                     <RemoteDataPicker
-                        {...this.props.form.getFieldProps("userId")}
+                        {...this.props.form.getFieldProps("userId",{initialValue:""})}
+                        style={{width:"2.2rem",height:"100%"}}
                         defaultValue={""}
                         extra={[{id:"",name:"全部"}]}
                         cols={1}
                         url={billListApi.getUserListUrl}
+                        justify={"center"}
+                        align={"center"}
                     />
                     <FontIcon
                         unicode={icons.xe502}

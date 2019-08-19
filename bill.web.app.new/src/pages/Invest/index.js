@@ -1,7 +1,7 @@
 import * as React from "react";
 import ToolBar from "@components/ToolBar";
 import Total from "@pages/Home/Total";
-import CacheRouterContainer from "@components/CacheRouterContainer";
+import {Flex} from "antd-mobile";
 
 
 export default class Invest extends React.Component{
@@ -12,7 +12,7 @@ export default class Invest extends React.Component{
 
     render(){
         return(
-            <CacheRouterContainer
+            <Flex
                 style={{width:"100%",height:"100%"}}
                 direction={"column"}
             >
@@ -22,7 +22,7 @@ export default class Invest extends React.Component{
                     onAddClick={this.onAddClick}
                 />
                 <Total/>
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }

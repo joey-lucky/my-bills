@@ -3,9 +3,13 @@ import {Redirect, Route, Router} from "react-router-dom";
 import {Flex, LocaleProvider, Toast} from "antd-mobile";
 // import {publicPath} from "./global";
 import routes from "./routes";
-import createHashHistory from "history/createHashHistory";
+import {createHashHistory} from "history";
 import {setErrorHander} from "@utils/request";
-
+import {Switch} from "@components/routes";
+import * as styles from "./App.css";
+import * as globalStyles from "./globalStyles.css";
+import {observer} from "mobx-react";
+import {observable} from "mobx";
 
 let history = createHashHistory({
     // forceRefresh:false,
@@ -16,7 +20,9 @@ let history = createHashHistory({
 function fullScreen() {
     let ele = document.body;
     if (ele.requestFullscreen) {
-        ele.requestFullscreen().catch((error)=>{console.log(error)});
+        ele.requestFullscreen().catch((error) => {
+            console.log(error)
+        });
     } else if (ele.mozRequestFullScreen) {
         ele.mozRequestFullScreen();
     } else if (ele.webkitRequestFullscreen) {
@@ -26,10 +32,13 @@ function fullScreen() {
     }
 }
 
+@observer
 export default class App extends React.Component {
-    constructor(props,context){
-        super(props,context);
-        setErrorHander((e)=>{
+    @observable hideGoFullScreen = false;
+
+    constructor(props, context) {
+        super(props, context);
+        setErrorHander((e) => {
             if (e.message.indexOf("token") !== -1) {
                 history.push("/login");
             }
@@ -38,33 +47,36 @@ export default class App extends React.Component {
 
     render() {
         Toast.SHORT = 1;
-        const {match} = this.props;
         return (
-            <LocaleProvider >
+            <LocaleProvider>
                 <Router history={history}>
-                    <div style={styles.container}>
-                        <div style={styles.contentContainer}>
-                            {
-                                routes.map(item=>
-                                    <Route
-                                        key={item.path}
-                                        path={item.path}
-                                        component={item.component}
-                                    />
-                                )
-                            }
-                            {/*<Redirect to={"/home"}/>*/}
+                    <div className={styles.container}>
+                        <div className={styles.contentContainer}>
+                            <Switch>
+                                {
+                                    routes.map(item =>
+                                        <Route
+                                            key={item.path}
+                                            path={item.path}
+                                            component={item.component}
+                                        />
+                                    )
+                                }
+                                <Redirect to={"/home"}/>
+                            </Switch>
                         </div>
                         {/*<Flex*/}
-                            {/*onClick={()=>{*/}
+                            {/*onClick={() => {*/}
+                                {/*this.hideGoFullScreen = true;*/}
                                 {/*fullScreen();*/}
-                                {/*styles.fullScreenContainer.display = "none";*/}
                             {/*}}*/}
-                            {/*style={styles.fullScreenContainer}*/}
+                            {/*className={`${styles.fullScreenContainer} ${this.hideGoFullScreen && globalStyles.hide}`}*/}
                             {/*justify={"center"}*/}
                             {/*align={"center"}*/}
                         {/*>*/}
-                            {/*进入全屏*/}
+                            {/*<div className={styles.goFullScreen}>*/}
+                                {/*进入全屏*/}
+                            {/*</div>*/}
                         {/*</Flex>*/}
                     </div>
                 </Router>
@@ -72,30 +84,3 @@ export default class App extends React.Component {
         );
     }
 }
-
-const styles = {
-    container: {
-        width: "100%",
-        height: "100%",
-        backgroundColor: "white",
-        position: "relative"
-    },
-    contentContainer: {
-        top:0,
-        left:0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "white",
-        position: "absolute"
-    },
-    fullScreenContainer: {
-        top:0,
-        left:0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0,0,0,0.3)",
-        color:"#FFFFFF",
-        position: "absolute",
-        zIndex:999,
-    },
-};

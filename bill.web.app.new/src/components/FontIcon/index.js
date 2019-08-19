@@ -12,9 +12,10 @@ export default class FontIcon extends React.Component {
     };
 
     render() {
-        let {className="",style={}} = this.props;
+        let {className="",style={},...restProps} = this.props;
         return (
             <div
+                {...restProps}
                 className={`${styles.container} ${className}`}
                 style={style}
             >

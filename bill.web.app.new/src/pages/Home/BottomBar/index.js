@@ -10,10 +10,8 @@ export default class BottomBar extends React.Component {
         onItemClick: PropTypes.func,
         data: PropTypes.array.isRequired,
     };
-    onAddBillClick = ()=>{
-        let pathname = this.props.location.pathname;
-        let parentPath = pathname.replace(/[^/]+$/, "");
-        this.props.history.push(parentPath + "add-bill");
+    onAddBillClick = () => {
+        this.props.history.push(this.props.match.path + "/add-bill");
     };
 
     render() {
@@ -26,9 +24,7 @@ export default class BottomBar extends React.Component {
                                 title={item.label}
                                 unicode={item.icon}
                                 onClick={() => {
-                                    let pathname = this.props.location.pathname;
-                                    let parentPath = pathname.replace(/[^/]+$/, "");
-                                    this.props.history.push(parentPath + item.url);
+                                    this.props.history.push(this.props.match.path + "/" + item.url);
                                 }}
                             />
                             {

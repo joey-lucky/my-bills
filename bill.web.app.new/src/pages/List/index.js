@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ActivityIndicator, ListView} from "antd-mobile";
+import {ActivityIndicator, Flex, ListView} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import SlideShow from "@components/SlideShow";
 import MonthItem from "@pages/List/MonthItem";
@@ -11,8 +11,6 @@ import Bottom from "./Bottom";
 import moment from "moment";
 import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
-import CacheRouterContainer from "@components/CacheRouterContainer";
-import {getItem} from "@global";
 
 const VIEW_TYPE = ["MONTH", "BILL"];
 
@@ -179,15 +177,12 @@ export default class List extends React.Component {
 
     onAddClick = (event) => {
         event.stopPropagation();
-        let path = this.props.match.path + "/add-bill";
-        this.props.history.push(path);
+        this.props.history.push(this.props.match.path  + "/add-bill");
     };
 
     onItemClick = (item) => {
         this._cacheSelectItem = item;
-        let pathname = this.props.location.pathname;
-        let url = pathname + "/edit-bill?id=" + item.id;
-        this.props.history.push(url);
+        this.props.history.push(this.props.match.path + "/edit-bill?id=" + item.id);
     };
 
     onExpandChange = (dateTime, expand) => {
@@ -232,7 +227,7 @@ export default class List extends React.Component {
     render() {
         const {totalData, activityIndicatorState} = this._appState;
         return (
-            <CacheRouterContainer
+            <Flex
                 style={styles.container}
                 direction={"column"}
             >
@@ -269,7 +264,7 @@ export default class List extends React.Component {
                     pageSize={15}
                 />
                 <Bottom onChange={this.onBottomChange}/>
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }

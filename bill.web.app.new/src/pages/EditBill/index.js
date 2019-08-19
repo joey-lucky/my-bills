@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ActivityIndicator, Toast} from "antd-mobile";
+import {ActivityIndicator, Flex, Toast} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import {action, computed, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
@@ -13,7 +13,6 @@ import {createForm} from "rc-form";
 import {editBillApi} from "../../services/api";
 import moment from "moment";
 import {RouteUtils} from "@utils/RouteUtils";
-import CacheRouterContainer from "@components/CacheRouterContainer";
 import strings from "@res/strings";
 
 class AppState {
@@ -126,7 +125,7 @@ export default class EditBill extends BaseBillEdit {
     render() {
         let {activityIndicatorState} = this._appState;
         return (
-            <CacheRouterContainer
+            <Flex
                 style={styles.container}
                 direction={"column"}
             >
@@ -166,7 +165,7 @@ export default class EditBill extends BaseBillEdit {
                     onSaveClick={this.onSaveClick}
                     onDeleteClick={this.onDeleteClick}
                 />
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }

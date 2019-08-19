@@ -1,42 +1,43 @@
-// let regex = /^(0|(0\.[0-9]*)|([1-9][0-9]*[\.]?[0-9]*))$/;
-// console.log("----------------true--------------------");
-// console.log(regex.test("0"));
-// console.log(regex.test("0."));
-// console.log(regex.test("0.1"));
-// console.log(regex.test("1"));
-// console.log(regex.test("1."));
-// console.log(regex.test("1.1"));
-// console.log(regex.test("1.10"));
-//
-// console.log("----------------false--------------------");
-// console.log(regex.test("."));
-// console.log(regex.test("00"));
-// console.log(regex.test("01"));
-// console.log(regex.test("0.."));
-// console.log(regex.test("1.."));
-// console.log(regex.test("1..12"));
-
-// let re = new Promise(async (resolve, reject) => {
-//     try {
-//         throw new Error("测试");
-//     } catch (e) {
-//         reject(e.message)
-//     }
-// }).then(
-//     () => {
-//         return Promise.resolve();
-//     },
-//     (cause) => {
-//         console.log(cause);
-//         return Promise.reject(cause)
-//     }
-// );
-async function  test() {
-    try{
-        let data = await Promise.reject("测试");
-    }catch (e) {
-        console.log(e);
+let pathname = "/a/ba/c/d/f";
+function getQueryObject(location){
+    let searchText = location.search||"";
+    searchText = searchText.replace(/^[\?]/, "");
+    let splits = searchText.split("&");
+    let result = {};
+    splits.forEach(item => {
+        let entry = item.split("=");
+        let key = entry[0];
+        let value = decodeURI(entry[1]);
+        try {
+            let isJSON = /(^[\[][\s\S]*[\]]$)|(^[\{][\s\S]*[\}]$)/;
+            if (isJSON.test(value)) {
+                value = JSON.parse(value);
+            }
+        } catch (e) {
+        }
+        result[key] = value;
+    });
+    return result;
+}
+function mathPath(pathname, path) {
+    let realName = path.replace("/", "");
+    let pathList = path.replace("/", "").split("/");
+    for (let i = pathList.length - 1; i >= 0; i--) {
+        let item = pathList[i];
+        if (item === realName) {
+            return {
+                path:path,
+                url:pathname,
+                index:i,
+                params:getQueryObject(window.location),
+            }
+        }
     }
 }
 
-test().then();
+
+console.log(mathPath(pathname, "/a"));
+console.log(mathPath(pathname, "/f"));
+
+console.log(mathPath(pathname, "/b"));
+console.log(mathPath(pathname, "/a/"));

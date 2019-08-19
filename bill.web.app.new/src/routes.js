@@ -7,7 +7,7 @@ import Login from "@pages/Login";
 import AddBill from "@pages/AddBill";
 import EditBill from "@pages/EditBill";
 
-let bottomRoutes = [
+export default [
     {
         path: "/login",
         component: Login,
@@ -36,28 +36,21 @@ let bottomRoutes = [
         component: Setting,
         functionCode: "home"
     },
-];
-
-const listBill =  {
-    path: ["/asset/list","/list"],
-    component: List,
-    name: "资产",
-    functionCode: "sub-list"
-};
-
-const addBill = {
-    path: [...listBill.path.map(item => item + "/add-bill"),"/add-bill"],
-    component: AddBill,
-    name: "记一笔",
-    functionCode: "add-bill"
-};
-
-const editBill = {
-    path: listBill.path.map(item => item + "/edit-bill"),
-    component: EditBill,
-    functionCode: "EditBill"
-};
-
-export default [
-    ...bottomRoutes,listBill,addBill,editBill
+    {
+        path: "/list",
+        component: List,
+        name: "资产",
+        functionCode: "sub-list"
+    },
+    {
+        path: "/add-bill",
+        component: AddBill,
+        name: "记一笔",
+        functionCode: "add-bill"
+    },
+    {
+        path: "/edit-bill",
+        component: EditBill,
+        functionCode: "EditBill"
+    }
 ];

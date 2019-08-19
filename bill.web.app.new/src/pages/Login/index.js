@@ -10,7 +10,6 @@ import colors from "@res/colors";
 import {createForm} from 'rc-form';
 import {safeController} from "../../services/api";
 import {setToken} from "@utils/request";
-import CacheRouterContainer from "@components/CacheRouterContainer";
 
 @createForm()
 export default class Login extends React.Component {
@@ -24,15 +23,13 @@ export default class Login extends React.Component {
         return safeController.login(params)
             .then((d) => {
                 setToken(d.data[0].token);
-                let pathname = this.props.location.pathname;
-                let parentPath = pathname.replace(/[^/]+$/, "");
-                this.props.history.push(parentPath + "home");
+                this.props.history.push("/home");
             });
     };
 
     render() {
         return (
-            <CacheRouterContainer
+            <Flex
                 style={{width: "100%", height: "100%"}}
                 direction={"column"}
             >
@@ -80,7 +77,7 @@ export default class Login extends React.Component {
                 >
                     登录
                 </Flex>
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }

@@ -10,7 +10,7 @@ import TopList from "./TopList";
 import TemplateList from "./TemplateList";
 import BaseBillEdit from "@components/BaseBillEdit";
 import AddBillContent from "@pages/AddBill/AddBillContent";
-import CacheRouterContainer from "@components/CacheRouterContainer";
+import {Flex} from "antd-mobile";
 
 class AppState {
     data = ["模板", "支出", "收入", "其它"];
@@ -65,7 +65,7 @@ export default class AddBill extends BaseBillEdit {
     render() {
         let {selectPosition, billTypeTypeName} = this._appState;
         return (
-            <CacheRouterContainer
+            <Flex
                 style={styles.container}
                 direction={"column"}
             >
@@ -96,7 +96,7 @@ export default class AddBill extends BaseBillEdit {
                     }
 
                 </div>
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }

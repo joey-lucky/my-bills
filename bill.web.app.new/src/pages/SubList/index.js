@@ -11,7 +11,6 @@ import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
 import colors from "@res/colors";
 import BillItem from "@pages/SubList/BillItem";
-import CacheRouterContainer from "@components/CacheRouterContainer";
 
 const VIEW_TYPE = ["header", "item"];
 
@@ -130,8 +129,7 @@ export default class SubList extends React.Component {
 
     onItemClick = (item) => {
         this._cacheSelectItem = item;
-        let pathname = this.props.location.pathname;
-        let url = pathname + "/edit-bill?id=" + item.id;
+        let url = this.props.match.path + "/edit-bill?id=" + item.id;
         this.props.history.push(url);
     };
 
@@ -146,7 +144,7 @@ export default class SubList extends React.Component {
     render() {
         let {activityIndicatorState,toolBarName} = this._appState;
         return (
-            <CacheRouterContainer
+            <Flex
                 style={styles.container}
                 direction={"column"}
             >
@@ -181,7 +179,7 @@ export default class SubList extends React.Component {
                     onEndReached={this.onEndReached}
                     pageSize={15}
                 />
-            </CacheRouterContainer>
+            </Flex>
         );
 
     }
