@@ -1,8 +1,8 @@
 import {Controller} from "egg";
 import {getCustomRepository} from "typeorm";
-import BcBillTypeRepo from "../../../database/repositories/BcBillTypeRepo";
-import BcCardRepo from "../../../database/repositories/BcCardRepo";
-import {BcBillType} from "../../../database/entity/BcBillType";
+import BcBillTypeRepo from "../../database/repositories/BcBillTypeRepo";
+import BcCardRepo from "../../database/repositories/BcCardRepo";
+import {BcBillType} from "../../database/entity/BcBillType";
 
 export default class extends Controller {
     public async getCardList() {

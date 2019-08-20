@@ -1,8 +1,8 @@
 import {Controller} from "egg";
 import {getCustomRepository} from "typeorm";
-import BcUserRepo from "../../database/repositories/BcUserRepo";
-import {BcUser} from "../../database/entity/BcUser";
-import EncryptUtils from "../../utils/EncryptUtils";
+import BcUserRepo from "../database/repositories/BcUserRepo";
+import {BcUser} from "../database/entity/BcUser";
+import EncryptUtils from "../utils/EncryptUtils";
 
 export default class Safe extends Controller {
     public async login() {

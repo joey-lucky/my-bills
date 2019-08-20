@@ -5,7 +5,7 @@ import SlideShow from "@components/SlideShow";
 import {Divider} from "@components/Divider";
 import {observable, toJS} from "mobx";
 import CardList from "./CardList";
-import {asset} from "../../services/api";
+import {assetApi} from "../../services/api";
 import {observer} from "mobx-react";
 
 class AppState {
@@ -17,7 +17,7 @@ class AppState {
     };
 
     asyncLoadData() {
-        asset.groupByTypeList({}).then(d => {
+        assetApi.groupByTypeList({}).then(d => {
             let data = d.data || [];
             let total = 0;
             let asset = 0;

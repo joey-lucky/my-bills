@@ -1,0 +1,53 @@
+.container {
+    display: flex;
+    width: 100%;
+    height: 1.74rem;
+    flex-direction: column;
+    background-color: white;
+    padding-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.container * {
+    flex-shrink: 0;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 0;
+    flex: 1;
+    padding-right: 0.54rem;
+    align-items: center;
+}
+
+.textContent{
+    display: flex;
+    padding: 0 0.24rem;
+    flex-direction: row;
+    width:0;
+    flex: 1;
+}
+
+.name{
+    width:0;
+    flex: 1;
+    font-size: 0.45rem;
+    color: #302f2b;
+}
+.typeName{
+    font-size: 0.35rem;
+    color: #808080;
+}
+
+.rightIcon {
+    color: #c6c7c9;
+    font-size: 0.4rem;
+}
+
+.leftIcon {
+    font-size: 0.6rem;
+    color:#E6543B;
+}
+

@@ -1,11 +1,9 @@
 import {Controller} from "egg";
 import {DeepPartial, getCustomRepository} from "typeorm";
-import {BdBill} from "../../../database/entity/BdBill";
-import {BdBillTemplate} from "../../../database/entity/BdBillTemplate";
-import BcBillTypeRepo from "../../../database/repositories/BcBillTypeRepo";
-import RequestError from "../../../model/RequestError";
-import BcCardRepo from "../../../database/repositories/BcCardRepo";
-import {BcUser} from "../../../database/entity/BcUser";
+import {BdBillTemplate} from "../../database/entity/BdBillTemplate";
+import BcBillTypeRepo from "../../database/repositories/BcBillTypeRepo";
+import BcCardRepo from "../../database/repositories/BcCardRepo";
+import {BcUser} from "../../database/entity/BcUser";
 
 export default class extends Controller {
     //获取模板列表

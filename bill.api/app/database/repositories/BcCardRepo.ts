@@ -11,7 +11,6 @@ import BaseRepository from "../BaseRepository";
 import {BcCard} from "../entity/BcCard";
 import {BcCardType} from "../entity/BcCardType";
 import {BcUser} from "../entity/BcUser";
-import BcUserRepo from "./BcUserRepo";
 
 @EntityRepository(BcCard)
 export default class BcCardRepo extends BaseRepository<BcCard> {

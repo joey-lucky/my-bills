@@ -19,7 +19,8 @@ export default class BcBillTypeRepo extends BaseRepository<BcBillType> {
         let data: BcBillType[] = await this.find({
             where: conditions,
             order: {
-                sort: "ASC"
+                sort: "ASC",
+                type: "DESC",
             }
         });
         return this.entityToViewList(data);

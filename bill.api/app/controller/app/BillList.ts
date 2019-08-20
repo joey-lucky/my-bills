@@ -1,7 +1,7 @@
 import {Controller} from "egg";
 import {getCustomRepository} from "typeorm";
-import BdStatBillMRepo from "../../../database/repositories/BdStatBillMRepo";
-import {BcUser} from "../../../database/entity/BcUser";
+import BdStatBillMRepo from "../../database/repositories/BdStatBillMRepo";
+import {BcUser} from "../../database/entity/BcUser";
 
 export default class extends Controller {
     //获取账单月统计列表

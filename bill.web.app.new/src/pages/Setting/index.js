@@ -1,27 +1,34 @@
 import * as React from "react";
 import ToolBar from "@components/ToolBar";
-import Total from "@pages/Home/Total";
-import {Flex} from "antd-mobile";
+import SettingItem from "@pages/Setting/SettingItem";
+import * as styles from "./index.css";
 
-export default class Setting extends React.Component{
+export default class Setting extends React.Component {
 
     onAddClick = (event) => {
         event.stopPropagation();
     };
 
-    render(){
-        return(
-            <Flex
-                style={{width:"100%",height:"100%"}}
-                direction={"column"}
+    render() {
+        return (
+            <div
+                className={styles.container}
             >
                 <ToolBar
                     title={"设置"}
                     showAdd={true}
                     onAddClick={this.onAddClick}
                 />
-                <Total/>
-            </Flex>
+                <div className={styles.content}>
+                    <SettingItem
+                        label={"账单类型"}
+                        onClick={() => {
+                            this.props.history.push(this.props.match.path + "/bill-type-list");
+                        }}
+                    />
+                    <SettingItem label={"其它"}/>
+                </div>
+            </div>
         );
 
     }
