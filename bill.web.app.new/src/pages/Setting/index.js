@@ -26,7 +26,12 @@ export default class Setting extends React.Component {
                             this.props.history.push(this.props.match.path + "/bill-type-list");
                         }}
                     />
-                    <SettingItem label={"其它"}/>
+                    <SettingItem
+                        label={"退出"}
+                        onClick={() => {
+                            this.props.history.push( "/login");
+                        }}
+                    />
                 </div>
             </div>
         );
