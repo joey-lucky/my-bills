@@ -9,6 +9,12 @@ import FontIcon from "@components/FontIcon";
 import icons from "@res/icons";
 import createForm from "rc-form/es/createForm";
 
+const billTypeTypeData = [
+    {id:"",name:"全部"},
+    {id:"-1",name:"支出"},
+    {id:"1",name:"收入"},
+    {id:"0",name:"转账"},
+];
 @createForm({
     onValuesChange:(props,changeValues,allValues)=>{
         props.onChange(allValues);
@@ -39,6 +45,14 @@ export default class Bottom extends React.Component {
                         extra={[{id:"",name:"全部"}]}
                         cols={1}
                         url={billListApi.getUserListUrl}
+                        justify={"center"}
+                        align={"center"}
+                    />
+                    <RemoteDataPicker
+                        {...this.props.form.getFieldProps("billTypeType",{initialValue:""})}
+                        style={{width:"2.2rem",height:"100%",marginLeft:"0.12rem"}}
+                        extra={billTypeTypeData}
+                        cols={1}
                         justify={"center"}
                         align={"center"}
                     />

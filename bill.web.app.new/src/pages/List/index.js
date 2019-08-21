@@ -75,7 +75,7 @@ class AppState {
                 let startMonth = month;
                 let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
                 let params = {
-                    ...this.queryParams,
+                    ...toJS(this.queryParams),
                     dateTime: [startMonth, endMonth],
                 };
                 let d = await billListApi.getBillList(params);
@@ -166,7 +166,8 @@ export default class List extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        let {name = "流水", ...params} = RouteUtils.getQueryObject(props.location);
+        let queryObject = RouteUtils.getQueryObject(props.location);
+        let {name = "流水", ...params} = queryObject;
         this._appState.toolBarTitle = name;
         this._appState.queryParams = params || {};
     }

@@ -144,6 +144,9 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
         if (params.billTypeId) {
             where += ` and BdBill.bill_type_id = '${params.billTypeId}'`;
         }
+        if (params.billTypeType) {
+            where += ` and BdBill__billType.type = '${params.billTypeType}'`;
+        }
         if (params.dateTime) {
             let [start,end] = params.dateTime;
             if (start) {
@@ -169,6 +172,7 @@ interface QueryParam {
     userId?: string,
     cardId?: string,
     billTypeId?: string,
+    billTypeType?: string,
     dateTime?: string[],
     money?: number[]
 }

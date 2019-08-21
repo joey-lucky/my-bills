@@ -28,14 +28,19 @@ const extend: ExtendRequest = {
             Object.keys(params).forEach((key) => {
                 const value = params[key];
                 if (value) {
-                    try{
-                        const obj = JSON.parse(value);
-                        if (typeof obj !== "string") {
-                            objects[key] = obj;
-                        } else {
+                    let isJSON = /(^[\[][\s\S]*[\]]$)|(^[\{][\s\S]*[\}]$)/;
+                    if (isJSON.test(value)){
+                        try{
+                            const obj = JSON.parse(value);
+                            if (typeof obj !== "string") {
+                                objects[key] = obj;
+                            } else {
+                                objects[key] = value;
+                            }
+                        }catch (e) {
                             objects[key] = value;
                         }
-                    }catch (e) {
+                    } else {
                         objects[key] = value;
                     }
                 } else {
