@@ -7,6 +7,7 @@ import Login from "@pages/Login";
 import AddBill from "@pages/AddBill";
 import EditBill from "@pages/EditBill";
 import BillTypeList from "@pages/BillTypeList";
+import BillTypeEdit from "@pages/BillTypeEdit";
 
 export default [
     {
@@ -52,6 +53,12 @@ export default [
     {
         path: "/bill-type-list",
         component: BillTypeList,
+        name: "记一笔",
+        functionCode: "add-bill"
+    },
+    {
+        path: "/bill-type-edit",
+        component: BillTypeEdit,
         name: "记一笔",
         functionCode: "add-bill"
     },

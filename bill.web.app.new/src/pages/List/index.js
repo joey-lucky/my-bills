@@ -93,6 +93,7 @@ class AppState {
 
     //更新单月数据
     async loadOneMonthData(month) {
+        console.log(month);
         try {
             this.activityIndicatorState.animating = true;
             let index = this.monthRows.findIndex(item => item.dateTime === month);
@@ -162,7 +163,8 @@ class AppState {
 @observer
 export default class List extends React.Component {
     _appState = new AppState();
-    _cacheSelectItem;
+    //正在进行编辑的月份
+    _onEditDateTimeStr;
 
     constructor(props, context) {
         super(props, context);
@@ -182,6 +184,7 @@ export default class List extends React.Component {
     };
 
     onItemClick = (item) => {
+        this._onEditDateTimeStr = item.dateTime;
         this._cacheSelectItem = item;
         this.props.history.push(this.props.match.path + "/edit-bill?id=" + item.id);
     };
@@ -275,7 +278,7 @@ export default class List extends React.Component {
         let {path} = this.props.match;
         let {pathname: nextPathname} = prevProps.location;
         if (pathname !== nextPathname && pathname === path) {//地址发生变化，且为当前地址，说明是跳转后返回
-            let monthDate = this._cacheSelectItem && this._cacheSelectItem.date || new Date();
+            let monthDate = this._onEditDateTimeStr || new Date();
             let month = moment(monthDate).format("YYYY-MM-01 00:00:00");
             this._appState.loadOneMonthData(month).then();
         }

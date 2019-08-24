@@ -20,6 +20,7 @@ export default class BillTypeItem extends React.Component {
         let color = colors.getMoneyColor(this.props.value.typeName);
         return (
             <div
+                onClick={this.props.onClick}
                 className={styles.container}
             >
                 <div className={styles.content}>

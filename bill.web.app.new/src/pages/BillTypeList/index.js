@@ -42,7 +42,7 @@ export default class BillTypeList extends React.Component {
 
     onAddClick = (event) => {
         event.stopPropagation();
-        let path = this.props.match.path + "/add-bill";
+        let path = this.props.match.path + "/bill-type-edit";
         this.props.history.push(path);
     };
 
@@ -59,17 +59,8 @@ export default class BillTypeList extends React.Component {
     };
 
     onItemClick = (item) => {
-        this._cacheSelectItem = item;
-        let url = this.props.match.path + "/edit-bill?id=" + item.id;
+        let url = this.props.match.path + "/bill-type-edit?id=" + item.id;
         this.props.history.push(url);
-    };
-
-    onEndReached = () => {
-        let {pageInfo} = this._appState;
-        if (pageInfo.pageCount > pageInfo.pageIndex) {
-            pageInfo.pageIndex++;
-            this._appState.loadData().then();
-        }
     };
 
     render() {
@@ -86,8 +77,9 @@ export default class BillTypeList extends React.Component {
                 />
                 <ToolBar
                     title={"账单类型管理"}
-                    showAdd={false}
+                    showAdd={true}
                     showSearch={false}
+                    onAddClick={this.onAddClick}
                 />
                 <ListView
                     style={styles.content}
