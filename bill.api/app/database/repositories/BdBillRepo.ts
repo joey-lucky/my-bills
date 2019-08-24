@@ -139,7 +139,7 @@ export default class BdBillRepo extends BaseRepository<BdBill> {
             where += ` and BdBill.user_id = '${params.userId}'`;
         }
         if (params.cardId) {
-            where += ` and BdBill.card_id = '${params.cardId}'`;
+            where += ` and (BdBill.card_id = '${params.cardId}' or BdBill__billTransfer.target_card_id = '${params.cardId}')`;
         }
         if (params.billTypeId) {
             where += ` and BdBill.bill_type_id = '${params.billTypeId}'`;

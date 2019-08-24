@@ -56,7 +56,7 @@ export default class Assert extends React.Component {
         let name = item.userName + "  ·  " + item.name;
         let path = this.props.match.path;
         let cardId = item.id;
-        this.props.history.push(`${path}/list?name=${name}&cardId=${cardId}`);
+        this.props.history.push(`${path}/sub-list?name=${name}&cardId=${cardId}`);
     };
 
     render() {

@@ -31,7 +31,6 @@ class AppState {
         pageCount: 1
     };
 
-    //按月份分组
     billRows = [];
 
     async loadData() {
@@ -43,11 +42,11 @@ class AppState {
             };
             let d = await subBillListApi.getBillPageData(params);
             let data = d.data || [];
-            let allBillRow = [...this.billRows, ...data];
+            this.billRows = [...this.billRows, ...data];
             let result = [];
             let currDay = null;
             let isFirst = true;
-            for (let bill of allBillRow) {
+            for (let bill of  this.billRows) {
                 let dateMoment = moment(bill.dateTime);
                 let day = dateMoment.format("YYYYMMDD");
                 if (currDay !== day) {
@@ -85,7 +84,7 @@ export default class SubList extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        let {name, ...params} = RouteUtils.getQueryObject(props.location);
+        let {name="账单列表", ...params} = RouteUtils.getQueryObject(props.location);
         this._appState.toolBarName = name;
         this._appState.params = params;
     }
@@ -163,16 +162,16 @@ export default class SubList extends React.Component {
                     ref={(e) => {
                         this._listView = e
                     }}
-                    renderHeader={() =>
-                        <SlideShow
-                            title={"净资产"}
-                            money={"10000"}
-                            label1={"资产"}
-                            value1={"20000"}
-                            label2={"负债"}
-                            value2={"10000"}
-                        />
-                    }
+                    // renderHeader={() =>
+                    //     <SlideShow
+                    //         title={"净资产"}
+                    //         money={"10000"}
+                    //         label1={"资产"}
+                    //         value1={"20000"}
+                    //         label2={"负债"}
+                    //         value2={"10000"}
+                    //     />
+                    // }
                     dataSource={toJS(this._appState.listViewDataSource)}
                     renderRow={this.renderItem}
                     initialListSize={15}
