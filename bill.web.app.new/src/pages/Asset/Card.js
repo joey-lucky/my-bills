@@ -18,7 +18,6 @@ export default class Card extends React.Component {
     render() {
         return (
             <Flex
-                className={"my-button"}
                 style={styles.container}
                 direction={"row"}
                 align={"center"}

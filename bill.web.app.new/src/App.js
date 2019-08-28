@@ -7,7 +7,6 @@ import {createHashHistory} from "history";
 import {setErrorHander} from "@utils/request";
 import {Switch} from "@components/routes";
 import * as styles from "./App.css";
-import * as globalStyles from "./globalStyles.css";
 import {observer} from "mobx-react";
 import {observable} from "mobx";
 

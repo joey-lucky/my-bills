@@ -18,21 +18,7 @@ export const propTypes = {
     }
 };
 
-const globalData = {
-    rem:14,
-};
-
-function initSize() {
-    const clientWidth = Math.min(document.documentElement.clientHeight*0.7, document.documentElement.clientWidth);
-    let docEl = window.document.documentElement;
-    // document.getElementById("root").style.height = docEl.clientHeight+500+"px" ;
-    // document.getElementById("root").style.width = clientWidth+"px" ;
-    globalData.rem = clientWidth * 100 / 1080;
-    //设置rem对应的像素大小
-    document.documentElement.style.fontSize = globalData.rem + "px";
-}
-
-initSize();
+const globalData = {};
 
 /**
  * 保存全局变量
