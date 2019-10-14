@@ -5,8 +5,33 @@ import Content from "./Content";
 import BottomBar from "./BottomBar";
 import {Flex} from "antd-mobile";
 import icons from "@res/icons";
+import {homeApi} from "../../services/api";
+import {observable} from "mobx";
+import {observer} from "mobx-react";
+import ContentItem from "@pages/Home/Content/ContentItem";
+import moment from "moment";
 
+class AppState {
+    @observable data = [];
+
+    asyncLoadData() {
+        homeApi.getCurrTotal().then((d) => {
+            let data = d.data && d.data[0] || {};
+            let {today = {}, toWeek = {}, toMonth = {}, preMonth = {}} = data;
+            let list = [];
+            list.push({...today, "title": "当天"});
+            list.push({...toWeek, "title": "本周"});
+            list.push({...toMonth, "title": "本月"});
+            list.push({...preMonth, "title": "上月"});
+            this.data = list;
+        });
+    }
+}
+
+
+@observer
 export default class Home extends React.Component {
+    _appState = new AppState();
     _bottomIcons = [
         {
             label: "账户",
@@ -30,6 +55,10 @@ export default class Home extends React.Component {
         },
     ];
 
+    componentDidMount() {
+        this._appState.asyncLoadData();
+    }
+
     render() {
         return (
             <Flex
@@ -37,9 +66,18 @@ export default class Home extends React.Component {
                 direction={"column"}
             >
                 <ToolBar title={"默认账本"}/>
-                <Flex direction={"column"} style={{width:"100%",height:0,flex:1,overflowY:"auto"}}>
+                <Flex direction={"column"} style={{width: "100%", height: 0, flex: 1, overflowY: "auto"}}>
                     <Total/>
-                    <Content/>
+                    {
+                        this._appState.data.map(item=>
+                            <ContentItem
+                                title={item.title}
+                                outgoing={item.outgoing||"0.00"}
+                                income={item.income||"0.00"}
+                                dateText={moment(item.startDate).format("MM月DD日 - ")+moment(item.endDate).format("MM月DD日")}
+                            />
+                        )
+                    }
                 </Flex>
                 <BottomBar data={this._bottomIcons}/>
             </Flex>

@@ -1,10 +1,19 @@
 import {request} from '@utils/request';
 
+
+
+export const homeApi = {
+    getCurrTotal: function () {
+        return request('/app/home/get-curr-total', {});
+    },
+};
+
 export const assetApi = {
     groupByTypeList: function (params) {
         return request('/app/asset/group-by-type-list', params);
     },
 };
+
 export const billTypeListApi = {
     getList: function (params) {
         return request('/app/bill-type-list/get-list', params);

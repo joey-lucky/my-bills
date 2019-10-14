@@ -10,6 +10,10 @@ import icons from "@res/icons";
 export default class ContentItem extends React.Component {
     static propTypes = {
         onClick: PropTypes.func,
+        title: PropTypes.string,
+        dateText: PropTypes.string,
+        income: PropTypes.string,
+        outgoing: PropTypes.string,
     };
 
     render() {
@@ -37,9 +41,9 @@ export default class ContentItem extends React.Component {
                         direction={"column"}
                         align={"start"}
                     >
-                        <Text type={"title"} text={"今天"}/>
+                        <Text type={"title"} text={this.props.title}/>
                         <Blank level={1} direction={"column"}/>
-                        <Text type={"tooltip"} text={"6月10日 - 6月17日"}/>
+                        <Text type={"tooltip"} text={this.props.dateText}/>
                     </Flex>
                     <Blank level={2} direction={"row"}/>
                     <Flex
@@ -49,13 +53,13 @@ export default class ContentItem extends React.Component {
                         <Text
                             color={colors.income}
                             type={"text"}
-                            text={"0.00"}
+                            text={this.props.income}
                         />
                         <Blank level={1} direction={"column"}/>
                         <Text
                             color={colors.outgoing}
                             type={"text"}
-                            text={"0.00"}
+                            text={this.props.outgoing}
                         />
                     </Flex>
                     <Blank level={2} direction={"row"}/>
