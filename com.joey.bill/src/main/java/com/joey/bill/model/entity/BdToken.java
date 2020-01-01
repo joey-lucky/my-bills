@@ -1,4 +1,4 @@
-package com.joey.bill.database.entity;
+package com.joey.bill.model.entity;
 
 import javax.persistence.*;
 import java.util.Date;

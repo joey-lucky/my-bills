@@ -1,7 +1,11 @@
-package com.joey.bill.configuration.interceptor;
+package com.joey.bill.config.interceptor;
 
-import com.joey.bill.manager.WebContext;
+import com.joey.bill.model.ResponseResult;
+import com.joey.bill.model.entity.BcUser;
 import com.joey.bill.service.TokenService;
+import com.joey.bill.utils.ResponseUtil;
+import com.joey.bill.utils.UserSessionManager;
+import com.joey.bill.utils.WebContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -11,13 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class WebContextInterceptor implements HandlerInterceptor{
+public class TokenInterceptor implements HandlerInterceptor{
     @Autowired
     private TokenService mTokenService;
 
     @Override
     public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3) throws Exception {
-
+        UserSessionManager.getInstance().removeUser();
     }
 
     @Override
@@ -27,8 +31,16 @@ public class WebContextInterceptor implements HandlerInterceptor{
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
-        WebContext.setRequest(request);
-        WebContext.setResponse(response);
-        return true;
+        try {
+            String token = request.getParameter("_token");
+            BcUser user = mTokenService.verifyTokenAndGetUser(token);
+            UserSessionManager.getInstance().setUser(user);
+            return true;
+        } catch (Exception e) {
+            WebContext.getResponse().setStatus(403);
+            ResponseResult result = ResponseUtil.failResult("没有权限");
+            ResponseUtil.writeIntoResponse(result);
+            return false;
+        }
     }
 }

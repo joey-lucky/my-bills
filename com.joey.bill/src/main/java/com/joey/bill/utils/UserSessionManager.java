@@ -1,7 +1,7 @@
-package com.joey.bill.manager;
+package com.joey.bill.utils;
 
 
-import com.joey.bill.database.entity.BcUser;
+import com.joey.bill.model.entity.BcUser;
 
 /**
  * 登录用户session管理器

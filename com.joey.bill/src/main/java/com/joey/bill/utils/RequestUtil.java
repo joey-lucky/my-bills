@@ -1,10 +1,10 @@
-package com.joey.bill.manager;
+package com.joey.bill.utils;
 
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestUnit {
+public class RequestUtil {
     public static String getString(String paramName) {
         String result = WebContext.getRequest().getParameter(paramName);
         return result == null ? "" : result;

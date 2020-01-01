@@ -1,9 +1,9 @@
 package com.joey.bill.service;
 
-import com.joey.bill.database.entity.BcUser;
-import com.joey.bill.database.entity.BdToken;
-import com.joey.bill.database.repository.BcUserRepository;
-import com.joey.bill.database.repository.BdTokenRepository;
+import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.model.entity.BdToken;
+import com.joey.bill.repository.BcUserRepository;
+import com.joey.bill.repository.BdTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -32,16 +32,11 @@ public class TokenService {
         return token.getId();
     }
 
-    public void verifyToken(String token) throws Exception {
+    public BcUser verifyTokenAndGetUser(String token) throws Exception{
+        Assert.hasText(token,"token为空");
         BdToken bdToken = mTokenRepository.findById(token).orElseThrow(() -> new Exception("token不存在"));
         Assert.isTrue(bdToken.getExpires().after(new Date()), "token已过期");
         String userId = bdToken.getUserId();
-        Assert.isTrue(mUserRepository.existsById(userId), "用户不存在");
-    }
-
-    public BcUser getUserByToken(String token){
-        BdToken bdToken = mTokenRepository.getOne(token);
-        String userId = bdToken.getUserId();
-        return mUserRepository.getOne(userId);
+        return mUserRepository.findById(userId).orElseThrow(() -> new Exception("用户不存在"));
     }
 }

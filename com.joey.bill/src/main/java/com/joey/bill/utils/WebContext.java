@@ -1,4 +1,4 @@
-package com.joey.bill.manager;
+package com.joey.bill.utils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -1,7 +1,7 @@
-package com.joey.bill.configuration;
+package com.joey.bill.config;
 
-import com.joey.bill.database.entity.BcUser;
-import com.joey.bill.manager.UserSessionManager;
+import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.utils.UserSessionManager;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 

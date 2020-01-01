@@ -1,7 +1,7 @@
-package com.joey.bill.database.repository;
+package com.joey.bill.repository;
 
 import com.google.gson.Gson;
-import com.joey.bill.database.entity.BcUser;
+import com.joey.bill.model.entity.BcUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

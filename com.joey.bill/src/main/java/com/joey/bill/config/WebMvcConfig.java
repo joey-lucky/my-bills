@@ -1,7 +1,7 @@
-package com.joey.bill.configuration;
+package com.joey.bill.config;
 
-import com.joey.bill.configuration.interceptor.TokenInterceptor;
-import com.joey.bill.configuration.interceptor.WebContextInterceptor;
+import com.joey.bill.config.interceptor.TokenInterceptor;
+import com.joey.bill.config.interceptor.WebContextInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

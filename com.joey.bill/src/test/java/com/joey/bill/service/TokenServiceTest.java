@@ -1,7 +1,7 @@
 package com.joey.bill.service;
 
-import com.joey.bill.database.entity.BcUser;
-import com.joey.bill.database.repository.BcUserRepository;
+import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.repository.BcUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ class TokenServiceTest {
         String userId = userList.get(0).getId();
         String token = mService.generateToken(userId);
         Assert.hasText(token, "token生成失败");
-        BcUser user = mService.getUserByToken(token);
+        BcUser user = mService.verifyTokenAndGetUser(token);
         Assert.isTrue(userId.equals(user.getId()),"token解析成功");
     }
 }

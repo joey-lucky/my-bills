@@ -1,4 +1,4 @@
-package com.joey.bill.database.entity;
+package com.joey.bill.model.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
