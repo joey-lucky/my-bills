@@ -1,5 +1,13 @@
 import * as orm from "typeorm";
-import {AfterLoad, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    AfterLoad,
+    BeforeInsert,
+    BeforeUpdate,
+    Column,
+    CreateDateColumn,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import {translate} from "./translate";
 
 export class BaseEntity extends orm.BaseEntity {
@@ -17,6 +25,29 @@ export class BaseEntity extends orm.BaseEntity {
 
     @Column({name: "update_by", length: 36, nullable: true})
     updateBy: string | null;
+
+    @BeforeInsert()
+    completeCreateInfo(){
+        if (!this.createTime) {
+            this.createTime = new Date();
+        }
+        if (!this.createBy) {
+            this.createBy = "admin";
+        }
+    }
+
+    @BeforeUpdate()
+    completeUpdateInfo(){
+        if (!this.updateTime) {
+            this.updateTime = new Date();
+        }
+        if (!this.updateBy) {
+            this.updateBy = "admin";
+        }
+    }
+
+
+
 
     @AfterLoad()
     async deleteUselessColumn(){

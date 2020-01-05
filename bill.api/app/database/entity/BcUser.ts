@@ -22,6 +22,9 @@ export class BcUser extends BaseEntity {
     @Column({name: "pic"})
     pic: string;
 
+    @Column({name: "buss_wx"})
+    bussWX: string;
+
     @AfterLoad()
     deletePassword(): void {
         delete this.loginPassword;

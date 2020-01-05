@@ -6,6 +6,7 @@ export function DateTimeColumn(options:DateTimeColumnOptions) {
     return Column({
         name: options.name,
         type: "datetime",
+        nullable:true,
         transformer: {
             from: (date: Date) => date,
             to: (date: string | Date) => {

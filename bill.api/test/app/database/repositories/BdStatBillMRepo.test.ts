@@ -1,7 +1,7 @@
 import {app} from "egg-mock/bootstrap";
 import {Context} from "egg";
 import {createConnection, getConnection, getConnectionOptions} from "typeorm";
-import {initAllCache} from "../../../../app/database/cache";
+import {BcToken} from "../../../../app/database";
 
 describe("test/app/database/repositories/BdStatBillMRepo.test.ts", () => {
     let ctx: Context;
@@ -21,10 +21,17 @@ describe("test/app/database/repositories/BdStatBillMRepo.test.ts", () => {
     });
     describe("generateOneMonth", () => {
         it('month date change', async () => {
-            let data = await ctx.service.table.bdBillService.getList({
-                dateTime:["2019-12-01 00:00:00", "2019-12-31 23:59:59"],
-            });
-            console.log(JSON.stringify(data))
+            let entity = new BcToken();
+            entity.type = "1";
+            entity.accessToken = "xx";
+            entity.expiresIn = new Date();
+            entity.corpId = "xx";
+            entity.secret = "x";
+            entity.createBy = "admin";
+            entity.updateBy = "admin";
+            entity.updateTime = new Date();
+            entity.createTime = new Date();
+            await entity.save();
         });
     });
 });
