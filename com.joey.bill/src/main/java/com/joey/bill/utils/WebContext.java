@@ -31,8 +31,7 @@ public class WebContext {
 
     public static HttpSession getSession() {
         HttpServletRequest request = threadRequest.get();
-        HttpSession session = request.getSession();
-        return session;
+        return request.getSession();
     }
 
     public static String getWebInitParameter(String key) {

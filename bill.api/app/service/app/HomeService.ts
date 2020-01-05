@@ -37,7 +37,6 @@ export default class HomeService extends Service {
         return [result];
     }
 
-
     private getTodayRange() {
         let today = moment();
         return [today.format("YYYY-MM-DD 00:00:00"), today.format("YYYY-MM-DD 23:59:59")];

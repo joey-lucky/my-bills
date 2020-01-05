@@ -1,8 +1,7 @@
 import {Context} from "egg";
 import TokenError from "./error/TokenError";
 import EncryptUtils from "../utils/EncryptUtils";
-import {getCustomRepository} from "typeorm";
-import BcUserRepo from "../database/repositories/BcUserRepo";
+import {BcUser, findOne} from "../database";
 
 export default function (options) {
     return async (ctx: Context, next) => {
@@ -11,7 +10,7 @@ export default function (options) {
             TokenError.hasText(token);
             const tokenObj = EncryptUtils.decryptToken(token);
             TokenError.available(tokenObj.expires);
-            ctx.user= await getCustomRepository(BcUserRepo).findOne(tokenObj.userId);
+            ctx.user= await findOne(BcUser,tokenObj.userId);
         }
         await next();
     };

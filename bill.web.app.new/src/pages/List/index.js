@@ -93,7 +93,6 @@ class AppState {
 
     //更新单月数据
     async loadOneMonthData(month) {
-        console.log(month);
         try {
             this.activityIndicatorState.animating = true;
             let index = this.monthRows.findIndex(item => item.dateTime === month);
@@ -110,7 +109,13 @@ class AppState {
             this.completeMonthField(monthItem);
             monthItem.expand = true;
             this.monthRows[index] = monthItem;
-
+            let sumResult = await billListApi.getSumStatList(this.queryParams);
+            let sumData = sumResult.data && sumResult.data[0] || {};
+            this.totalData = {
+                outgoing: sumData.outgoing,
+                income: sumData.income,
+                surplus: sumData.surplus,
+            };
             let billList = (await billListApi.getBillList(params)).data || [];
             this.billRows[index] = this.completeBillListField(billList);
             let data = this.calculateListViewData();

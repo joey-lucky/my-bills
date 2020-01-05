@@ -1,29 +1,27 @@
-import {Controller} from "egg";
-import {getCustomRepository} from "typeorm";
-import BdStatBillMRepo from "../../database/repositories/BdStatBillMRepo";
-import {BcUser} from "../../database/entity/BcUser";
+import BaseController from "../BaseController";
 
-export default class extends Controller {
+export default class extends BaseController {
     //获取账单月统计列表
     public async getMonthStatList() {
-        const params: any = this.ctx.request.queryObjects;
-        this.ctx.body.data = await getCustomRepository(BdStatBillMRepo).getGroupByMonthData(params);
+       let data = await this.ctx.service.table.bdStatBillMViewService.getGroupByMonthData();
+        this.successData(data);
     }
 
     //获取账单月统计列表
     public async getSumStatList() {
-        const params: any = this.ctx.request.queryObjects;
-        this.ctx.body.data = await getCustomRepository(BdStatBillMRepo).getSumData(params);
+       let data = await this.ctx.service.table.bdStatBillMViewService.getSumData();
+        this.successData(data);
     }
 
     //获取账单列表
     public async getBillList() {
-        const params: any = this.ctx.request.queryObjects;
-        this.ctx.body.data =  await this.ctx.service.table.bdBillService.getList(params);
+        let data = await this.ctx.service.table.bdBillService.getList();
+        this.successData(data);
     }
 
-    //获取账单列表
+    //获取用户列表
     public async getUserList() {
-        this.ctx.body.data = await BcUser.find();
+        let data =  await this.ctx.service.table.bcUserService.getList();
+        this.successData(data);
     }
 }

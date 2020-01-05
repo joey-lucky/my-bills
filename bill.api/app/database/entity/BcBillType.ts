@@ -1,6 +1,10 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany} from "typeorm";
-import BaseEntity from "../BaseEntity";
+import {Column, Entity} from "typeorm";
+import {BaseEntity} from "../BaseEntity";
+import {TranslateSource} from "../translate";
+import {MemoryCache} from "../cache";
 
+@MemoryCache({expires:60*60*1000})
+@TranslateSource("billTypeId")
 @Entity()
 export class BcBillType extends BaseEntity {
     @Column({name:"name"})
@@ -19,16 +23,6 @@ export class BcBillType extends BaseEntity {
             return "收入";
         } else {
             return "其它";
-        }
-    }
-
-    static getTypeByTypeName(name){
-        if ("支出" === name) {
-            return "-1";
-        }else if("收入" === name){
-            return "1";
-        }else {
-            return "0";
         }
     }
 }

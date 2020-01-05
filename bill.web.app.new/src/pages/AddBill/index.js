@@ -23,7 +23,7 @@ class AppState {
 }
 
 @observer
-export default class AddBill extends BaseBillEdit {
+export default class AddBill extends React.Component {
     _appState = new AppState();
     _billEditRef = null;
 

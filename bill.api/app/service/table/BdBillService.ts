@@ -1,76 +1,65 @@
-import {Service} from "egg";
-import {DeepPartial, getCustomRepository, getManager} from "typeorm";
-import BdBillRepo from "../../database/repositories/BdBillRepo";
-import {BdBill} from "../../database/entity/BdBill";
-import BdStatBillMRepo from "../../database/repositories/BdStatBillMRepo";
-import {BdBillTransfer} from "../../database/entity/BdBillTransfer";
+import {Between, DeepPartial, FindConditions} from "typeorm";
+import {BdBill, find, findOne} from "../../database";
 import Assert from "../../utils/Assert";
+import {BaseService} from "../BaseService";
+import moment = require("moment");
 
-export default class BdBillService extends Service {
-    async create() {
-        let params: DeepPartial<BdBill> = this.ctx.request.queryObjects["data"][0];
-        let userId = this.ctx.user.id;
-        let targetCardId = params["targetCardId"];
-        let bill: BdBill = BdBill.create(params);
-        let billTransfer: BdBillTransfer;
-        bill.userId = userId;
-        bill.createBy = userId;
-        if (targetCardId) {
-            billTransfer = new BdBillTransfer();
-            billTransfer.targetCardId = targetCardId;
-            billTransfer.createBy = userId;
+export default class BdBillService extends BaseService {
+    async create(): Promise<void> {
+        let data: DeepPartial<BdBill> = this.getRequestTableFirstData("data");
+        data.userId = this.getCtxUserId();
+        let entity: BdBill = this.parseToEntity(BdBill, data);
+        await this.createEntity(entity);
+    }
+
+    async update(): Promise<void> {
+        let data: DeepPartial<BdBill> = this.getRequestTableFirstData("data");
+        data.userId = this.getCtxUserId();
+        let entity: BdBill = this.parseToEntity(BdBill, data);
+        await this.updateEntity(entity);
+    }
+
+    async delete(): Promise<void> {
+        let id = this.getString("id");
+        let bill = await findOne(BdBill, id);
+        Assert.isTrue(!!bill, "账单不存在");
+        await this.deleteEntity(BdBill, id);
+    }
+
+    async getList(params = this.getQueryObjects()): Promise<BdBill[]> {
+        return await find(BdBill, {where: this.toFindConditions(params), order: {dateTime: "DESC"}});
+    }
+
+    async getPageData(params = this.getQueryObjects()) {
+        let where = this.toFindConditions();
+        let {pageInfo} = params;
+        return await this.findPageData(BdBill, {where, order: {dateTime: "DESC"}},pageInfo);
+    }
+
+    private toFindConditions(params = this.getQueryObjects()): FindConditions<BdBill> {
+        let where: FindConditions<BdBill> = {};
+        if (params.id) {
+            where.id = params.id;
         }
-        await getManager().transaction(async manager => {
-            await manager.save(bill, {reload: true});
-            if (billTransfer) {
-                billTransfer.billId = bill.id;
-                await manager.save(billTransfer);
-            }
-        });
-        await getCustomRepository(BdStatBillMRepo).generateOneMonth(bill.dateTime);
-        this.ctx.body.message = "创建成功";
-    }
-
-    async update() {
-        let params: DeepPartial<BdBill> = this.ctx.request.queryObjects["data"][0];
-        let userId = this.ctx.user.id;
-        let bill: BdBill = BdBill.create(params);
-        bill.userId = userId;
-        bill.updateBy = userId;
-        let billId = bill.id;
-        let billTransfer: BdBillTransfer = await BdBillTransfer.findOne({where: {billId: billId}});
-        if (billTransfer) {
-            billTransfer.targetCardId = params["targetCardId"];
-            billTransfer.updateBy = userId;
+        if (params.cardId) {
+            where.cardId = params.cardId;
         }
-        await getManager().transaction(async manager => {
-            await manager.save(bill, {reload: true});
-            if (billTransfer) {
-                await manager.save(billTransfer);
-            }
-        });
-        await getCustomRepository(BdStatBillMRepo).generateOneMonth(bill.dateTime);
-        this.ctx.body.message = "更新成功";
-    }
+        if (params.userId) {
+            where.userId = params.userId;
+        }
+        if (params.billTypeId) {
+            where.billTypeId = params.billTypeId;
+        }
+        if (params.targetCardId) {
+            where.targetCardId = params.targetCardId;
+        }
+        if (params.dateTime) {
+            let [startStr, endStr] = params.dateTime;
+            let start = startStr && moment(startStr).toDate() || new Date(0);
+            let end = endStr && moment(endStr).toDate() || new Date();
+            where.dateTime = Between(start, end);
+        }
+        return where;
 
-    async delete() {
-        const params: any = this.ctx.request.queryObjects;
-        let entity = await getCustomRepository(BdBillRepo).findOne(params.id);
-        Assert.notNull(entity, "账单不存在");
-        await BdBill.delete({id: params.id});
-        await BdBillTransfer.delete({billId: params.id});
-        await getCustomRepository(BdStatBillMRepo).generateOneMonth(entity.dateTime);
-        this.ctx.body.message = "删除成功";
-    }
-
-    async getList(params):Promise<any[]> {
-        return await getCustomRepository(BdBillRepo).getViewList(params)
-    }
-
-    async getPageData() {
-        const {pageInfo,...params} = this.ctx.request.queryObjects;
-        let result = await getCustomRepository(BdBillRepo).getViewPageData(pageInfo, params);
-        this.ctx.body.data = result[0];
-        this.ctx.body.pageInfo = result[1];
     }
 }

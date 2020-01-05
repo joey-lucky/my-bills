@@ -1,49 +1,42 @@
-import {Controller} from "egg";
-import {DeepPartial, getCustomRepository} from "typeorm";
-import {BdBillTemplate} from "../../database/entity/BdBillTemplate";
-import BcBillTypeRepo from "../../database/repositories/BcBillTypeRepo";
-import BcCardRepo from "../../database/repositories/BcCardRepo";
-import {BcUser} from "../../database/entity/BcUser";
+import BaseController from "../BaseController";
 
-export default class extends Controller {
+export default class extends BaseController {
     //获取模板列表
-    public async getBillTemplateList(){
-        this.ctx.body.data = await BdBillTemplate.getViewList({userId: this.ctx.user.id})
+    public async getBillTemplateList() {
+        let data = await this.ctx.service.table.bdBillTemplateService.findByCtxUser();
+        this.successData(data);
     }
 
     //保存模板
     public async createBillTemplate() {
-        let params: DeepPartial<BdBillTemplate> = this.ctx.request.queryObjects["data"][0];
-        params.userId = this.ctx.user.id;
-        let entity = BdBillTemplate.create(params);
-        await entity.save();
-        this.ctx.body.message = "保存成功";
+        await this.ctx.service.table.bdBillTemplateService.create();
+        this.successData();
     }
 
-    //保存模板
+    //更改模板
     public async updateBillTemplate() {
-        let params: DeepPartial<BdBillTemplate> = this.ctx.request.queryObjects["data"][0];
-        params.userId = (await BcUser.getAdminUser()).id;
-        let entity = BdBillTemplate.create(params);
-        await entity.save();
-        this.ctx.body.message = "保存成功";
+        await this.ctx.service.table.bdBillTemplateService.update();
+        this.successData();
     }
 
     //保存账单
     public async createBill() {
         await this.ctx.service.table.bdBillService.create();
+        this.successData();
     }
 
     public async getConsumerList() {
-        this.ctx.body.data = await getCustomRepository(BcBillTypeRepo).getConsumerList();
+        let data = await await this.ctx.service.table.bcBillTypeService.getConsumerList();
+        this.successData(data);
     }
 
     public async getCardList() {
-        this.ctx.body.data = await getCustomRepository(BcCardRepo).getGroupByUserViewList();
+        let data  = await await this.ctx.service.table.bcCardService.groupByUser();
+        this.successData(data);
     }
 
     public async getBillTypeList() {
-        this.ctx.body.data = await getCustomRepository(BcBillTypeRepo).getGroupByTypeList();
+        let data  = await await this.ctx.service.table.bcBillTypeService.groupByType();
+        this.successData(data);
     }
-
 }

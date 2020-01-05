@@ -85,7 +85,7 @@ class AppState {
 
 @createForm()
 @observer
-export default class EditBill extends BaseBillEdit {
+export default class EditBill extends React.Component {
     _appState = new AppState();
 
     constructor(props) {
@@ -156,9 +156,11 @@ export default class EditBill extends BaseBillEdit {
                     )}
                 />
                 <div style={styles.content}>
-                    {
-                        this.renderContent(this._appState.entity.billTypeTypeName)
-                    }
+                    <BaseBillEdit
+                        value={this._appState.entity}
+                        form={this.props.form}
+                        typeName={this._appState.entity.billTypeTypeName}
+                    />
                 </div>
                 <Bottom
                     isTransferBill={this._appState.isTransferBill}

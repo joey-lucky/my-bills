@@ -20,6 +20,7 @@ export default function (options) {
             if (ctx.body) {
                 const data = ctx.body.data;
                 assert.ok(Array.isArray(data), "ctx.body.data must be array");
+
             }else {
                 ctx.body = {
                     ...defResult,

@@ -1,15 +1,16 @@
 package com.joey.bill.model.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "bd_token")
-public class BdToken extends BaseEntity{
+@Table(name = "bd_token", schema = "bill")
+public class BdTokenEntity extends BaseEntity{
     @Column(name = "user_id")
     private String userId;
-
-    @Column
+    @Column(name = "expires")
     private Date expires;
 
     public String getUserId() {

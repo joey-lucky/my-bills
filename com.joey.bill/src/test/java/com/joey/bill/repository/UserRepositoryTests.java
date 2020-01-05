@@ -1,7 +1,7 @@
 package com.joey.bill.repository;
 
 import com.google.gson.Gson;
-import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.model.entity.BcUserEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,12 +28,12 @@ class UserRepositoryTests {
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
 		String formattedDate = dateFormat.format(date);
-		BcUser name = userRepository.findByName("黄秋裕");
+		BcUserEntity name = userRepository.findByName("黄秋裕");
 		System.out.println(new Gson().toJson(name));
-//		List<BcUser> all = userRepository.findAll();
+//		List<BcUserEntity> all = userRepository.findAll();
 //		System.out.println(new Gson().toJson(all));
 
-//		BcUser user=new BcUser("ff", "ff123456","ff@126.com", "ff",  formattedDate);
+//		BcUserEntity user=new BcUserEntity("ff", "ff123456","ff@126.com", "ff",  formattedDate);
 //		userRepository.findById(3L);
 //		userRepository.save(user);
 //		userRepository.delete(user);

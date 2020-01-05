@@ -3,8 +3,7 @@ import {Controller} from "egg";
 export default class extends Controller {
     //获取账单列表
     public async getBillList() {
-        const params: any = this.ctx.request.queryObjects;
-        this.ctx.body.data = await this.ctx.service.table.bdBillService.getList(params);
+        this.ctx.body.data =  await this.ctx.service.table.bdBillService.getList();
     }
 
     //更改账单

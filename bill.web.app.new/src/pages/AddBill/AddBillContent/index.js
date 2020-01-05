@@ -48,7 +48,7 @@ class AppState {
                 if (billTypeTypeName !== "收入") {
                     saveData["money"] = 0 - saveData["money"];
                 }
-                this.activityIndicatorState.text = "保存账单...";
+                this.activityIndicatorState.text = "保存中";
                 this.activityIndicatorState.animating = true;
                 await addBillApi.createBill({"data": [saveData]});
                 this.activityIndicatorState.animating = false;
@@ -63,7 +63,7 @@ class AppState {
 
 @createForm()
 @observer
-export default class AddBillContent extends BaseBillEdit {
+export default class AddBillContent extends React.Component {
     static propTypes = {
         visible: PropTypes.bool,
         billTypeTypeName: PropTypes.string,
@@ -137,9 +137,11 @@ export default class AddBillContent extends BaseBillEdit {
                     size={"large"}
                 />
                 <div style={styles.content}>
-                    {
-                        this.renderContent(billTypeTypeName)
-                    }
+                    <BaseBillEdit
+                        value={this._appState.value}
+                        form={this.props.form}
+                        typeName={billTypeTypeName}
+                    />
                 </div>
                 <Bottom
                     onSaveAgainClick={this.onSaveAgainClick}
@@ -163,6 +165,6 @@ const styles = {
     content: {
         flex: 1,
         width: "100%",
-        height: 0
+        height: 0,
     }
 };

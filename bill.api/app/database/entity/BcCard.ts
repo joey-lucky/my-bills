@@ -1,8 +1,12 @@
 import {Column, Entity, JoinColumn, ManyToOne} from "typeorm";
-import BaseEntity from "../BaseEntity";
+import {BaseEntity} from "../BaseEntity";
 import {BcUser} from "./BcUser";
 import {BcCardType} from "./BcCardType";
+import {TranslateColumn, TranslateSource} from "../translate";
+import {MemoryCache} from "../cache";
 
+@MemoryCache({expires:60*60*1000})
+@TranslateSource("cardId")
 @Entity()
 export class BcCard extends BaseEntity {
     @Column({name: "name"})
@@ -24,4 +28,10 @@ export class BcCard extends BaseEntity {
     @ManyToOne(() => BcCardType, {onDelete: "NO ACTION", onUpdate: "CASCADE"})
     @JoinColumn({name: "card_type_id"})
     cardType: BcCardType;
+
+    @TranslateColumn({foreignKey:"userId"})
+    userName: string;
+
+    @TranslateColumn({foreignKey:"cardTypeId"})
+    cardTypeName: string;
 }

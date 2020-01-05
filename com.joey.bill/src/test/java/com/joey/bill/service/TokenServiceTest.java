@@ -1,6 +1,6 @@
 package com.joey.bill.service;
 
-import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.model.entity.BcUserEntity;
 import com.joey.bill.repository.BcUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +23,11 @@ class TokenServiceTest {
 
     @Test
     void generateToken() throws Exception {
-        List<BcUser> userList = mUserRepository.findAll();
+        List<BcUserEntity> userList = mUserRepository.findAll();
         String userId = userList.get(0).getId();
         String token = mService.generateToken(userId);
         Assert.hasText(token, "token生成失败");
-        BcUser user = mService.verifyTokenAndGetUser(token);
+        BcUserEntity user = mService.verifyTokenAndGetUser(token);
         Assert.isTrue(userId.equals(user.getId()),"token解析成功");
     }
 }

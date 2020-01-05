@@ -1,7 +1,7 @@
 package com.joey.bill.config.interceptor;
 
 import com.joey.bill.model.ResponseResult;
-import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.model.entity.BcUserEntity;
 import com.joey.bill.service.TokenService;
 import com.joey.bill.utils.ResponseUtil;
 import com.joey.bill.utils.UserSessionManager;
@@ -33,7 +33,7 @@ public class TokenInterceptor implements HandlerInterceptor{
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
         try {
             String token = request.getParameter("_token");
-            BcUser user = mTokenService.verifyTokenAndGetUser(token);
+            BcUserEntity user = mTokenService.verifyTokenAndGetUser(token);
             UserSessionManager.getInstance().setUser(user);
             return true;
         } catch (Exception e) {

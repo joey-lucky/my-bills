@@ -1,5 +1,5 @@
 import {Repository} from "typeorm";
-import BaseEntity from "./BaseEntity";
+import {BaseEntity} from "./BaseEntity";
 import {Context} from "egg";
 
 

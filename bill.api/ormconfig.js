@@ -7,6 +7,7 @@ module.exports = {
     "password": "123456",
     "database": "bill",
     "synchronize": true,
+    "cache": false,
     "logging": [
         "query",
         "error",
@@ -21,7 +22,8 @@ module.exports = {
     "maxQueryExecutionTime": 10000,
     "debug": false,
     "entities": [
-        "app/database/entity/*.ts"
+        "app/database/entity/*.ts",
+        "app/database/view/*.ts"
     ],
     "subscribers": [
         "app/database/subscriber/*.ts"

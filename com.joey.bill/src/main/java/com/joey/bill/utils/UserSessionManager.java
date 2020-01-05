@@ -1,7 +1,7 @@
 package com.joey.bill.utils;
 
 
-import com.joey.bill.model.entity.BcUser;
+import com.joey.bill.model.entity.BcUserEntity;
 
 /**
  * 登录用户session管理器
@@ -23,7 +23,7 @@ public final class UserSessionManager {
         return instance;
     }
 
-    public void setUser(BcUser user) {
+    public void setUser(BcUserEntity user) {
         WebContext.getSession().setAttribute("userInfo", user);
     }
 
@@ -31,12 +31,17 @@ public final class UserSessionManager {
         WebContext.getSession().removeAttribute("userInfo");
     }
 
-    public BcUser getUser() {
-        Object user =  WebContext.getSession().getAttribute("userInfo");
-        if (user instanceof BcUser) {
-            return (BcUser) user;
-        } else {
+    public BcUserEntity getUser() {
+        try {
+            Object user = WebContext.getSession().getAttribute("userInfo");
+            if (user instanceof BcUserEntity) {
+                return (BcUserEntity) user;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
+
     }
 }
