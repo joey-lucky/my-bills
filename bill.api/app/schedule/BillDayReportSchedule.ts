@@ -7,7 +7,7 @@ export default class BillDayReportSchedule extends Subscription {
     static get schedule() {
         return {
             // 每三小时准点执行一次
-            cron: '0 0 */9 * * *',
+            cron: '0 0 9 * * *',
             // interval: "60000s", // 60 分钟间隔
             type: "all", // 指定所有的 worker 都需要执行
             immediate: false
@@ -16,8 +16,8 @@ export default class BillDayReportSchedule extends Subscription {
 
     async subscribe() {
         try {
-            let start = moment().format("YYYY-MM-DD");
-            let end = moment().add(-1, "day").format("YYYY-MM-DD");
+            let start = moment().add(-1, "day").format("YYYY-MM-DD");
+            let end = moment().format("YYYY-MM-DD");
             let data: any[] = await getConnection().query(`
                 select t1.name,
                        round(sum(t.money), 2) as money

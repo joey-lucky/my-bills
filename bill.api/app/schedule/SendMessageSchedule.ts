@@ -31,7 +31,6 @@ export default class SendMessageSchedule extends Subscription {
     async sendMessage(entity: BdSendMessage) {
         const {ctx} = this;
         const {msgContent, userId, tokenId} = entity;
-
         try {
             let tokenEntity: BcToken = await findOne(BcToken, tokenId);
             let user = await findOne(BcUser, userId);

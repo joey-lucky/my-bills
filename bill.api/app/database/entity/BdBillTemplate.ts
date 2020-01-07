@@ -7,7 +7,7 @@ import {findOneWithCache} from "../cache";
 
 @Entity()
 export class BdBillTemplate extends BaseEntity {
-    @Column({name: "name"})
+    @Column({name: "name",length:255})
     name: string;
 
     @Column({name: "bill_desc"})
