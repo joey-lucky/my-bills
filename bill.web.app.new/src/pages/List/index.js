@@ -206,6 +206,11 @@ export default class List extends React.Component {
         this._appState.loadMonthStatList().then();
     };
 
+    onSearchClick = () => {
+        let path = this.props.match.path;
+        this.props.history.push(`${path}/sub-list`);
+    };
+
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         if (rowData.viewType === VIEW_TYPE[0]) {
             let {income, outgoing, date, expand = false, dateTime} = rowData;
@@ -250,6 +255,7 @@ export default class List extends React.Component {
                     showAdd={true}
                     showSearch={true}
                     onAddClick={this.onAddClick}
+                    onSearchClick={this.onSearchClick}
                 />
 
                 <ListView

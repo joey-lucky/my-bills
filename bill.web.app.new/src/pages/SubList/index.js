@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ActivityIndicator, Flex, ListView} from "antd-mobile";
+import {ActivityIndicator, Flex, ListView, SearchBar} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import SlideShow from "@components/SlideShow";
 import DayItem from "./DayItem";
@@ -24,7 +24,9 @@ class AppState {
     };
     @observable toolBarName = "账单列表";
 
-    params = {};
+    params = {
+        billDesc:""
+    };
     pageInfo = {
         pageIndex: 1,
         pageSize: 20,
@@ -140,6 +142,13 @@ export default class SubList extends React.Component {
         }
     };
 
+    onSearch = (value="") => {
+        this._appState.params.billDesc = value;
+        this._appState.pageInfo.pageIndex = 1;
+        this._appState.billRows = [];
+        this._appState.loadData().then();
+    };
+
     render() {
         let {activityIndicatorState,toolBarName} = this._appState;
         return (
@@ -157,21 +166,17 @@ export default class SubList extends React.Component {
                     showAdd={false}
                     showSearch={false}
                 />
+                <SearchBar
+                    style={{width:"100%"}}
+                    placeholder="请输入搜索内容"
+                    onSubmit={this.onSearch}
+                    onClear={this.onSearch}
+                />
                 <ListView
                     style={styles.content}
                     ref={(e) => {
                         this._listView = e
                     }}
-                    // renderHeader={() =>
-                    //     <SlideShow
-                    //         title={"净资产"}
-                    //         money={"10000"}
-                    //         label1={"资产"}
-                    //         value1={"20000"}
-                    //         label2={"负债"}
-                    //         value2={"10000"}
-                    //     />
-                    // }
                     dataSource={toJS(this._appState.listViewDataSource)}
                     renderRow={this.renderItem}
                     initialListSize={15}

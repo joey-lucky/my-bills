@@ -8,12 +8,7 @@ import moment from "moment";
 
 export default class BillItem extends React.Component {
     static propTypes = {
-        data:PropTypes.shape({
-            money: PropTypes.number.isRequired,
-            billDesc: PropTypes.string.isRequired,
-            dateTime: PropTypes.string.isRequired,
-            billTypeTypeName: PropTypes.string.isRequired,
-        }),
+        data:PropTypes.any,
         showDivider: PropTypes.bool,
         onClick: PropTypes.func.isRequired,
     };
@@ -39,6 +34,11 @@ export default class BillItem extends React.Component {
         let {time,money} = this.state;
         let {showDivider,data} = this.props;
         let {billDesc, billTypeTypeName} = data;
+        let text = `${time} ${data.cardUserName}·${data.cardName}`;
+        if (data.targetCardName) {
+            text+=` - ${data.targetCardUserName}·${data.targetCardName} `
+        }
+
         return (
             <Flex
                 style={styles.container}
@@ -65,8 +65,8 @@ export default class BillItem extends React.Component {
                         direction={"column"}
                         align={"start"}
                     >
-                        <div style={commonStyles.title}>{billDesc}</div>
-                        <div style={styles.time}>{time}</div>
+                        <div style={commonStyles.title}>{billDesc+" "+data.billTypeName}</div>
+                        <div style={styles.time}>{text}</div>
                     </Flex>
 
                     <div

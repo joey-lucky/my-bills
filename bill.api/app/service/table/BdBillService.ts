@@ -1,5 +1,5 @@
-import {Between, DeepPartial, FindConditions} from "typeorm";
-import {BdBill, find, findOne} from "../../database";
+import {Between, DeepPartial, FindConditions, In, Like} from "typeorm";
+import {BcBillType, BdBill, find, findOne} from "../../database";
 import Assert from "../../utils/Assert";
 import {BaseService} from "../BaseService";
 import moment = require("moment");
@@ -27,22 +27,19 @@ export default class BdBillService extends BaseService {
     }
 
     async getList(params = this.getQueryObjects()): Promise<BdBill[]> {
-        return await find(BdBill, {where: this.toFindConditions(params), order: {dateTime: "DESC"}});
+        return await find(BdBill, {where: await this.toFindConditions(params), order: {dateTime: "DESC"}});
     }
 
     async getPageData(params = this.getQueryObjects()) {
-        let where = this.toFindConditions();
+        let where = await this.toFindConditions();
         let {pageInfo} = params;
-        return await this.findPageData(BdBill, {where, order: {dateTime: "DESC"}},pageInfo);
+        return await this.findPageData(BdBill, {where, order: {dateTime: "DESC"}}, pageInfo);
     }
 
-    private toFindConditions(params = this.getQueryObjects()): FindConditions<BdBill> {
+    private async toFindConditions(params = this.getQueryObjects()): Promise<FindConditions<BdBill> | FindConditions<BdBill>[]> {
         let where: FindConditions<BdBill> = {};
         if (params.id) {
             where.id = params.id;
-        }
-        if (params.cardId) {
-            where.cardId = params.cardId;
         }
         if (params.userId) {
             where.userId = params.userId;
@@ -53,11 +50,31 @@ export default class BdBillService extends BaseService {
         if (params.targetCardId) {
             where.targetCardId = params.targetCardId;
         }
+        if (params.billTypeType) {
+            let billTypeList = await find(BcBillType, {where: {type: params.billTypeType}});
+            let billTypeIdList: string[] = billTypeList.map(item => item.id);
+            where.billTypeId = In(billTypeIdList);
+        }
         if (params.dateTime) {
             let [startStr, endStr] = params.dateTime;
             let start = startStr && moment(startStr).toDate() || new Date(0);
             let end = endStr && moment(endStr).toDate() || new Date();
             where.dateTime = Between(start, end);
+        }
+        if (params.billDesc) {
+            where.billDesc = Like(`%${params.billDesc}%`);
+        }
+        if (params.cardId) {
+            return [
+                {
+                    ...where,
+                    cardId: params.cardId
+                },
+                {
+                    ...where,
+                    targetCardId: params.cardId
+                },
+            ];
         }
         return where;
 

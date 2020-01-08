@@ -9,8 +9,9 @@ export default class TokenSchedule extends Subscription {
     static get schedule() {
         return {
             interval: "60s", // 60 分钟间隔
-            type: "all", // 指定所有的 worker 都需要执行
-            immediate: true
+            type: "worker", // 指定所有的 worker 都需要执行
+            immediate: false,
+            disable:false
         };
     }
 

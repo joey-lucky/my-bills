@@ -9,11 +9,11 @@ module.exports = {
     "synchronize": true,
     "cache": false,
     "logging": [
-        "query",
+        // "query",
         "error",
-        "warn",
-        "info",
-        "log"
+        // "warn",
+        // "info",
+        // "log"
     ],
     "entityPrefix": "",
     "dateStrings": false,
