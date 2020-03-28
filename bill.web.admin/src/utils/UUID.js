@@ -1,5 +1,5 @@
 
-export class UUID {
+export default class UUID {
     static randomUUID(len) {
         let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
         let uuid = "";

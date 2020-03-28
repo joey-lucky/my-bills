@@ -42,6 +42,7 @@ export function setErrorHander(handler) {
 
 export function request(url, params = {}) {
     params = {_token: getToken(), ...params};
+
     let promise = new Promise(async (resolve, reject) => {
         try {
             let completeUrl = apiPath + url;

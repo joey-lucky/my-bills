@@ -1,0 +1,23 @@
+.tabItem {
+    display: flex;
+    height: 100%;
+    min-width: 120px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.tabItem:hover {
+    background-color: rgba(1, 143, 95, 1);
+    color: white;
+}
+
+.selected {
+    font-weight: bold;
+    background-color: rgba(1, 143, 95, 1);
+}

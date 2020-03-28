@@ -1,7 +1,3 @@
-import {publicPath} from "@global";
-
-export const setToken = (token) => window.localStorage.setItem(publicPath + "_token", token);
-
 
 export default class PropsUtils {
     // 比较两个对象中的某个key，是否相等。
@@ -13,7 +9,13 @@ export default class PropsUtils {
                 return false;
             } else if (typeof nextPropsValue === "string") { // 不相同的字符串
                 return false;
-            } else {// 对象，则需要解析并判断
+            } else if (propsValue instanceof Date) {// 对象，则需要解析并判断
+                if (!(nextPropsValue instanceof Date)) {
+                    return false;
+                }else {
+                    return propsValue.getTime() === nextPropsValue.getTime();
+                }
+            }else {
                 return JSON.stringify(propsValue) === JSON.stringify(nextPropsValue);
             }
         } else {

@@ -8,16 +8,16 @@ export interface ExtendRequest {
 
 const extend: ExtendRequest = {
     get queryParams(): { [key: string]: string } {
-        const parameterName = QUERY_PARAMS;
-        if (!this[parameterName]) {
+        const key = QUERY_PARAMS;
+        if (!this[key]) {
             const request: any = this;
             if (request.method === "GET") {
-                this[parameterName] = request.query;
+                this[key] = request.query;
             } else {
-                this[parameterName] = request.body;
+                this[key] = request.body;
             }
         }
-        return this[parameterName];
+        return this[key];
     },
 
     get queryObjects(): { [key: string]: object } {

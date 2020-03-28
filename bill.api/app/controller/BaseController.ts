@@ -6,7 +6,7 @@ export default class BaseController extends Controller {
         this.ctx.body.data = this.parseResultData(data);
     }
 
-    protected  successPageData(data = [], pageInfo) {
+    protected successPageData(data = [], pageInfo) {
         this.ctx.body.data = this.parseResultData(data);
         this.ctx.body.pageInfo = pageInfo;
     }

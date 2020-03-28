@@ -26,8 +26,10 @@ export default (app: Application) => {
     const {controller, router} = app;
     const allRoutes = getAllRouters(controller, "");
     router.prefix("/api");
-    for (const route of allRoutes) {
-        router.all(route.path, route.func);
-        app.loggers.logger.info("[register-router]", route.path);
-    }
+    // for (const route of allRoutes) {
+    //     router.all(route.path, route.func);
+    //     app.loggers.logger.info("[register-router]", route.path);
+    // }
+    router.resources('users', '/users', controller.user);
+    router.get("safe",'/safe/login', controller.safe.login);
 };

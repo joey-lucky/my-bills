@@ -1,4 +1,5 @@
 import React from "react";
+
 export default class DomUtils {
     static toHtmlString(reactNode) {
         let {type} = reactNode;
@@ -7,7 +8,7 @@ export default class DomUtils {
         Object.keys(props).forEach((propName) => {
             let propValue = props[propName] || "";
             if (propName === "className") {
-                propsStr += ` class="${JSON.stringify(propValue)}"`;
+                propsStr += ` class="${propValue}"`;
             } else {
                 if (typeof propValue === "string") {
                     propsStr += ` ${propName}="${propValue}"`;

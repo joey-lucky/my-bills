@@ -1,0 +1,9 @@
+.container {
+    height: 30px;
+    line-height: 30px;
+    text-align: end;
+}
+.colon{
+    padding-left: 6px;
+    padding-right: 12px;
+}

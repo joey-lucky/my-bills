@@ -11,6 +11,14 @@ export class BaseService extends Service {
         return getManager().create(entityClass, plainObject);
     }
 
+    protected parseToEntities<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, plainObject?: DeepPartial<Entity>[]): Entity[] {
+        let entities = [];
+        for (let obj of plainObject) {
+            entities.push(getManager().create(entityClass, obj));
+        }
+        return entities;
+    }
+
     protected async createEntity<Entity extends BaseEntity>(entity: Entity) {
         entity.createBy = this.getCtxUserId();
         entity.updateBy = this.getCtxUserId();

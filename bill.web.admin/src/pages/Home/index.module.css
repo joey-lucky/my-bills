@@ -1,0 +1,16 @@
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-shrink: 0;
+    position: relative;
+    flex-direction: column;
+}
+
+.contentContainer {
+    height: 0;
+    width: 100%;
+    flex-grow: 1;
+    display: block;
+    flex-shrink: 0;
+}
