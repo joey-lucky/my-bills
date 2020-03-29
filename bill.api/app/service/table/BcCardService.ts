@@ -9,13 +9,13 @@ export default class BcCardService extends BaseService {
             userName: string;
             children: BcCard[]
         };
-        let list = await this.getList();
-        let map: { [key: string]: GroupByUserCardView; } = {};
-        for (let item of list) {
-            let userName = item.userName;
+        const list = await this.getList();
+        const map: { [key: string]: GroupByUserCardView; } = {};
+        for (const item of list) {
+            const userName = item.userName;
             if (!map[userName]) {
                 map[userName] = {
-                    userName: userName,
+                    userName,
                     children: [],
                 };
             }
@@ -30,13 +30,13 @@ export default class BcCardService extends BaseService {
 
     public async getAssetList() {
         type Asset = { pic?: string } & BcCard;
-        let list: Asset[] = await this.getList();
-        let userList: BcUser[] = await find(BcUser, {});
-        let userMap = userList.reduce((pre, curr) => {
+        const list: Asset[] = await this.getList();
+        const userList: BcUser[] = await find(BcUser, {});
+        const userMap = userList.reduce((pre, curr) => {
             pre[curr.id] = curr;
             return pre;
         }, {});
-        for (let item of list) {
+        for (const item of list) {
             item.pic = userMap[item.userId].pic;
         }
         return list;
@@ -44,16 +44,16 @@ export default class BcCardService extends BaseService {
 
     public async groupByType() {
         type CardType = { cardTypeName: string, balance: number, children: BcCard[] };
-        let data = await this.getList();
-        let cardTypeMap: { [key: string]: CardType } = {};
-        for (let item of data) {
-            let cardTypeName = item.cardTypeName;
-            let balance = item.balance || 0;
+        const data = await this.getList();
+        const cardTypeMap: { [key: string]: CardType } = {};
+        for (const item of data) {
+            const cardTypeName = item.cardTypeName;
+            const balance = item.balance || 0;
             if (!cardTypeMap[cardTypeName]) {
                 cardTypeMap[cardTypeName] = {
                     cardTypeName,
                     balance: 0,
-                    children: []
+                    children: [],
                 };
             }
             cardTypeMap[cardTypeName].balance += balance;
@@ -92,7 +92,7 @@ export default class BcCardService extends BaseService {
 
     private toFindConditions(): FindConditions<BcCard> {
         const params = this.getQueryObjects();
-        let where: FindConditions<BcCard> = {};
+        const where: FindConditions<BcCard> = {};
         if (params.userId) {
             where.userId = params.userId;
         }

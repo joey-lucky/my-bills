@@ -1,9 +1,9 @@
-import BaseController from "../BaseController";
+import BaseController from "../../BaseController";
 
 export default class extends BaseController {
     //获取模板列表
     public async getBillTemplateList() {
-        let data = await this.ctx.service.table.bdBillTemplateService.findByCtxUser();
+        const data = await this.ctx.service.table.bdBillTemplateService.findByCtxUser();
         this.successData(data);
     }
 
@@ -26,17 +26,17 @@ export default class extends BaseController {
     }
 
     public async getConsumerList() {
-        let data = await await this.ctx.service.table.bcBillTypeService.getConsumerList();
+        const data = await await this.ctx.service.table.bcBillTypeService.getConsumerList();
         this.successData(data);
     }
 
     public async getCardList() {
-        let data  = await await this.ctx.service.table.bcCardService.groupByUser();
+        const data  = await await this.ctx.service.table.bcCardService.groupByUser();
         this.successData(data);
     }
 
     public async getBillTypeList() {
-        let data  = await await this.ctx.service.table.bcBillTypeService.groupByType();
+        const data  = await await this.ctx.service.table.bcBillTypeService.groupByType();
         this.successData(data);
     }
 }

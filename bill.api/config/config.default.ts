@@ -14,23 +14,26 @@ export default (appInfo: EggAppInfo) => {
     return {
         ...config,
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
+        // 私钥
+        secret: "hjoey",
+        secretVersion: 1,
         security: {
             xframe: {
                 enable: false,
             },
             csrf: {
-                enable: true,
-                cookieName: 'csrfToken', // Cookie 中的字段名，默认为 csrfToken
-                sessionName: 'csrfToken', // Session 中的字段名，默认为 csrfToken
-                headerName: 'x-csrf-token',
+                enable: false,
+                cookieName: "csrfToken", // Cookie 中的字段名，默认为 csrfToken
+                sessionName: "csrfToken", // Session 中的字段名，默认为 csrfToken
+                headerName: "x-csrf-token",
                 ignore: (ctx) => {
-                    let url = ctx.request.url;
-                    let ignoreUrls = ["/api/safe/login"];
+                    const url = ctx.request.url;
+                    const ignoreUrls = ["/api/safe/login"];
                     if (ignoreUrls.includes(url)) {
                         return true;
                     }
                     return false;
-                }
+                },
             },
         },
         cluster: {

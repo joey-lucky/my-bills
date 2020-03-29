@@ -3,21 +3,21 @@ export interface RestFullController {
 
     show();
 
-    create();
+    create?();
 
-    destroy();
+    destroy?();
 
-    update();
+    update?();
 }
 
 export interface RestFullService {
-    show(id:string):Promise<any>;
+    create?(data: any): Promise<any>;
 
-    create(data: any):Promise<any>;
+    destroy?(id: string): Promise<any>;
 
-    destroy(id:string):Promise<any>;
+    update?(id: string, data: any): Promise<any>;
 
-    update(id:string, data):Promise<any>;
+    show(id: string): Promise<any>;
 
-    index(params:any):Promise<any[]>;
+    index(params: any): Promise<any[]>;
 }

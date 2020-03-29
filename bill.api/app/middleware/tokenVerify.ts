@@ -1,17 +1,20 @@
 import {Context} from "egg";
-import TokenError from "./error/TokenError";
-import EncryptUtils from "../utils/EncryptUtils";
-import {BcUser, findOne} from "../database";
+import * as jwt from "jsonwebtoken";
+import {BcUser, findOneWithCache} from "../database";
+import {TokenPlayLoad} from "../typings/token";
+import Assert from "../utils/Assert";
 
 export default function (options) {
     return async (ctx: Context, next) => {
-        // if (ctx.request.url.indexOf("/safe/login") === -1) {
-        //     const token = ctx.request.queryParams["_token"];
-        //     TokenError.hasText(token);
-        //     const tokenObj = EncryptUtils.decryptToken(token);
-        //     TokenError.available(tokenObj.expires);
-        //     ctx.user= await findOne(BcUser,tokenObj.userId);
-        // }
+        if (ctx.request.url.indexOf("/safe/login") === -1) {
+            const authorization: string = ctx.request.header.authorization;
+            Assert.hasText(authorization, "header authorization is null");
+            const token = authorization.replace("Bearer ", "");
+            const secret = ctx.app.config.secret;
+            // @ts-ignore
+            const playLoad: TokenPlayLoad = jwt.verify(token, secret);
+            ctx.user = await findOneWithCache(BcUser, playLoad.userId);
+        }
         await next();
     };
 };

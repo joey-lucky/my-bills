@@ -10,5 +10,4 @@ export * from "./view/BdStatBillMView";
 export * from "./DataBaseUtil";
 export * from "./BaseEntity";
 export * from "./cache";
-
-
+

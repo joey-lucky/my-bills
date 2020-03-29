@@ -6,7 +6,7 @@ import {
     Column,
     CreateDateColumn,
     PrimaryGeneratedColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
 } from "typeorm";
 import {translate} from "./translate";
 
@@ -46,9 +46,6 @@ export class BaseEntity extends orm.BaseEntity {
         }
     }
 
-
-
-
     @AfterLoad()
     async deleteUselessColumn(){
         delete this.createBy;
@@ -59,6 +56,6 @@ export class BaseEntity extends orm.BaseEntity {
 
     @AfterLoad()
     async translateColumn(){
-        await translate(this)
+        await translate(this);
     }
 }

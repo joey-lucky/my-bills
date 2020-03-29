@@ -1,13 +1,13 @@
 import {BeforeInsert, Column, Entity} from "typeorm";
-import {BaseEntity} from "../BaseEntity";
-import {BcUser} from "./BcUser";
-import {BcCard} from "./BcCard";
 import Assert from "../../utils/Assert";
-import {TranslateColumn} from "../translate";
 import {DateTimeColumn} from "../annotation/DateTimeColumn";
-import {findOne} from "../DataBaseUtil";
+import {BaseEntity} from "../BaseEntity";
 import {findOneWithCache} from "../cache";
+import {findOne} from "../DataBaseUtil";
+import {TranslateColumn} from "../translate";
 import {BcBillType} from "./BcBillType";
+import {BcCard} from "./BcCard";
+import {BcUser} from "./BcUser";
 
 @Entity()
 export class BdBill extends BaseEntity {
@@ -17,7 +17,7 @@ export class BdBill extends BaseEntity {
     @Column({name: "bill_desc"})
     billDesc: string;
 
-    @DateTimeColumn({name:"date_time"})
+    @DateTimeColumn({name: "date_time"})
     dateTime: Date;
 
     @Column({name: "bill_type_id", length: 36})
@@ -49,16 +49,16 @@ export class BdBill extends BaseEntity {
 
     @TranslateColumn({
         foreignKey: "cardId",
-        getSourceValue: (entity: BcCard) => entity.userId
+        getSourceValue: (entity: BcCard) => entity.userId,
     })
     cardUserId: string;
 
     @TranslateColumn({
         foreignKey: "cardId",
         getSourceValue: async (entity: BcCard) => {
-            let user = await findOne(BcUser, entity.userId);
+            const user = await findOne(BcUser, entity.userId);
             return user.name;
-        }
+        },
     })
     cardUserName: string;
 
@@ -71,7 +71,7 @@ export class BdBill extends BaseEntity {
     @TranslateColumn({
         foreignKey: "targetCardId",
         target: BcCard,
-        getSourceValue: (entity: BcCard) => entity.userId
+        getSourceValue: (entity: BcCard) => entity.userId,
     })
     targetCardUserId: string;
 
@@ -79,15 +79,15 @@ export class BdBill extends BaseEntity {
         foreignKey: "targetCardId",
         target: BcCard,
         getSourceValue: async (entity: BcCard) => {
-            let user = await findOneWithCache(BcUser, entity.userId);
+            const user = await findOneWithCache(BcUser, entity.userId);
             return user.name;
-        }
+        },
     })
     targetCardUserName: string;
 
     @TranslateColumn({
         foreignKey: "billTypeId",
-        getSourceValue:(entity:BcBillType)=>entity.typeName
+        getSourceValue: (entity: BcBillType) => entity.typeName,
     })
     billTypeTypeName: string;
 

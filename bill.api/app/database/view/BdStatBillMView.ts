@@ -3,7 +3,7 @@ import {BaseView} from "../BaseView";
 import {TranslateColumn} from "../translate";
 
 @ViewEntity({
-    name:"bd_stat_bill_m_view",
+    name: "bd_stat_bill_m_view",
     expression: `select surplus,
          income,
          outgoing,
@@ -22,7 +22,7 @@ import {TranslateColumn} from "../translate";
                left join bc_bill_type t1 on t1.id = t.bill_type_id
         where 1 = 1
           and t1.type <> '0'
-        group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id, t.bill_type_id, t.card_id) t`
+        group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id, t.bill_type_id, t.card_id) t`,
 })
 export class BdStatBillMView extends BaseView{
     @ViewColumn()

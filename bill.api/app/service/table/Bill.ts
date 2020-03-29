@@ -1,39 +1,41 @@
-import {Between, DeepPartial, FindConditions, In, Like} from "typeorm";
-import {BcBillType, BdBill, find, findOne} from "../../database";
-import Assert from "../../utils/Assert";
+import {BcBillType, BdBill, find} from "../../database/index";
+import {RestFullService} from "../../typings/rest";
 import {BaseService} from "../BaseService";
+import {Between, FindConditions, In, Like} from "typeorm";
 import moment = require("moment");
 
-export default class BdBillService extends BaseService {
-    async create(): Promise<void> {
-        const data: DeepPartial<BdBill> = this.getRequestTableFirstData("data");
-        data.userId = this.getCtxUserId();
-        const entity: BdBill = this.parseToEntity(BdBill, data);
+export default class Bill extends BaseService implements RestFullService {
+    public async create(data: any): Promise<any> {
+        const entity:BdBill = this.parseToEntity(BdBill, data);
+        entity.userId = this.getCtxUserId();
         await this.createEntity(entity);
+        await entity.reload();
+        return entity;
     }
 
-    async update(): Promise<void> {
-        const data: DeepPartial<BdBill> = this.getRequestTableFirstData("data");
-        data.userId = this.getCtxUserId();
-        const entity: BdBill = this.parseToEntity(BdBill, data);
-        await this.updateEntity(entity);
-    }
-
-    async delete(): Promise<void> {
-        const id = this.getString("id");
-        const bill = await findOne(BdBill, id);
-        Assert.isTrue(!!bill, "账单不存在");
+    public async destroy(id: string): Promise<any> {
+        const entity = await this.assertEntityIdExist(BdBill, id);
         await this.deleteEntity(BdBill, id);
+        return entity;
     }
 
-    async getList(params = this.getQueryObjects()): Promise<BdBill[]> {
-        return await find(BdBill, {where: await this.toFindConditions(params), order: {dateTime: "DESC"}});
+    public async update(id: string, data: any): Promise<any> {
+        await this.assertEntityIdExist(BdBill, id);
+        let entity:BdBill = this.parseToEntity(BdBill, data);
+        entity.id = id;
+        entity.userId = this.getCtxUserId();
+        await this.updateEntity(entity);
+        await entity.reload();
+        return entity;
     }
 
-    async getPageData(params = this.getQueryObjects()) {
-        const where = await this.toFindConditions();
-        const {pageInfo} = params;
-        return await this.findPageData(BdBill, {where, order: {dateTime: "DESC"}}, pageInfo);
+    public async show(id: string): Promise<any> {
+        return await this.assertEntityIdExist(BdBill, id);
+    }
+
+    public async index(params: any): Promise<any[]> {
+        const where = await this.toFindConditions(params);
+        return await find(BdBill, {where, order: {dateTime: "DESC"}});
     }
 
     private async toFindConditions(params = this.getQueryObjects()): Promise<FindConditions<BdBill> | Array<FindConditions<BdBill>>> {

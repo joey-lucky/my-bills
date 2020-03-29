@@ -33,4 +33,3 @@ export default class DataBaseObserverFactory{
         this.observerMap.set(key, observer);
     }
 }
-

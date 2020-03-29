@@ -1,11 +1,11 @@
 import {Column, Entity, JoinColumn, ManyToOne} from "typeorm";
 import {BaseEntity} from "../BaseEntity";
-import {BcUser} from "./BcUser";
-import {BcCardType} from "./BcCardType";
-import {TranslateColumn, TranslateSource} from "../translate";
 import {MemoryCache} from "../cache";
+import {TranslateColumn, TranslateSource} from "../translate";
+import {BcCardType} from "./BcCardType";
+import {BcUser} from "./BcUser";
 
-@MemoryCache({expires:60*60*1000})
+@MemoryCache({expires: 60 * 60 * 1000})
 @TranslateSource("cardId")
 @Entity()
 export class BcCard extends BaseEntity {
@@ -21,9 +21,9 @@ export class BcCard extends BaseEntity {
     @Column({name: "card_type_id", length: 36})
     cardTypeId: string | null;
 
-    @TranslateColumn({foreignKey:"userId"})
+    @TranslateColumn({foreignKey: "userId"})
     userName: string;
 
-    @TranslateColumn({foreignKey:"cardTypeId"})
+    @TranslateColumn({foreignKey: "cardTypeId"})
     cardTypeName: string;
 }

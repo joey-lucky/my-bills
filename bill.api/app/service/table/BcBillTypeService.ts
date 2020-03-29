@@ -1,16 +1,16 @@
-import {BaseService} from "../BaseService";
 import {FindConditions} from "typeorm";
 import {BcBillType, find} from "../../database";
+import {BaseService} from "../BaseService";
 
 export default class BcBillTypeService extends BaseService {
     public async groupByType(): Promise<GroupByTypeView[]> {
-        let list = await this.getList();
-        let map: { [key: string]: GroupByTypeView } = {};
-        for (let item of list) {
-            let typeName = item.typeName;
+        const list = await this.getList();
+        const map: { [key: string]: GroupByTypeView } = {};
+        for (const item of list) {
+            const typeName = item.typeName;
             if (!map[typeName]) {
                 map[typeName] = {
-                    typeName: typeName,
+                    typeName,
                     children: [],
                 };
             }
@@ -24,11 +24,11 @@ export default class BcBillTypeService extends BaseService {
     }
 
     public async getConsumerList(): Promise<BcBillType[]> {
-        return await find(BcBillType, {where: this.toFindConditions({type:"-1"}), order: {sort: "DESC"}});
+        return await find(BcBillType, {where: this.toFindConditions({type: "-1"}), order: {sort: "DESC"}});
     }
 
     private toFindConditions(params = this.getQueryObjects()): FindConditions<BcBillType> {
-        let where: FindConditions<BcBillType> = {};
+        const where: FindConditions<BcBillType> = {};
         if (params.type) {
             where.type = params.type;
         }
@@ -38,5 +38,5 @@ export default class BcBillTypeService extends BaseService {
 
 interface GroupByTypeView {
     typeName: string;
-    children: BcBillType[]
+    children: BcBillType[];
 }

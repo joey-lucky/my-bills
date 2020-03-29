@@ -1,6 +1,6 @@
 import {Column, Entity} from "typeorm";
-import {BaseEntity} from "../BaseEntity";
 import {DateTimeColumn} from "../annotation/DateTimeColumn";
+import {BaseEntity} from "../BaseEntity";
 
 @Entity()
 export class BdSendMessage extends BaseEntity {
@@ -10,15 +10,15 @@ export class BdSendMessage extends BaseEntity {
     @Column({name: "send_status"})
     sendStatus: string;
 
-    @Column({name: "msg_content",length:2000})
+    @Column({name: "msg_content", length: 2000})
     msgContent: string;
 
-    @Column({name: "error_code",nullable:true})
+    @Column({name: "error_code", nullable: true})
     errorCode: string;
 
     @DateTimeColumn({name: "send_time"})
     sendTime: Date;
 
     @Column({name: "token_id"})
-    tokenId:string;
+    tokenId: string;
 }

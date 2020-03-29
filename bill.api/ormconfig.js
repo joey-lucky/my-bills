@@ -6,7 +6,7 @@ module.exports = {
     "username": "root",
     "password": "123456",
     "database": "bill",
-    "synchronize": true,
+    "synchronize": false,
     "cache": false,
     "logging": [
         // "query",

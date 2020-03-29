@@ -24,8 +24,8 @@ export default class EncryptUtils {
     }
 
     public static decryptToken(token): TokenObject {
-        let result  = EncryptUtils.decrypt(token);
-        let tokenObj:TokenObject = JSON.parse(result);
+        const result  = EncryptUtils.decrypt(token);
+        const tokenObj: TokenObject = JSON.parse(result);
         return tokenObj;
     }
 

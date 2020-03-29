@@ -1,12 +1,11 @@
-import {Column} from "typeorm";
 import * as moment from "moment";
+import {Column} from "typeorm";
 
-
-export function DateTimeColumn(options:DateTimeColumnOptions) {
+export function DateTimeColumn(options: DateTimeColumnOptions) {
     return Column({
         name: options.name,
         type: "datetime",
-        nullable:true,
+        nullable: true,
         transformer: {
             from: (date: Date) => date,
             to: (date: string | Date) => {
@@ -15,10 +14,10 @@ export function DateTimeColumn(options:DateTimeColumnOptions) {
                 }
                 return date;
             },
-        }
-    })
+        },
+    });
 }
 
 export interface DateTimeColumnOptions {
-    name:string;
+    name: string;
 }

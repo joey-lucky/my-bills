@@ -6,7 +6,7 @@ export function TranslateColumn(options: TranslateColumnOptions) {
         pushTranslateColumn({
             target: obj.constructor,
             propertyName,
-            options: options
+            options,
         });
     };
 }

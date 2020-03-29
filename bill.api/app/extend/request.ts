@@ -28,7 +28,7 @@ const extend: ExtendRequest = {
             Object.keys(params).forEach((key) => {
                 const value = params[key];
                 if (value) {
-                    let isJSON = /(^[\[][\s\S]*[\]]$)|(^[\{][\s\S]*[\}]$)/;
+                    const isJSON = /(^[\[][\s\S]*[\]]$)|(^[\{][\s\S]*[\}]$)/;
                     if (isJSON.test(value)){
                         try{
                             const obj = JSON.parse(value);

@@ -2,10 +2,10 @@ import {BaseEntity, FindManyOptions, getManager, ObjectType} from "typeorm";
 import {findOneWithCache} from "./cache";
 
 export interface PageInfo {
-    pageIndex?: number,
-    pageSize?: number,
-    pageCount?: number,
-    count?: number,
+    pageIndex?: number;
+    pageSize?: number;
+    pageCount?: number;
+    count?: number;
 }
 
 export async function find<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, options?: FindManyOptions<Entity>) {

@@ -8,18 +8,18 @@ export default class SendMessageSchedule extends Subscription {
             interval: "60s", // 60 分钟间隔
             type: "worker", // 指定所有的 worker 都需要执行
             immediate: false,
-            disable:false
+            disable: false,
         };
     }
 
     async subscribe() {
         try {
-            let entityList: BdSendMessage[] = await find(BdSendMessage, {
+            const entityList: BdSendMessage[] = await find(BdSendMessage, {
                 where: {
                     sendStatus: "0",
-                }
+                },
             });
-            for (let entity of entityList) {
+            for (const entity of entityList) {
                 await this.sendMessage(entity);
             }
             this.app.loggers.logger.info("[schedule]", "SendMessageSchedule success");
@@ -33,28 +33,28 @@ export default class SendMessageSchedule extends Subscription {
         const {ctx} = this;
         const {msgContent, userId, tokenId} = entity;
         try {
-            let tokenEntity: BcToken = await findOne(BcToken, tokenId);
-            let user = await findOne(BcUser, userId);
-            let {bussWX} = user;
+            const tokenEntity: BcToken = await findOne(BcToken, tokenId);
+            const user = await findOne(BcUser, userId);
+            const {bussWX} = user;
             Assert.hasText(bussWX, "企业微信号不存在");
-            const {data} = await ctx.curl("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="+tokenEntity.accessToken, {
-                method: 'POST',
-                contentType: 'json',
+            const {data} = await ctx.curl("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + tokenEntity.accessToken, {
+                method: "POST",
+                contentType: "json",
                 data: {
                     // "access_token": tokenEntity.accessToken,
-                    "touser": bussWX,
+                    touser: bussWX,
                     // "toparty" : "PartyID1|PartyID2",
                     // "totag" : "TagID1 | TagID2",
-                    "msgtype": "text",
-                    "agentid": tokenEntity.agentId,
-                    "text": {
-                        "content": msgContent
+                    msgtype: "text",
+                    agentid: tokenEntity.agentId,
+                    text: {
+                        content: msgContent,
                     },
-                    "safe": 0,
-                    "enable_id_trans": 0,
-                    "enable_duplicate_check": 0
+                    safe: 0,
+                    enable_id_trans: 0,
+                    enable_duplicate_check: 0,
                 },
-                dataType: 'json',
+                dataType: "json",
             });
             Assert.isTrue(data.errcode === 0, "errcode不为0");
             await entity.save();

@@ -8,15 +8,15 @@ export default class Assert {
     }
 
     static notNull(str, msg?) {
-        let undefinedMsg = msg || "expect not null but undefined";
-        let nullMsg = msg || "expect not null but null";
+        const undefinedMsg = msg || "expect not null but undefined";
+        const nullMsg = msg || "expect not null but null";
         Assert.isTrue(str !== null, nullMsg);
         Assert.isTrue(str !== undefined, undefinedMsg);
     }
 
     static hasText(str: string, msg?) {
-        let nullMsg = msg || "expect has text but null";
-        let emptyTextMsg = msg || "expect has text but text length = 0";
+        const nullMsg = msg || "expect has text but null";
+        const emptyTextMsg = msg || "expect has text but text length = 0";
         Assert.notNull(str, nullMsg);
         Assert.isTrue(str.length !== 0, emptyTextMsg);
     }

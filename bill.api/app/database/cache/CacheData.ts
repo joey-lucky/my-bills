@@ -8,33 +8,38 @@ const cacheValidTime = {};
 export function setCacheEntityConfig<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, options: MemoryCacheOptions) {
     needCacheEntity[entityClass.name] = {
         target: entityClass,
-        options: options
+        options,
     };
 }
 
 export async function findOneWithCache<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, id: string) {
-    let entityClassName = entityClass.name;
+    const entityClassName = entityClass.name;
     if (!!needCacheEntity[entityClassName]) {
-        let expires = cacheValidTime[entityClassName] || 0;
+        const expires = cacheValidTime[entityClassName] || 0;
         if (expires < Date.now()) {//过期
             await initCache(entityClass);
         }
-        return cache[entityClassName][id];
+        let entity = cache[entityClassName][id] ;
+        if (!entity) { //缓存不存在，则查库并加入到缓存
+            entity = await getManager().findOne(entityClass, id);
+            cache[entityClassName][id] = entity;
+        }
+        return entity;
     } else {
         return await getManager().findOne(entityClass, id);
     }
 }
 
 export async function initCache<Entity extends BaseEntity>(entityClass: ObjectType<Entity>) {
-    let entityClassName = entityClass.name;
-    let expires = cacheValidTime[entityClassName] || 0;
+    const entityClassName = entityClass.name;
+    const expires = cacheValidTime[entityClassName] || 0;
     if (expires < Date.now()) {//过期
-        let cacheEntity = needCacheEntity[entityClassName];
-        let expires = cacheEntity && cacheEntity.options && cacheEntity.options.expires || (60 * 60 * 1000);
-        let validCacheTime = Date.now() + expires;
-        let rows: BaseEntity[] = await getManager().find(entityClass);
-        let entityCache = {};
-        for (let row of rows) {
+        const cacheEntity = needCacheEntity[entityClassName];
+        const expires = cacheEntity && cacheEntity.options && cacheEntity.options.expires || (60 * 60 * 1000);
+        const validCacheTime = Date.now() + expires;
+        const rows: BaseEntity[] = await getManager().find(entityClass);
+        const entityCache = {};
+        for (const row of rows) {
             // @ts-ignore
             entityCache[row.id] = row;
         }
@@ -44,7 +49,7 @@ export async function initCache<Entity extends BaseEntity>(entityClass: ObjectTy
 }
 
 export async function initAllCache() {
-    for (let value of Object.values(needCacheEntity)) {
+    for (const value of Object.values(needCacheEntity)) {
         await initCache(value.target);
     }
 }

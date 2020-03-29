@@ -1,6 +1,6 @@
 import {BaseEntity} from "typeorm";
-import {getForeignKeyEntity, getTranslateColumns} from "./TranslateConfig";
 import {findOneWithCache} from "../cache";
+import {getForeignKeyEntity, getTranslateColumns} from "./TranslateConfig";
 
 export * from "./TranslateColumn";
 export * from "./TranslateSource";
@@ -11,14 +11,14 @@ function defGetSourceValue(entity: BaseEntity) {
 }
 
 export async function translate(obj: BaseEntity) {
-    let columns = getTranslateColumns(obj.constructor);
-    for (let column of columns) {
-        let {propertyName, options} = column;
+    const columns = getTranslateColumns(obj.constructor);
+    for (const column of columns) {
+        const {propertyName, options} = column;
         let {foreignKey, target, getSourceValue = defGetSourceValue} = options;
-        let sourceId = obj[foreignKey];
+        const sourceId = obj[foreignKey];
         target = target || getForeignKeyEntity(foreignKey);
         if (sourceId && target) {
-            let entity = await findOneWithCache(target, sourceId);
+            const entity = await findOneWithCache(target, sourceId);
             if (entity) {
                 let value = getSourceValue(entity);
                 if (value instanceof Promise) {
