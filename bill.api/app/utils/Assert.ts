@@ -1,6 +1,6 @@
 import AssertError from "../model/AssertError";
 
-export default class Assert {
+export class Assert {
     static isTrue(needTrue: boolean, msg?) {
         if (!needTrue) {
             throw new AssertError(msg || "expect true but false");
@@ -35,3 +35,5 @@ export default class Assert {
         Assert.notNull(list.length > 0, msg || "expect not empty but empty");
     }
 }
+
+export default Assert;

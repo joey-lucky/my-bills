@@ -1,7 +1,6 @@
 import {Redirect, Route, Switch, withRouter} from "react-router-dom";
 import React from "react";
 import * as PropTypes from "prop-types";
-import {propTypes} from "@global";
 
 @withRouter
 export default class RouteContent extends React.Component {

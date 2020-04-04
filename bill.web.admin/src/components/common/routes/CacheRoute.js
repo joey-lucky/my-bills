@@ -2,14 +2,12 @@ import * as React from "react";
 import {withRouter} from "react-router-dom";
 import * as PropTypes from "prop-types";
 import {parsePath} from "history";
-import {propTypes} from "@global";
 
 @withRouter
 export default class CacheRoute extends React.Component {
     static propTypes = {
         path: PropTypes.any,
         defaultRoute: PropTypes.any,
-        ...propTypes.routeComponent
     };
 
     _component;

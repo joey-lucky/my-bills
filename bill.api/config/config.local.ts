@@ -1,22 +1,49 @@
-const mysql = {
-    // 单数据库信息配置
+const typeorm = {
     client: {
-        // host
-        host: "localhost",
-        // 端口号
-        port: "3306",
-        // 用户名
-        user: "root",
-        // 密码
-        password: "123456",
-        // 数据库名
-        database: "bill",
+        "type": "mysql",
+        "name": "default",
+        "host": "localhost",
+        "port": 3306,
+        "username": "root",
+        "password": "123456",
+        "database": "bill",
+        "synchronize": false,
+        "cache": false,
+        "logging": [
+            // "query",
+            "error",
+            // "warn",
+            // "info",
+            // "log"
+        ],
+        "entityPrefix": "",
+        "dateStrings": false,
+        "connectTimeout": 10000,
+        "acquireTimeout": 10000,
+        "maxQueryExecutionTime": 10000,
+        "debug": false,
+        "entities": [
+            "app/database/entity/*.ts",
+            "app/database/view/*.ts"
+        ],
+        "subscribers": [
+            "app/database/subscriber/*.ts"
+        ],
+        "migrations": [
+            "app/database/migration/*.ts"
+        ],
+        "cli": {
+            "entitiesDir": "app/database/entity",
+            "migrationsDir": "app/database/migration",
+            "subscribersDir": "app/database/subscriber"
+        }
     },
     app: true,
     agent: false,
 };
+
 export default () => {
   return {
-      mysql,
+      typeorm,
   };
 };

@@ -4,8 +4,12 @@ import store from "./store";
 
 
 export default class User extends React.Component {
+    columns = [
+
+    ];
+
     componentDidMount() {
-        store.loadData();
+        store.loadData().then();
     }
 
     render() {

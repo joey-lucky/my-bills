@@ -8,7 +8,6 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import {translate} from "./translate";
 
 export class BaseEntity extends orm.BaseEntity {
     @PrimaryGeneratedColumn("uuid")
@@ -52,10 +51,5 @@ export class BaseEntity extends orm.BaseEntity {
         delete this.updateBy;
         delete this.createTime;
         delete this.updateTime;
-    }
-
-    @AfterLoad()
-    async translateColumn(){
-        await translate(this);
     }
 }

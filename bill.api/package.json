@@ -34,7 +34,7 @@
   "dependencies": {
     "@types/mysql": "^2.15.5",
     "egg": "^2.6.1",
-    "egg-mysql": "^3.0.0",
+    "egg-redis": "^2.4.0",
     "egg-scripts": "^2.6.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
@@ -55,6 +55,7 @@
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.16.0",
     "egg-ts-helper": "^1.25.7",
+    "module-alias": "^2.2.2",
     "tslib": "^1.9.0",
     "tslint": "^4.0.0",
     "typescript": "3.8.3"

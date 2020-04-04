@@ -4,7 +4,6 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import {authStore, htmlStore} from "@stores";
 import {computed, toJS} from "mobx";
-import PasswordDialog from "./PasswordDialog";
 import * as styles from "./index.module.css";
 import Header from "./Header";
 import NavRouteContent from "@components/common/routes/NavRouteContent";
@@ -57,19 +56,6 @@ export default class Home extends React.Component {
 
         return (
             <div className={styles.container}>
-                <PasswordDialog
-                    ref={this.passwordRef}
-                    onFinish={()=>{
-                        Modal.success({
-                            title: "提示",
-                            content: "修改密码成功,请重新登陆系统！",
-                            okText: "确定",
-                            onOk: function () {
-                                authStore.loginOut();
-                            }
-                        });
-                    }}
-                />
                 <Header
                     title={htmlStore.projectName}
                     version={htmlStore.version}

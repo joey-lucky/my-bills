@@ -1,5 +1,4 @@
 import * as crypto from "crypto";
-import {TokenObject} from "../extend/application/TokenCrypto";
 
 export interface TokenObject {
     userId: string;
@@ -25,8 +24,7 @@ export default class EncryptUtils {
 
     public static decryptToken(token): TokenObject {
         const result  = EncryptUtils.decrypt(token);
-        const tokenObj: TokenObject = JSON.parse(result);
-        return tokenObj;
+        return JSON.parse(result);
     }
 
     public static generateToken(userId): string {

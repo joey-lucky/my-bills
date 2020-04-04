@@ -1,11 +1,11 @@
 import {Service} from "egg";
-import {DeepPartial, FindManyOptions, getManager, ObjectType} from "typeorm";
-import {BaseEntity, findAndCount, PageInfo} from "../database";
+import {DeepPartial, FindManyOptions, ObjectType} from "typeorm";
+import {BaseEntity, PageInfo} from "../database";
 import Assert from "../utils/Assert";
 
-export class BaseService extends Service {
+export default class BaseService extends Service {
     protected async assertEntityIdExist<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, id: string): Promise<Entity> {
-        let entity: Entity = await getManager().findOne(entityClass, id);
+        let entity: Entity = await this.app.dbManager.findOne(entityClass, id);
         Assert.isTrue(!!entity, `id=${id} not exist`);
         return entity;
     }
@@ -15,13 +15,13 @@ export class BaseService extends Service {
     }
 
     protected parseToEntity<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, plainObject?: DeepPartial<Entity>): Entity {
-        return getManager().create(entityClass, plainObject);
+        return this.app.dbManager.create(entityClass, plainObject);
     }
 
     protected parseToEntities<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, plainObject?: Array<DeepPartial<Entity>>): Entity[] {
         const entities = [];
         for (const obj of plainObject) {
-            entities.push(getManager().create(entityClass, obj));
+            entities.push(this.app.dbManager.create(entityClass, obj));
         }
         return entities;
     }
@@ -31,17 +31,17 @@ export class BaseService extends Service {
         entity.updateBy = this.getCtxUserId();
         entity.createTime = new Date();
         entity.updateTime = new Date();
-        await getManager().save(entity.constructor, entity);
+        await this.app.dbManager.save(entity.constructor, entity);
     }
 
     protected async updateEntity<Entity extends BaseEntity>(entity: Entity) {
         entity.updateBy = this.getCtxUserId();
         entity.updateTime = new Date();
-        await getManager().save(entity.constructor, entity);
+        await this.app.dbManager.save(entity.constructor, entity);
     }
 
     protected async deleteEntity<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, id: string) {
-        await getManager().delete(entityClass, id);
+        await this.app.dbManager.delete(entityClass, id);
     }
 
     protected async findPageData<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, options?: FindManyOptions<Entity>, pageInfo = this.getPageInfo()): Promise<[Entity[], PageInfo]> {
@@ -49,7 +49,7 @@ export class BaseService extends Service {
         const start = (pageSize * (pageIndex - 1));
         options.take = pageSize;
         options.skip = start;
-        const [data, count] = await findAndCount(entityClass, options);
+        const [data, count] = await this.app.dbManager.findAndCount(entityClass, options);
         const newPageInfo: PageInfo = {
             pageIndex,
             pageSize,

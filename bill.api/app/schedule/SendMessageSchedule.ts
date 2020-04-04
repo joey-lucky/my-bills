@@ -1,5 +1,5 @@
 import {Subscription} from "egg";
-import {BcToken, BcUser, BdSendMessage, find, findOne} from "../database";
+import {BcToken, BcUser, BdSendMessage} from "../database";
 import Assert from "../utils/Assert";
 
 export default class SendMessageSchedule extends Subscription {
@@ -8,13 +8,14 @@ export default class SendMessageSchedule extends Subscription {
             interval: "60s", // 60 分钟间隔
             type: "worker", // 指定所有的 worker 都需要执行
             immediate: false,
-            disable: false,
+            disable: true,
         };
     }
 
     async subscribe() {
+        const {dbManager} = this.app;
         try {
-            const entityList: BdSendMessage[] = await find(BdSendMessage, {
+            const entityList: BdSendMessage[] = await dbManager.find(BdSendMessage, {
                 where: {
                     sendStatus: "0",
                 },
@@ -31,10 +32,11 @@ export default class SendMessageSchedule extends Subscription {
 
     async sendMessage(entity: BdSendMessage) {
         const {ctx} = this;
+        const {dbManager} = this.app;
         const {msgContent, userId, tokenId} = entity;
         try {
-            const tokenEntity: BcToken = await findOne(BcToken, tokenId);
-            const user = await findOne(BcUser, userId);
+            const tokenEntity: BcToken = await dbManager.findOne(BcToken, tokenId);
+            const user = await dbManager.findOne(BcUser, userId);
             const {bussWX} = user;
             Assert.hasText(bussWX, "企业微信号不存在");
             const {data} = await ctx.curl("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + tokenEntity.accessToken, {

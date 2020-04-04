@@ -1,6 +1,6 @@
 import {Context} from "egg";
 import * as jwt from "jsonwebtoken";
-import {BcUser, findOneWithCache} from "../database";
+import {BcUser} from "../database";
 import {TokenPlayLoad} from "../typings/token";
 import Assert from "../utils/Assert";
 
@@ -13,7 +13,7 @@ export default function (options) {
             const secret = ctx.app.config.secret;
             // @ts-ignore
             const playLoad: TokenPlayLoad = jwt.verify(token, secret);
-            ctx.user = await findOneWithCache(BcUser, playLoad.userId);
+            ctx.user = await ctx.dbManager.findOne(BcUser, playLoad.userId);
         }
         await next();
     };

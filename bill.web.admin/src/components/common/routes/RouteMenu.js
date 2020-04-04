@@ -1,7 +1,8 @@
 import {withRouter} from "react-router-dom";
 import React from "react";
 import * as PropTypes from "prop-types";
-import {Icon, Menu} from "antd";
+import {Menu} from "antd";
+import { MailOutlined,ProfileOutlined } from '@ant-design/icons';
 
 @withRouter
 export default class RouteMenu extends React.Component {
@@ -107,7 +108,7 @@ export default class RouteMenu extends React.Component {
                 return (
                     <Menu.SubMenu
                         key={path}
-                        title={<span><Icon type="profile" /><span>{name}</span></span>}
+                        title={<span><ProfileOutlined/><span>{name}</span></span>}
                     >
                         {
                             children.map(item => this.getRouteNode(item, path))
@@ -116,7 +117,7 @@ export default class RouteMenu extends React.Component {
                 );
             } else {
                 return (
-                    <Menu.Item key={path} ><span><Icon type="mail"/><span>{name}</span></span></Menu.Item>
+                    <Menu.Item key={path} ><span><MailOutlined/><span>{name}</span></span></Menu.Item>
                 );
             }
         } else {

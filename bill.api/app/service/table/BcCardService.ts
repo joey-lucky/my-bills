@@ -1,15 +1,14 @@
-import {Application} from "egg";
 import {FindConditions} from "typeorm";
-import {BcCard, BcUser, find} from "../../database";
-import {BaseService} from "../BaseService";
+import {BcCard, BcCardView, BcUser} from "../../database";
+import BaseService from "../BaseService";
 
 export default class BcCardService extends BaseService {
     public async groupByUser() {
         type GroupByUserCardView = {
             userName: string;
-            children: BcCard[]
+            children: BcCardView[]
         };
-        const list = await this.getList();
+        const list:BcCardView[] = await this.getList();
         const map: { [key: string]: GroupByUserCardView; } = {};
         for (const item of list) {
             const userName = item.userName;
@@ -24,14 +23,16 @@ export default class BcCardService extends BaseService {
         return Object.values(map);
     }
 
-    public async getList() {
-        return await find(BcCard, {where: this.toFindConditions(), order: {userId: "DESC"}});
+    public async getList():Promise<BcCardView[]> {
+        const {dbManager} = this.app;
+        return await dbManager.find(BcCardView, {where: this.toFindConditions(), order: {userId: "DESC"}});
     }
 
     public async getAssetList() {
-        type Asset = { pic?: string } & BcCard;
+        const {dbManager} = this.app;
+        type Asset = { pic?: string } & BcCardView;
         const list: Asset[] = await this.getList();
-        const userList: BcUser[] = await find(BcUser, {});
+        const userList: BcUser[] = await dbManager.find(BcUser, {});
         const userMap = userList.reduce((pre, curr) => {
             pre[curr.id] = curr;
             return pre;
@@ -57,42 +58,14 @@ export default class BcCardService extends BaseService {
                 };
             }
             cardTypeMap[cardTypeName].balance += balance;
-            cardTypeMap[cardTypeName].children.push(item);
+            // cardTypeMap[cardTypeName].children.push(item);
         }
         return Object.values(cardTypeMap);
     }
 
-    public async getListByCardTypeId(cardTypeId?: string | string[]): Promise<any[]> {
-        const app: Application = this.app;
-        let sql = "select *\n" +
-            "from bc_card t\n" +
-            "where 1=1\n";
-        const queryParams: string[] = [];
-        if (cardTypeId) {
-            if (typeof cardTypeId === "string") {
-                sql += "  and t.card_type_id = ?\n";
-                queryParams.push(cardTypeId);
-            } else if (Array.isArray(cardTypeId) && cardTypeId.length > 0) {
-                let idSql = "";
-                for (const id of cardTypeId) {
-                    idSql += "?,";
-                    queryParams.push(id);
-                }
-                idSql = idSql.substr(0, idSql.length - 1);
-                sql += `  and t.card_type_id in (${idSql})\n`;
-            }
-        }
-        sql += "order by t.user_id asc,t.card_type_id asc,t.name asc";
-        const rows: any[] = await app.sqlExecutor.query(sql, queryParams);
-        for (const row of rows) {
-            await app.tableRowHelper.translateId(row);
-        }
-        return rows;
-    }
-
-    private toFindConditions(): FindConditions<BcCard> {
+    private toFindConditions(): FindConditions<BcCardView> {
         const params = this.getQueryObjects();
-        const where: FindConditions<BcCard> = {};
+        const where: FindConditions<BcCardView> = {};
         if (params.userId) {
             where.userId = params.userId;
         }

@@ -1,19 +1,19 @@
 import {Subscription} from "egg";
-import {getConnection} from "typeorm";
-import {BcCard, find} from "../database";
+import {BcCard} from "../database";
 
 export default class CalculateBalance extends Subscription {
     static get schedule() {
         return {
             interval: "60s", // 60 分钟间隔
             type: "worker", // 指定所有的 worker 都需要执行
-            immediate: false,
+            immediate: true,
+            disable: false,
         };
     }
 
     async subscribe() {
         try {
-            const data: any[] = await getConnection().query(`
+            const data: any[] = await this.app.db.query(`
               select t.card_id as cardId,
                      round(sum(t.money),2) as money
               from (select bb.card_id, sum(bb.money) as money from bd_bill bb group by bb.card_id
@@ -23,7 +23,7 @@ export default class CalculateBalance extends Subscription {
                     where bb.target_card_id is not null
                     group by bb.target_card_id)t
               group by t.card_id`);
-            const cardList = await find(BcCard);
+            const cardList = await this.app.dbManager.find(BcCard);
             const balanceMap = data.reduce((pre, curr) => {
                 pre[curr.cardId] = curr.money;
                 return pre;

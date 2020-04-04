@@ -1,9 +1,12 @@
 import 'egg';
 import {ExtendApplication} from "../app/extend/application";
 import {ExtendRequest} from "../app/extend/request";
-import {BcUser} from "../app/database/entity/BcUser";
+import {Connection} from "typeorm";
+import {BcUser, DbManager} from "../app/database";
 
 declare module 'egg' {
+
+
     interface Request extends ExtendRequest {
 
     }
@@ -11,10 +14,13 @@ declare module 'egg' {
     interface Context{
         body: RequestResult;
         user: BcUser;
+        db:Connection,
+        dbManager:DbManager,
     }
 
     interface Application extends ExtendApplication {
-        mysql: MySql
+        db:Connection,
+        dbManager:DbManager,
     }
 
     interface PageInfo {

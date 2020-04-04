@@ -1,6 +1,5 @@
 import {Redirect, Route, Switch, withRouter} from "react-router-dom";
 import React from "react";
-import {propTypes} from "@global";
 import * as PropTypes from "prop-types";
 
 function DefaultContent() {

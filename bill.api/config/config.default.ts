@@ -1,6 +1,17 @@
 import {EggAppConfig, EggAppInfo, PowerPartial} from "egg";
 
 const middleware = ["errorHandler", "requestLogger", "tokenVerify"];
+
+const redis = {
+    client: {
+        port: 6379,          // Redis port
+        host: '127.0.0.1',   // Redis host
+        password: '',
+        db: 0
+    },
+    app:true,
+};
+
 export default (appInfo: EggAppInfo) => {
     const config = {} as PowerPartial<EggAppConfig>;
 
@@ -11,6 +22,7 @@ export default (appInfo: EggAppInfo) => {
     config.middleware = middleware;
     // add your special config in here
     // the return config will combines to EggAppConfig
+    config.redis = redis;
     return {
         ...config,
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
@@ -23,17 +35,6 @@ export default (appInfo: EggAppInfo) => {
             },
             csrf: {
                 enable: false,
-                cookieName: "csrfToken", // Cookie 中的字段名，默认为 csrfToken
-                sessionName: "csrfToken", // Session 中的字段名，默认为 csrfToken
-                headerName: "x-csrf-token",
-                ignore: (ctx) => {
-                    const url = ctx.request.url;
-                    const ignoreUrls = ["/api/safe/login"];
-                    if (ignoreUrls.includes(url)) {
-                        return true;
-                    }
-                    return false;
-                },
             },
         },
         cluster: {

@@ -1,10 +1,6 @@
 import {AfterLoad, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "../BaseEntity";
-import {MemoryCache} from "../cache";
-import {TranslateSource} from "../translate";
 
-@MemoryCache({expires: 60 * 1000})
-@TranslateSource("userId")
 @Entity()
 export class BcUser extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")

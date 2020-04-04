@@ -1,57 +1,63 @@
-import {Column, ViewColumn, ViewEntity} from "typeorm";
+import {Column, ViewEntity} from "typeorm";
 import {BaseView} from "../BaseView";
-import {TranslateColumn} from "../translate";
 
 @ViewEntity({
     name: "bd_stat_bill_m_view",
-    expression: `select surplus,
-         income,
-         outgoing,
-         str_to_date(concat(date_time, '-01 00:00:00'), '%Y-%m-%d %H:%i:%s')as dateTime,
-         bill_type_id as billTypeId,
-         card_id as cardId,
-         user_id as userId
-  from (select ROUND(sum(t.money), 2)                                            as surplus,
-               round(sum(case when t.money >= 0 then t.money else 0 end), 2)     as income,
-               round(sum(case when t.money < 0 then abs(t.money) else 0 end), 2) as outgoing,
-               DATE_FORMAT(t.date_time, '%Y-%m')                                 as date_time,
-               t.bill_type_id,
-               t.card_id,
-               t.user_id
-        from bd_bill t
-               left join bc_bill_type t1 on t1.id = t.bill_type_id
-        where 1 = 1
-          and t1.type <> '0'
-        group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id, t.bill_type_id, t.card_id) t`,
+    expression: `select t.bill_type_id,
+       t.card_id,
+       t.user_id,
+       card.name                                                            as card_name,
+       user.name                                                            as user_name,
+       billType.name                                                        as bill_type_name,
+       t.surplus,
+       t.income,
+       t.outgoing,
+       str_to_date(concat(t.date_time, '-01 00:00:00'), '%Y-%m-%d %H:%i:%s')as date_time
+
+from (select ROUND(sum(t.money), 2)                                            as surplus,
+             round(sum(case when t.money >= 0 then t.money else 0 end), 2)     as income,
+             round(sum(case when t.money < 0 then abs(t.money) else 0 end), 2) as outgoing,
+             DATE_FORMAT(t.date_time, '%Y-%m')                                 as date_time,
+             t.bill_type_id,
+             t.card_id,
+             t.user_id
+      from bd_bill t
+             left join bc_bill_type t1 on t1.id = t.bill_type_id
+      where 1 = 1
+        and t1.type <> '0'
+      group by DATE_FORMAT(t.date_time, '%Y-%m'), t.user_id, t.bill_type_id, t.card_id) t
+       left join bc_card card on card.id = t.card_id
+       left join bc_user user on user.id = t.user_id
+       left join bc_bill_type billType on billType.id = t.bill_type_id`,
 })
 export class BdStatBillMView extends BaseView{
-    @ViewColumn()
+    @Column()
     surplus: number;
 
-    @ViewColumn()
+    @Column()
     income: number;
 
-    @ViewColumn()
+    @Column()
     outgoing: number;
 
-    @ViewColumn()
+    @Column({name: "date_time"})
     dateTime: Date;
 
-    @ViewColumn()
+    @Column({name: "user_id"})
     userId: string;
 
-    @ViewColumn()
+    @Column({name: "card_id"})
     cardId: string;
 
-    @ViewColumn()
+    @Column({name: "bill_type_id"})
     billTypeId: string;
 
-    @TranslateColumn({foreignKey: "billTypeId"})
+    @Column({name: "bill_type_name"})
     billTypeName: string;
 
-    @TranslateColumn({foreignKey: "userId"})
+    @Column({name: "user_name"})
     userName: string;
 
-    @TranslateColumn({foreignKey: "cardId"})
+    @Column({name: "card_name"})
     cardName: string;
 }

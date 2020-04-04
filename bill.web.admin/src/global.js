@@ -1,8 +1,8 @@
 const globalData = {};
 
 let pathConfig = {
-    publicPath: process.env.PUBLIC_PATH || "",
-    apiPath: "",
+    publicPath:  "/bill/admin",
+    apiPath: "/bill/api",
     filePath: "",
 };
 
@@ -70,3 +70,4 @@ export function getCookie(key) {
     }
     return "";
 }
+

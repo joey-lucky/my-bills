@@ -2,12 +2,6 @@ import {BeforeInsert, Column, Entity} from "typeorm";
 import Assert from "../../utils/Assert";
 import {DateTimeColumn} from "../annotation/DateTimeColumn";
 import {BaseEntity} from "../BaseEntity";
-import {findOneWithCache} from "../cache";
-import {findOne} from "../DataBaseUtil";
-import {TranslateColumn} from "../translate";
-import {BcBillType} from "./BcBillType";
-import {BcCard} from "./BcCard";
-import {BcUser} from "./BcUser";
 
 @Entity()
 export class BdBill extends BaseEntity {
@@ -31,65 +25,6 @@ export class BdBill extends BaseEntity {
 
     @Column({name: "target_card_id", length: 36, nullable: true})
     targetCardId: string;
-
-    @TranslateColumn({
-        foreignKey: "userId",
-    })
-    userName: string;
-
-    @TranslateColumn({
-        foreignKey: "billTypeId",
-    })
-    billTypeName: string;
-
-    @TranslateColumn({
-        foreignKey: "cardId",
-    })
-    cardName: string;
-
-    @TranslateColumn({
-        foreignKey: "cardId",
-        getSourceValue: (entity: BcCard) => entity.userId,
-    })
-    cardUserId: string;
-
-    @TranslateColumn({
-        foreignKey: "cardId",
-        getSourceValue: async (entity: BcCard) => {
-            const user = await findOne(BcUser, entity.userId);
-            return user.name;
-        },
-    })
-    cardUserName: string;
-
-    @TranslateColumn({
-        foreignKey: "targetCardId",
-        target: BcCard,
-    })
-    targetCardName: string;
-
-    @TranslateColumn({
-        foreignKey: "targetCardId",
-        target: BcCard,
-        getSourceValue: (entity: BcCard) => entity.userId,
-    })
-    targetCardUserId: string;
-
-    @TranslateColumn({
-        foreignKey: "targetCardId",
-        target: BcCard,
-        getSourceValue: async (entity: BcCard) => {
-            const user = await findOneWithCache(BcUser, entity.userId);
-            return user.name;
-        },
-    })
-    targetCardUserName: string;
-
-    @TranslateColumn({
-        foreignKey: "billTypeId",
-        getSourceValue: (entity: BcBillType) => entity.typeName,
-    })
-    billTypeTypeName: string;
 
     @BeforeInsert()
     validField() {

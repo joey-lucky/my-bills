@@ -1,7 +1,6 @@
 import {Subscription} from "egg";
 import * as moment from "moment";
-import {getConnection} from "typeorm";
-import {BcUser, BdSendMessage, find} from "../database";
+import {BcUser, BdSendMessage} from "../database";
 
 export default class BillDayReportSchedule extends Subscription {
     static get schedule() {
@@ -10,7 +9,8 @@ export default class BillDayReportSchedule extends Subscription {
             cron: "0 0 9 * * *",
             // interval: "60000s", // 60 分钟间隔
             type: "worker", // 指定所有的 worker 都需要执行
-            immediate: false,
+            immediate: true,
+            disable: true,
         };
     }
 
@@ -18,7 +18,7 @@ export default class BillDayReportSchedule extends Subscription {
         try {
             const start = moment().add(-1, "day").format("YYYY-MM-DD");
             const end = moment().format("YYYY-MM-DD");
-            const data: any[] = await getConnection().query(`
+            const data: any[] = await this.app.db.query(`
                 select t1.name,
                        round(sum(t.money), 2) as money
                 from bd_bill t
@@ -34,7 +34,7 @@ export default class BillDayReportSchedule extends Subscription {
                 const {name, money} = item;
                 msgContent += "\n" + name + ":" + money;
             }
-            const userList = await find(BcUser);
+            const userList = await this.app.dbManager.find(BcUser);
             for (const user of userList) {
                 const entity = new BdSendMessage();
                 entity.sendStatus = "0";

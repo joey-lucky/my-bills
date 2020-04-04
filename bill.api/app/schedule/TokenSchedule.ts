@@ -1,6 +1,6 @@
 import {Subscription} from "egg";
 import {LessThanOrEqual} from "typeorm";
-import {BcToken, find} from "../database";
+import {BcToken} from "../database";
 import Assert from "../utils/Assert";
 
 export default class TokenSchedule extends Subscription {
@@ -11,13 +11,14 @@ export default class TokenSchedule extends Subscription {
             interval: "60s", // 60 分钟间隔
             type: "worker", // 指定所有的 worker 都需要执行
             immediate: false,
-            disable: false,
+            disable: true,
         };
     }
 
     async subscribe() {
+        const {dbManager} = this.app;
         try {
-            const tokenEntityList = await find(BcToken, {
+            const tokenEntityList = await dbManager.find(BcToken, {
                 where: {
                     expiresIn: LessThanOrEqual(new Date(Date.now() - TokenSchedule.EXPIRES_THRESHOLD)),
                 },

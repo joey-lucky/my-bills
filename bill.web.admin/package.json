@@ -30,16 +30,15 @@
     "@types/react": "^16.4.6",
     "@types/react-router-dom": "^4.3.1",
     "@types/webpack": "^4.4.4",
-    "hjoey-react-scripts": "^0.0.8"
+    "hjoey-react-scripts": "latest"
   },
   "engines": {
     "node": ">=8.9.4"
   },
-  "homepage": "http://localhost:8080/admin",
+  "homepage": "http://localhost:8080/bill/admin",
   "cdnHost": "",
   "proxy": {
-    "/api": "http://localhost:3000",
-    "/file": "D:/tempDirectory"
+    "/bill/api": "http://localhost:3000"
   },
   "resolveAlias": {
     "@pages": "src/pages",

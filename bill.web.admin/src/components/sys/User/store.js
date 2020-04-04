@@ -6,7 +6,7 @@ class Store {
 
 
     async loadData(){
-        let d = await userAPI.index();
+        let d =  userAPI.index().then();
         this.data = d.data;
     }
 }
