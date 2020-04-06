@@ -1,8 +1,8 @@
 import {Layout} from "antd";
 import React from "react";
 import {withRouter} from "react-router-dom";
-import {RouteMenu, RouteContent} from "@components/common/routes";
 import * as PropTypes from "prop-types";
+import {RouteMenu,RouteContent} from "@components";
 
 const {Content, Sider} = Layout;
 
@@ -14,7 +14,7 @@ export default class CommonLayout extends React.Component {
 
     render() {
         return (
-            <Layout className="fill-parent">
+            <Layout className={"fill-parent"}>
                 <Sider collapsible style={{width: 20, background: "white", overflow: "auto"}}>
                     <RouteMenu childRouteData={this.props.childRouteData}/>
                 </Sider>

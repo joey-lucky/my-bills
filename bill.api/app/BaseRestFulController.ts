@@ -1,6 +1,7 @@
 import {RestFullController, RestFullService} from "./typings/rest";
 import Assert from "./utils/Assert";
 import BaseController from "./BaseController";
+import {PageInfo} from "./database";
 
 export default abstract class BaseRestFulController extends BaseController implements RestFullController {
 
@@ -34,15 +35,22 @@ export default abstract class BaseRestFulController extends BaseController imple
 
     //查多个
     public async index() {
-        const params = this.ctx.request.query;
-        const data = await this.getService().index(params);
-        this.successData(data);
+        const params = this.ctx.request.query || {};
+        const {pageIndex, pageSize, ...rest} = params;
+        if (pageIndex && pageSize) {
+            // @ts-ignore
+            let pageInfo: PageInfo = {pageIndex, pageSize};
+            const result = await this.getService().pageIndex(pageInfo,rest);
+            this.successPageData(result.data,result.pageInfo)
+        } else {
+            const data = await this.getService().index(params);
+            this.successData(data);
+        }
     }
 
-    private getUniqueId(){
+    private getUniqueId() {
         const id = this.ctx.params.id;
         Assert.hasText(id, "id is null");
         return id;
     }
-
 }

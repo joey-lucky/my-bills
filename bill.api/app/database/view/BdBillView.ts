@@ -1,4 +1,4 @@
-import {Column, ViewEntity} from "typeorm";
+import {Column, PrimaryColumn, ViewEntity} from "typeorm";
 import {BaseView} from "../BaseView";
 
 @ViewEntity({
@@ -17,11 +17,14 @@ from bd_bill bill
        left join bc_bill_type billType on billType.id = bill.bill_type_id
        left join bc_user user on user.id = bill.user_id
        left join bc_card card on card.id = bill.card_id
-       left join bc_user cardUser on cardUser.id = card.id
+       left join bc_user cardUser on cardUser.id = card.user_id
        left join bc_card targetCard on targetCard.id = bill.target_card_id
        left join bc_user targetCardUser on targetCardUser.id = targetCard.user_id`,
 })
 export class BdBillView extends BaseView {
+    @PrimaryColumn({name: "id"})
+    id: string;
+
     @Column({name: "money"})
     money: number;
 

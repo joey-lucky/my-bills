@@ -6,8 +6,6 @@ import useRemoteFormState from "./useRemoteFormState"
 export default function RemoteSelect(props) {
     const {data, value, setValue} = useRemoteFormState(props);
 
-    const filterOption = (inputValue = "", option) => option.props.children.indexOf(inputValue) > -1;
-
     const onChange = (targetValue) => {
         if (targetValue !== value) {
             if (!("value" in props)) {

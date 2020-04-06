@@ -7,7 +7,7 @@ const typeorm = {
         "username": "root",
         "password": "123456",
         "database": "bill",
-        "synchronize": false,
+        "synchronize": true,
         "cache": false,
         "logging": [
             // "query",

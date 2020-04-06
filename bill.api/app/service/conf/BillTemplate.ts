@@ -1,4 +1,4 @@
-import {BcBillTemplate, BcBillTemplateView, BcBillType} from "../../database";
+import {BcBillTemplate, BcBillTemplateView, BcBillType, PageInfo} from "../../database";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
 import {FindConditions, In, Like} from "typeorm";
@@ -36,6 +36,12 @@ export default class BillTemplate extends BaseService implements RestFullService
         const {dbManager} = this.app;
         const where = await this.toFindConditions(params);
         return await dbManager.find(BcBillTemplate, {where});
+    }
+
+    public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
+        const {dbManager} = this.app;
+        const where = await this.toFindConditions(params);
+        return await dbManager.findPage(BcBillTemplate, pageInfo,{where});
     }
 
     private async toFindConditions(params = this.getQueryObjects()): Promise<FindConditions<BcBillTemplateView> | Array<FindConditions<BcBillTemplateView>>> {

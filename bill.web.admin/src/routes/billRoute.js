@@ -1,15 +1,16 @@
 import CommonLayout from "@layouts/CommonLayout";
 import User from "@components/../business/sys/User";
+import Bill from "@business/bill/Bill";
 
 const route = {
-    path: "/sys",
+    path: "/bill",
     component: CommonLayout,
-    name: "设置",
+    name: "账单管理",
     children:[
         {
-            path: "/user",
-            component: User,
-            name: "用户",
+            path: "/bill-list",
+            component: Bill,
+            name: "账单列表",
         },
     ]
 

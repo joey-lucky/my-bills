@@ -1,3 +1,5 @@
+import {PageInfo} from "../database";
+
 export interface RestFullController {
     index();
 
@@ -20,4 +22,6 @@ export interface RestFullService {
     show(id: string): Promise<any>;
 
     index(params: any): Promise<any[]>;
+
+    pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }>;
 }

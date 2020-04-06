@@ -1,6 +1,6 @@
 import {notification} from 'antd';
-import {getCookie, getItem, getPublicPath, setItem} from "@global";
-import umiRequest from "umi-request";
+import {getItem, getPublicPath, setItem} from "@global";
+import {extend} from "umi-request";
 
 const codeMessage = {
     200: '服务器成功返回请求的数据。',
@@ -19,6 +19,10 @@ const codeMessage = {
     503: '服务不可用，服务器暂时过载或维护。',
     504: '网关超时。',
 };
+
+const request = extend({
+    useCache:false,
+});
 
 const errorHandler = (error) => {
     const {response} = error;
@@ -40,9 +44,10 @@ const errorHandler = (error) => {
 };
 
 function getHeaders() {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json;charset=utf-8");
-    return headers;
+    return {
+        "Content-Type": "application/json;charset=utf-8",
+        "Authorization": "Bearer " + getToken()
+    };
 }
 
 export function getToken() {
@@ -54,9 +59,6 @@ export function setToken(token = "") {
 }
 
 async function commonFetch(url, params = {}, method) {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json;charset=utf-8");
-    headers.append("x-csrf-token", getCookie("csrfToken"));
     try {
         params = {
             ...params,
@@ -67,11 +69,10 @@ async function commonFetch(url, params = {}, method) {
             data: JSON.stringify(params)
         };
         if (method === "GET") {
-            delete requestParams.body;
+            delete requestParams.data;
             requestParams.params = params
         }
-        console.log(requestParams);
-        let data = await umiRequest(url, requestParams);
+        let data = await request(url, requestParams);
         if (data.code === "1") {
             return data;
         } else {
@@ -104,7 +105,7 @@ async function update(url, id, params) {
     return await commonFetch(url + "/" + id, params, "PUT");
 }
 
-async function apiGet(url,  params) {
+async function apiGet(url, params) {
     return await commonFetch(url, params, "GET");
 }
 
@@ -114,5 +115,5 @@ export default {
     create: create,
     destroy: destroy,
     update: update,
-    apiGet:apiGet,
+    apiGet: apiGet,
 };

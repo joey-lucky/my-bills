@@ -1,6 +1,7 @@
 import Home from "@pages/Home";
 import Login from "@pages/Login";
 import sysRoute from "./sysRoute";
+import billRoute from "./billRoute";
 
 const loginPage = {
     path: "/login",
@@ -12,6 +13,6 @@ const homePage = {
     path: "/home",
     component: Home,
     name: "首页",
-    children:[sysRoute]
+    children:[billRoute,sysRoute]
 };
 export default [loginPage,homePage]; // homeSingleRoute

@@ -1,12 +1,10 @@
-import {BcBillType, BdBill, BdBillView} from "../../database";
+import {BdBill, BdBillView, PageInfo} from "../../database";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
-import {Between, FindConditions, In, Like} from "typeorm";
-import moment = require("moment");
 
 export default class Bill extends BaseService implements RestFullService {
     public async create(data: any): Promise<any> {
-        const entity:BdBill = this.parseToEntity(BdBill, data);
+        const entity: BdBill = this.parseToEntity(BdBill, data);
         entity.userId = this.getCtxUserId();
         await this.createEntity(entity);
         await entity.reload();
@@ -21,7 +19,7 @@ export default class Bill extends BaseService implements RestFullService {
 
     public async update(id: string, data: any): Promise<any> {
         await this.assertEntityIdExist(BdBill, id);
-        let entity:BdBill = this.parseToEntity(BdBill, data);
+        let entity: BdBill = this.parseToEntity(BdBill, data);
         entity.id = id;
         entity.userId = this.getCtxUserId();
         await this.updateEntity(entity);
@@ -35,52 +33,76 @@ export default class Bill extends BaseService implements RestFullService {
 
     public async index(params: any): Promise<any[]> {
         const {dbManager} = this.app;
-        const where = await this.toFindConditions(params);
-        return await dbManager.find(BdBill, {where, order: {dateTime: "DESC"}});
+        const sqlObj = await this.toSql(params);
+        return await dbManager.query(sqlObj.sql, sqlObj.params);
     }
 
-    private async toFindConditions(params = this.getQueryObjects()): Promise<FindConditions<BdBillView> | Array<FindConditions<BdBillView>>> {
+    public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
         const {dbManager} = this.app;
-        const where: FindConditions<BdBill> = {};
-        if (params.id) {
-            where.id = params.id;
-        }
-        if (params.userId) {
-            where.userId = params.userId;
-        }
-        if (params.billTypeId) {
-            where.billTypeId = params.billTypeId;
-        }
-        if (params.targetCardId) {
-            where.targetCardId = params.targetCardId;
-        }
-        if (params.billTypeType) {
-            const billTypeList = await dbManager.find(BcBillType, {where: {type: params.billTypeType}});
-            const billTypeIdList: string[] = billTypeList.map((item) => item.id);
-            where.billTypeId = In(billTypeIdList);
-        }
-        if (params.dateTime) {
-            const [startStr, endStr] = params.dateTime;
-            const start = startStr && moment(startStr).toDate() || new Date(0);
-            const end = endStr && moment(endStr).toDate() || new Date();
-            where.dateTime = Between(start, end);
-        }
-        if (params.billDesc) {
-            where.billDesc = Like(`%${params.billDesc}%`);
-        }
-        if (params.cardId) {
-            return [
-                {
-                    ...where,
-                    cardId: params.cardId,
-                },
-                {
-                    ...where,
-                    targetCardId: params.cardId,
-                },
-            ];
-        }
-        return where;
+        const sqlObj = await this.toSql(params);
+        return await dbManager.queryPage(sqlObj.sql, sqlObj.params, pageInfo);
+    }
 
+    private async toSql(requestParams): Promise<{ sql: string, params: any }> {
+        const {dbManager} = this.app;
+        let params: any = {};
+        let whereSql = "where 1=1 ";
+        if (requestParams.id) {
+            params.id = requestParams.id;
+            whereSql += " and bd_bill_view.id = @id ";
+        }
+        if (requestParams.userId) {
+            params.userId = requestParams.userId;
+            whereSql += " and bd_bill_view.user_id = @userId ";
+        }
+        if (requestParams.billTypeId) {
+            params.billTypeId = requestParams.billTypeId;
+            whereSql += " and bd_bill_view.bill_type_id = @billTypeId ";
+        }
+        if (requestParams.targetCardId) {
+            params.targetCardId = requestParams.targetCardId;
+            whereSql += " and bd_bill_view.target_card_id = @targetCardId ";
+        }
+        if (requestParams.cardId) {
+            params.cardId = requestParams.cardId;
+            whereSql += " and bd_bill_view.card_id = @cardId ";
+        }
+        if (requestParams.billDesc) {
+            params.billDesc = requestParams.billDesc;
+            whereSql += " and bd_bill_view.bill_desc = @billDesc ";
+        }
+        if (requestParams.billTypeType) {
+            params.billTypeType = requestParams.billTypeType;
+            whereSql += " and bd_bill_view.bill_type_type = @billTypeType ";
+        }
+        if (requestParams.dateTime) {
+            const [startStr, endStr] = requestParams.dateTime;
+            if (startStr) {
+                params.startStr = requestParams.startStr;
+                whereSql += ` and bd_bill_view.date_time >= str_to_date('${startStr}','%Y-%m-%d %H:%i:%s') `;
+            }
+            if (endStr) {
+                params.endStr = requestParams.endStr;
+                whereSql += ` and bd_bill_view.date_time <= str_to_date('${endStr}','%Y-%m-%d %H:%i:%s') `;
+            }
+        }
+        if (requestParams.cardIdOrTargetCardId) {
+            params.cardIdOrTargetCardId = requestParams.cardIdOrTargetCardId;
+            whereSql += " and (bill.card_id = @cardIdOrTargetCardId or bd_bill_view.target_card_id = @cardIdOrTargetCardId)";
+        }
+        if (requestParams.cardIdOrTargetCardId) {
+            params.cardIdOrTargetCardId = requestParams.cardIdOrTargetCardId;
+            whereSql += " and (bill.card_id = @cardIdOrTargetCardId or bd_bill_view.target_card_id = @cardIdOrTargetCardId)";
+        }
+        if (requestParams.keyword) {
+            params.keyword = "%" + requestParams.keyword + "%";
+            let likeSql = " bd_bill_view.bill_desc like @keyword ";
+            likeSql += " or bd_bill_view.user_name like @keyword ";
+            likeSql += " or bd_bill_view.bill_type_name like @keyword ";
+            whereSql += ` and (${likeSql})`;
+        }
+        let columnSql = await dbManager.getCamelColumnSql("bd_bill_view");
+        let sql = `select ${columnSql} from bd_bill_view bd_bill_view ${whereSql} order by bd_bill_view.date_time desc , bd_bill_view.bill_type_id desc`;
+        return {sql, params};
     }
 }

@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {Ajax} from "@utils/ajax";
 
 function parseData(rows = [], parse = {}) {
     const {id = "id", name = "name"} = parse;
@@ -22,19 +21,8 @@ function parseData(rows = [], parse = {}) {
     });
 }
 
-function loadData(url, params, parse) {
-    if (url) {
-        return Ajax.apiPost(url, params).then(d=>{
-            let data = d.data || [];
-            return parseData(data, parse);
-        });
-    } else {
-        return Promise.resolve([]);
-    }
-}
-
 export function useRemoteFormState(props) {
-    const {url, parse, params, extraOptions = [], value:propValue, defaultValue,...restProps} = props;
+    const {loadData, parse, params={}, extraOptions = [], value:propValue, defaultValue,...restProps} = props;
 
     const [data, setData] = useState(extraOptions || []);
     const [value, setValue] = useState(propValue || defaultValue);
@@ -44,14 +32,14 @@ export function useRemoteFormState(props) {
     }, [propValue]);
 
     useEffect(
-        () => {
-            loadData(url, params, parse).then((rows = []) => {
-                let allData = [...extraOptions, ...rows];
-                setData(allData);
+         () => {
+            loadData(params).then(d=>{
+                const data = d.data || [];
+                const parsedData = parseData(data,parse);
+                setData([...extraOptions,...parsedData]);
             });
         },
         [
-            url,
             JSON.stringify(params),
             JSON.stringify(extraOptions)
         ]

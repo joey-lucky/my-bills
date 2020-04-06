@@ -9,12 +9,11 @@ import {screenState} from "@utils/ScreenState";
 import {getPublicPath, initConfig} from "@global";
 import {toJS} from "mobx";
 import routes from "./routes";
-import "antd/dist/antd.less"
 import "./theme.less";
 
 initConfig({
-    apiPath: "/api",
-    publicPath: "/admin",
+    apiPath: "/bill/api",
+    publicPath: "/bill/admin",
     filePath:"/file"
 });
 

@@ -1,4 +1,4 @@
-import {BcUser} from "../../database/index";
+import {BcUser, PageInfo} from "../../database/index";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
 
@@ -31,5 +31,9 @@ export default class User extends BaseService implements RestFullService {
 
     public async index(params: any): Promise<any[]> {
         return await this.app.dbManager.find(BcUser);
+    }
+
+    public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
+        return await this.app.dbManager.findPage(BcUser,pageInfo);
     }
 }

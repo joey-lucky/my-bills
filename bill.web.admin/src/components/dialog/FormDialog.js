@@ -29,7 +29,7 @@ let formNameIndex = 0;
 export default class FormDialog extends React.Component {
     static propTypes = {
         // 请求
-        actionURL: PropTypes.string.isRequired,
+        loadData: PropTypes.func.isRequired,
         onFinish: PropTypes.func,
         onFinishFailed: PropTypes.func,
 
@@ -53,7 +53,7 @@ export default class FormDialog extends React.Component {
         width: 520,
         okText: "确定",
         cancelText: "取消",
-        actionURL: "",
+        loadData: "",
         labelCol: null,
         wrapperCol: null,
         layout: null,
@@ -109,24 +109,24 @@ export default class FormDialog extends React.Component {
     }
 
     onOkClick = async () => {
-        const {onFinish, onFinishFailed, actionURL, successMessage} = this.props;
+        const {onFinish, onFinishFailed, successMessage,loadData} = this.props;
         //不捕捉异常，托管给Form页面捕捉
         this.formRef.current.validateFields().then(async (values) => {
             this.showConfirmLoading();
             try {
-                Assert.hasText(actionURL, "actionURL 为空");
+                Assert.notNull(loadData, "loadData 为空");
                 values = {...values};
                 values = Object.assign({}, this.record, values);
                 values = this.beforeSubmit(values);
                 values = FormUtils.trimAroundSpace(values);
                 checkRelationDataType(values);
-                let d = await Ajax.apiPost(actionURL, values);
+                let d = await loadData(values);
                 this.hideConfirmLoading();
                 this.hide();
-                if (d.result_flag_dsc) {
+                if (d.message) {
                     Modal.success({
                         title: "提示",
-                        content: successMessage || d.result_flag_dsc,
+                        content: successMessage || d.message,
                         okText: "确定"
                     });
                 }
@@ -156,7 +156,8 @@ export default class FormDialog extends React.Component {
     }
 
     @action show(data = {}) {
-        this.record = this.beforeShow(toJS(data));
+        data = {...toJS(data)};
+        this.record = this.beforeShow(data);
         this.appState.visible = true;
         this.resetFields();
         this.setFieldsValue(this.record);//将数据填充到表单

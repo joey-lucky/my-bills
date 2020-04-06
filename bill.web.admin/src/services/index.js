@@ -9,23 +9,23 @@ class RestFullApi {
     }
 
     show = async (id) => {
-        return await request.show(getApiPath() + this.url, id);
+        return await request.show(this.url, id);
     };
 
-    index = async (url, params = {}) => {
-        return await request.index(getApiPath() + this.url, params);
+    index = async (params = {}) => {
+        return await request.index(this.url, params);
     };
 
     create = async (params) => {
-        return await request.create(getApiPath() + this.url, params);
+        return await request.create(this.url, params);
     };
 
     destroy = async (id) => {
-        return await request.destroy(getApiPath() + this.url, id);
+        return await request.destroy(this.url, id);
     };
 
-    update = async (id, params) => {
-        return await request.update(getApiPath() + this.url, id, params);
+    update = async (params) => {
+        return await request.update(this.url, params.id, params);
     };
 }
 
@@ -42,6 +42,9 @@ export async function getPublicKey() {
 }
 
 export const userAPI = new RestFullApi(getApiPath() + "/conf/users");
+export const billTypeAPI = new RestFullApi(getApiPath() + "/conf/bill-types");
+export const cardAPI = new RestFullApi(getApiPath() + "/conf/cards");
 
-export const billAPI = new RestFullApi(getApiPath() + "/conf/bills");
+export const billAPI = new RestFullApi(getApiPath() + "/data/bills");
+
 

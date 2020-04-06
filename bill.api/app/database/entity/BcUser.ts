@@ -20,10 +20,4 @@ export class BcUser extends BaseEntity {
 
     @Column({name: "buss_wx"})
     bussWX: string;
-
-    @AfterLoad()
-    deletePassword(): void {
-        delete this.loginPassword;
-        delete this.loginName;
-    }
 }

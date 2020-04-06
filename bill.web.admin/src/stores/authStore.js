@@ -11,7 +11,5 @@ class Store {
         this.userInfo = d.data[0];
         return d;
     }
-
 }
-
 export default new Store();

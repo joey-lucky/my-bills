@@ -6,7 +6,7 @@ import {authStore, htmlStore} from "@stores";
 import {computed, toJS} from "mobx";
 import * as styles from "./index.module.css";
 import Header from "./Header";
-import NavRouteContent from "@components/common/routes/NavRouteContent";
+import {NavRouteContent} from "@components";
 
 @observer
 export default class Home extends React.Component {

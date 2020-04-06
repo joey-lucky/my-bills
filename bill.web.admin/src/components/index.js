@@ -10,6 +10,6 @@ export {default as RemoteTransfer} from "./remote/RemoteTransfer";
 export {default as RemoteTree} from "./remote/RemoteTree";
 export {default as RemoteTreeSelect} from "./remote/RemoteTreeSelect";
 //dialog
-export {default as Dialog} from "./dialog/Dialog";
+export {default as Dialog} from "./dialog/Dialog/index";
 export {default as DetailDialog} from "./dialog/DetailDialog";
 export {default as FormDialog} from "./dialog/FormDialog";

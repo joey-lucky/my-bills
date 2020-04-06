@@ -41,13 +41,13 @@
     "/bill/api": "http://localhost:3000"
   },
   "resolveAlias": {
-    "@pages": "src/pages",
-    "holly-wdp-safe": "src/holly-wdp-safe",
     "@components": "src/components",
+    "@business": "src/business",
+    "@layouts": "src/layouts",
+    "@pages": "src/pages",
     "@utils": "src/utils",
     "@stores": "src/stores",
     "@global": "src/global.js",
-    "@layouts": "src/layouts",
     "@services": "src/services"
   }
 }

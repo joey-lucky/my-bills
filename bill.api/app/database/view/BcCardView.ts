@@ -8,7 +8,7 @@ import {BaseView} from "../BaseView";
        user.name     as user_name
 from bc_card card
        left join bc_card_type cardType on cardType.id = card.card_type_id
-       left join bc_user user on user.id = card.user_idd`,
+       left join bc_user user on user.id = card.user_id`,
 })
 export class BcCardView extends BaseView {
     @Column({name: "id"})
