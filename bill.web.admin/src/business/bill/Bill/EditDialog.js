@@ -35,7 +35,6 @@ export default class EditDialog extends FormDialog {
         }
         return values;
     }
-
     renderForm() {
         return (
             <React.Fragment>
@@ -46,7 +45,7 @@ export default class EditDialog extends FormDialog {
                             name={"billDesc"}
                             rules={[{required: true}]}
                         >
-                            <Input style={{width: 200}}/>
+                            <Input />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -55,7 +54,7 @@ export default class EditDialog extends FormDialog {
                             name={"money"}
                             rules={[{required: true}]}
                         >
-                            <Input style={{width: 200}} type={"number"}/>
+                            <Input type={"number"}/>
                         </Form.Item>
                     </Col>
                 </Row>

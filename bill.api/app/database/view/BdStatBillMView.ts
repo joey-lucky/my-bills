@@ -3,7 +3,8 @@ import {BaseView} from "../BaseView";
 
 @ViewEntity({
     name: "bd_stat_bill_m_view",
-    expression: `select t.bill_type_id,
+    expression: `select uuid() as id,
+       t.bill_type_id,
        t.card_id,
        t.user_id,
        card.name                                                            as card_name,

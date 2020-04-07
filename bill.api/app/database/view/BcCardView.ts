@@ -11,9 +11,6 @@ from bc_card card
        left join bc_user user on user.id = card.user_id`,
 })
 export class BcCardView extends BaseView {
-    @Column({name: "id"})
-    id: string;
-
     @Column({name: "name"})
     name: string;
 

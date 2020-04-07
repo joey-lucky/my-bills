@@ -1,5 +1,6 @@
 import CommonLayout from "@layouts/CommonLayout";
-import User from "@components/../business/sys/User";
+import Card from "@business/sys/Card";
+import User from "@business/sys/User";
 
 const route = {
     path: "/sys",
@@ -11,8 +12,12 @@ const route = {
             component: User,
             name: "用户",
         },
+        {
+            path: "/card",
+            component: Card,
+            name: "银行卡",
+        },
     ]
-
 };
 
 

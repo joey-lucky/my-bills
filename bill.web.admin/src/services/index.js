@@ -41,10 +41,13 @@ export async function getPublicKey() {
     return request.index(getApiPath() + '/get-public-key', {});
 }
 
+// conf
 export const userAPI = new RestFullApi(getApiPath() + "/conf/users");
 export const billTypeAPI = new RestFullApi(getApiPath() + "/conf/bill-types");
 export const cardAPI = new RestFullApi(getApiPath() + "/conf/cards");
+export const cardTypeAPI = new RestFullApi(getApiPath() + "/conf/card-types");
 
+// data
 export const billAPI = new RestFullApi(getApiPath() + "/data/bills");
 
 

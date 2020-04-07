@@ -101,8 +101,9 @@ export default class Bill extends BaseService implements RestFullService {
             likeSql += " or bd_bill_view.bill_type_name like @keyword ";
             whereSql += ` and (${likeSql})`;
         }
-        let columnSql = await dbManager.getCamelColumnSql("bd_bill_view");
-        let sql = `select ${columnSql} from bd_bill_view bd_bill_view ${whereSql} order by bd_bill_view.date_time desc , bd_bill_view.bill_type_id desc`;
+        let selectSql = await dbManager.getSelectSql("bd_bill_view");
+        let orderSql = "order by bd_bill_view.date_time desc , bd_bill_view.bill_type_id desc";
+        let sql = `${selectSql} ${whereSql} ${whereSql} ${orderSql}`;
         return {sql, params};
     }
 }

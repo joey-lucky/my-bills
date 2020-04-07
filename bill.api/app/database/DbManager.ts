@@ -18,6 +18,11 @@ export interface PageInfo {
     count?: number;
 }
 
+interface ColumnOption {
+    alias?:string;
+    ignore?: string[];
+}
+
 export class DbManager {
     private manager: EntityManager;
     private app: Application;
@@ -28,7 +33,7 @@ export class DbManager {
     }
 
     //转成驼峰
-    public async getCamelColumnSql(tableName: string, options: { alias?: string, ignore?: string[] } = {}):Promise<string> {
+    public async getCamelColumnSql(tableName: string, options:ColumnOption = {}): Promise<string> {
         const alias = options.alias || tableName;
         const ignore = options.ignore || ["create_time", "update_time", "create_by", "update_by"];
         const ignoreSql = ignore.map(item => "'" + item + "'").join(",");
@@ -40,9 +45,15 @@ export class DbManager {
         for (let item of columnData) {
             let name = item["column_name"] || "";
             let targetName = name.replace(/_[0-9a-zA-Z]/g, (text) => text.substr(1).toUpperCase());
-            sql+=`${alias}.${name} as ${targetName},`
+            sql += `${alias}.${name} as ${targetName},`;
         }
-        return sql.substr(0,sql.length-1);
+        return sql.substr(0, sql.length - 1);
+    }
+
+    public async getSelectSql(tableName: string, options:ColumnOption = {}): Promise<string> {
+        const alias = options.alias || tableName;
+        let columnSql = await this.getCamelColumnSql("bc_card_view",options);
+        return `select ${columnSql} from ${tableName} ${alias} `;
     }
 
     async queryPage(sql: string, params: any = {}, pageInfo: PageInfo = {}): Promise<{ data: any[], pageInfo: PageInfo }> {

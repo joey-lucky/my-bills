@@ -22,9 +22,6 @@ from bd_bill bill
        left join bc_user targetCardUser on targetCardUser.id = targetCard.user_id`,
 })
 export class BdBillView extends BaseView {
-    @PrimaryColumn({name: "id"})
-    id: string;
-
     @Column({name: "money"})
     money: number;
 
