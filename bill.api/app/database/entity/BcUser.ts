@@ -1,23 +1,24 @@
-import {AfterLoad, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { PrimaryGeneratedColumn} from "typeorm";
 import {BaseEntity} from "../BaseEntity";
+import {Column,Entity} from "../decorator";
 
 @Entity()
 export class BcUser extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({name: "name"})
+    @Column()
     name: string;
 
-    @Column({name: "login_name"})
+    @Column()
     loginName: string;
 
-    @Column({name: "login_password"})
+    @Column()
     loginPassword: string;
 
-    @Column({name: "pic"})
+    @Column()
     pic: string;
 
-    @Column({name: "buss_wx"})
-    bussWX: string;
+    @Column()
+    bussWx: string;
 }

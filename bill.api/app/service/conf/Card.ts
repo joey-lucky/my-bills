@@ -1,4 +1,4 @@
-import {BcBillType, BcCard, BcCardView, PageInfo} from "../../database";
+import {BcBillType, BcCard, BcCardView, BdBillView, PageInfo} from "../../database";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
 import {FindConditions, In, Like} from "typeorm";
@@ -32,44 +32,47 @@ export default class Card extends BaseService implements RestFullService {
 
     public async index(params: any): Promise<any[]> {
         const {dbManager} = this.app;
-        const sqlObj = await this.toSql(params);
-        return await dbManager.query(sqlObj.sql, sqlObj.params);
+        let whereCondition = await this.toWhereCondition(params);
+        return await dbManager.createQueryBuilder(BdBillView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getMany();
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
         const {dbManager} = this.app;
-        const sqlObj = await this.toSql(params);
-        return await dbManager.queryPage(sqlObj.sql, sqlObj.params, pageInfo);
+        let whereCondition = await this.toWhereCondition(params);
+        return await dbManager.createPageQueryBuilder(BcCardView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getPageData(pageInfo);
     }
 
-    private async toSql(requestParams): Promise<{ sql: string, params: any }> {
-        const {dbManager} = this.app;
-        let params: any = {};
-        let whereSql = "where 1=1 ";
-        if (requestParams.id) {
-            params.id = requestParams.id;
-            whereSql += " and cardView.id = @id ";
+    private async toWhereCondition(queryParam:any = {}): Promise<{ where: string, params: any }> {
+        let where = " 1=1 ";
+        const params: BcCardView & QueryParams = {...queryParam};
+        if (params.id) {
+            where += " and t.id = :id ";
         }
-        if (requestParams.userId) {
-            params.userId = requestParams.userId;
-            whereSql += " and cardView.user_id = @userId ";
+        if (params.name) {
+            where += " and t.name = @name ";
         }
-        if (requestParams.cardTypeId) {
-            params.cardTypeId = requestParams.cardTypeId;
-            whereSql += " and cardView.card_type_id = @cardTypeId ";
+        if (params.balance) {
+            where += " and t.balance = @balance ";
         }
-        if (requestParams.name) {
-            params.name = requestParams.name;
-            whereSql += " and cardView.name = @name ";
+        if (params.userId) {
+            where += " and t.id = @userId ";
         }
-        if (requestParams.keyword) {
-            params.keyword = "%" + requestParams.keyword + "%";
-            let likeSql = " cardView.name like @keyword ";
-            whereSql += ` and (${likeSql})`;
+        if (params.keyword) {
+            params.keyword = "%" + params.keyword + "%";
+            let likeSql = " t.name like :keyword ";
+            likeSql += " or t.card_type_name like :keyword ";
+            likeSql += " or t.user_name like :keyword ";
+            likeSql += " or t.balance like :keyword ";
+            where += ` and (${likeSql})`;
         }
-        let selectSql = await dbManager.getSelectSql("bc_card_view",{alias:"cardView"});
-        let orderSql = `order by cardView.user_id desc`;
-        let sql = `${selectSql} ${whereSql} ${orderSql}`;
-        return {sql, params};
+        return {where, params};
     }
+}
+
+interface QueryParams {
+    keyword?: string;
 }

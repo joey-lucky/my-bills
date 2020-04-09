@@ -1,15 +1,15 @@
-import {Column, Entity} from "typeorm";
+import {Column,Entity} from "../decorator";
 import {BaseEntity} from "../BaseEntity";
 
 @Entity()
 export class BcBillType extends BaseEntity {
-    @Column({name: "name"})
+    @Column()
     name: string;
 
-    @Column({name: "sort"})
+    @Column()
     sort: number;
 
-    @Column({name: "type", comment: "-1支出 1收入 0转账"})
+    @Column({comment: "-1支出 1收入 0转账"})
     type: string;
 
     get typeName(){

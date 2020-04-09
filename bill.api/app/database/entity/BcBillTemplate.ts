@@ -1,5 +1,5 @@
-import {Column, Entity} from "typeorm";
 import {BaseEntity} from "../BaseEntity";
+import {Column,Entity} from "../decorator";
 
 @Entity()
 export class BcBillTemplate extends BaseEntity {

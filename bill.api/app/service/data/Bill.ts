@@ -33,77 +33,82 @@ export default class Bill extends BaseService implements RestFullService {
 
     public async index(params: any): Promise<any[]> {
         const {dbManager} = this.app;
-        const sqlObj = await this.toSql(params);
-        return await dbManager.query(sqlObj.sql, sqlObj.params);
+        let whereCondition = await this.toWhereCondition(params);
+        return await dbManager.createQueryBuilder(BdBillView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getMany();
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
         const {dbManager} = this.app;
-        const sqlObj = await this.toSql(params);
-        return await dbManager.queryPage(sqlObj.sql, sqlObj.params, pageInfo);
+        let whereCondition = await this.toWhereCondition(params);
+        return await dbManager.createPageQueryBuilder(BdBillView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getPageData(pageInfo);
     }
 
-    private async toSql(requestParams): Promise<{ sql: string, params: any }> {
-        const {dbManager} = this.app;
-        let params: any = {};
-        let whereSql = "where 1=1 ";
-        if (requestParams.id) {
-            params.id = requestParams.id;
-            whereSql += " and bd_bill_view.id = @id ";
+    private async toWhereCondition(queryParam:any = {}): Promise<{ where: string, params: any }> {
+        let where = " 1=1 ";
+        const params: BdBillView & QueryParams = {...queryParam};
+        if (params.id) {
+            where += " and t.id = :id ";
         }
-        if (requestParams.userId) {
-            params.userId = requestParams.userId;
-            whereSql += " and bd_bill_view.user_id = @userId ";
+        if (params.userId) {
+            where += " and t.id = @userId ";
         }
-        if (requestParams.billTypeId) {
-            params.billTypeId = requestParams.billTypeId;
-            whereSql += " and bd_bill_view.bill_type_id = @billTypeId ";
+        if (params.billTypeId) {
+            where += " and t.bill_type_id = @billTypeId ";
         }
-        if (requestParams.targetCardId) {
-            params.targetCardId = requestParams.targetCardId;
-            whereSql += " and bd_bill_view.target_card_id = @targetCardId ";
+        if (params.targetCardId) {
+            where += " and t.target_card_id = @targetCardId ";
         }
-        if (requestParams.cardId) {
-            params.cardId = requestParams.cardId;
-            whereSql += " and bd_bill_view.card_id = @cardId ";
+        if (params.cardId) {
+            where += " and t.card_id = @cardId ";
         }
-        if (requestParams.billDesc) {
-            params.billDesc = requestParams.billDesc;
-            whereSql += " and bd_bill_view.bill_desc = @billDesc ";
+        if (params.billDesc) {
+            where += " and t.bill_desc = @billDesc ";
         }
-        if (requestParams.billTypeType) {
-            params.billTypeType = requestParams.billTypeType;
-            whereSql += " and bd_bill_view.bill_type_type = @billTypeType ";
+        if (params.billTypeType) {
+            where += " and t.bill_type_type = @billTypeType ";
         }
-        if (requestParams.dateTime) {
-            const [startStr, endStr] = requestParams.dateTime;
-            if (startStr) {
-                params.startStr = requestParams.startStr;
-                whereSql += ` and bd_bill_view.date_time >= str_to_date('${startStr}','%Y-%m-%d %H:%i:%s') `;
+        if (params.cardIdOrTargetCardId) {
+            where += " and (t.card_id = :cardIdOrTargetCardId or t.target_card_id = :cardIdOrTargetCardId)";
+        }
+        if (params.dateTime) {
+            // @ts-ignore
+            if (typeof params.dateTime) {
+                where += ` and t.date_time = str_to_date(:dateTime,'%Y-%m-%d %H:%i:%s') `;
+            } else if (Array.isArray(params.dateTime)) {
+                const [start, end] = params.dateTime;
+                if (start) {
+                    params["dateTime>="] = start;
+                }
+                if (end) {
+                    params["dateTime<="] = end;
+                }
+                delete params.dateTime;
             }
-            if (endStr) {
-                params.endStr = requestParams.endStr;
-                whereSql += ` and bd_bill_view.date_time <= str_to_date('${endStr}','%Y-%m-%d %H:%i:%s') `;
-            }
+            delete params.dateTime;
         }
-        if (requestParams.cardIdOrTargetCardId) {
-            params.cardIdOrTargetCardId = requestParams.cardIdOrTargetCardId;
-            whereSql += " and (bill.card_id = @cardIdOrTargetCardId or bd_bill_view.target_card_id = @cardIdOrTargetCardId)";
+        if (params["dateTime>="]) {
+            where += ` and t.date_time >= str_to_date(:dateTime>=,'%Y-%m-%d %H:%i:%s') `;
         }
-        if (requestParams.cardIdOrTargetCardId) {
-            params.cardIdOrTargetCardId = requestParams.cardIdOrTargetCardId;
-            whereSql += " and (bill.card_id = @cardIdOrTargetCardId or bd_bill_view.target_card_id = @cardIdOrTargetCardId)";
+        if (params["dateTime<="]) {
+            where += ` and t.date_time <= str_to_date(:dateTime<=,'%Y-%m-%d %H:%i:%s') `;
         }
-        if (requestParams.keyword) {
-            params.keyword = "%" + requestParams.keyword + "%";
-            let likeSql = " bd_bill_view.bill_desc like @keyword ";
-            likeSql += " or bd_bill_view.user_name like @keyword ";
-            likeSql += " or bd_bill_view.bill_type_name like @keyword ";
-            whereSql += ` and (${likeSql})`;
+        if (params.keyword) {
+            params.keyword = "%" + params.keyword + "%";
+            let likeSql = " t.bill_desc like :keyword ";
+            likeSql += " or t.user_name like :keyword ";
+            likeSql += " or t.bill_type_name like :keyword ";
+            where += ` and (${likeSql})`;
         }
-        let selectSql = await dbManager.getSelectSql("bd_bill_view");
-        let orderSql = "order by bd_bill_view.date_time desc , bd_bill_view.bill_type_id desc";
-        let sql = `${selectSql} ${whereSql} ${whereSql} ${orderSql}`;
-        return {sql, params};
+        return {where, params};
     }
+}
+
+interface QueryParams {
+    keyword?: string;
+    cardIdOrTargetCardId: string;
+    dateTime: string | [string, string],
 }

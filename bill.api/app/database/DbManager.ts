@@ -7,7 +7,9 @@ import {
     FindManyOptions,
     ObjectID,
     ObjectType,
-    SaveOptions
+    QueryRunner,
+    SaveOptions,
+    SelectQueryBuilder
 } from "typeorm";
 import {Application} from "egg";
 
@@ -19,12 +21,16 @@ export interface PageInfo {
 }
 
 interface ColumnOption {
-    alias?:string;
+    alias?: string;
     ignore?: string[];
 }
 
+interface PageQuerySelectQueryBuilder<Entity> extends SelectQueryBuilder<Entity> {
+    getPageData(pageInfo: PageInfo): Promise<{ data: Entity[], pageInfo: PageInfo }>;
+}
+
 export class DbManager {
-    private manager: EntityManager;
+    private readonly manager: EntityManager;
     private app: Application;
 
     constructor(app: Application, manager: EntityManager) {
@@ -32,51 +38,30 @@ export class DbManager {
         this.app = app;
     }
 
-    //转成驼峰
-    public async getCamelColumnSql(tableName: string, options:ColumnOption = {}): Promise<string> {
-        const alias = options.alias || tableName;
-        const ignore = options.ignore || ["create_time", "update_time", "create_by", "update_by"];
-        const ignoreSql = ignore.map(item => "'" + item + "'").join(",");
-        let columnSql = `select t.COLUMN_NAME as column_name from information_schema.columns t
-         where t.table_name = @tableName
-          and t.COLUMN_NAME not in ( ${ignoreSql} ) `;
-        let columnData = await this.query(columnSql, {tableName});
-        let sql = " ";
-        for (let item of columnData) {
-            let name = item["column_name"] || "";
-            let targetName = name.replace(/_[0-9a-zA-Z]/g, (text) => text.substr(1).toUpperCase());
-            sql += `${alias}.${name} as ${targetName},`;
-        }
-        return sql.substr(0, sql.length - 1);
+    public getTypeOrmManager(): EntityManager {
+        return this.manager;
     }
 
-    public async getSelectSql(tableName: string, options:ColumnOption = {}): Promise<string> {
-        const alias = options.alias || tableName;
-        let columnSql = await this.getCamelColumnSql("bc_card_view",options);
-        return `select ${columnSql} from ${tableName} ${alias} `;
+    public createQueryBuilder<Entity>(entityClass: ObjectType<Entity>, alias: string, queryRunner?: QueryRunner): SelectQueryBuilder<Entity> {
+        return this.manager.createQueryBuilder(entityClass, alias, queryRunner);
     }
 
-    async queryPage(sql: string, params: any = {}, pageInfo: PageInfo = {}): Promise<{ data: any[], pageInfo: PageInfo }> {
-        const {pageIndex = 1, pageSize = Number.MAX_SAFE_INTEGER} = pageInfo;
-        const offset = (pageSize * (pageIndex - 1));
-        const queryParams = [];
-        const replaceSql = sql.replace(/@[a-zA-Z0-9]+/g, (text) => {
-            let key = text.substr(1);
-            queryParams.push(params[key] || "");
-            return "?";
-        });
-        const pageSql = `select t.* from (${replaceSql}) t LIMIT ${pageSize} OFFSET ${offset}`;
-        const countSql = `select count(*) as cnt from (${replaceSql}) t`;
-        let countData: any[] = await this.manager.query(countSql, queryParams);
-        let data: any[] = await this.manager.query(pageSql, queryParams);
-        const count = countData[0].cnt || 0;
-        const pageCount = Math.floor(count / pageSize);
-        return {
-            data,
-            pageInfo: {
-                pageIndex, pageSize, count, pageCount
-            }
+    public createPageQueryBuilder<Entity>(entityClass: ObjectType<Entity>, alias: string, queryRunner?: QueryRunner): PageQuerySelectQueryBuilder<Entity> {
+        // @ts-ignore
+        let builder: PageQuerySelectQueryBuilder = this.createQueryBuilder(entityClass, alias, queryRunner);
+        builder.getPageData = async function (pageInfo: PageInfo) {
+            const {pageIndex = 1, pageSize = Number.MAX_SAFE_INTEGER} = pageInfo;
+            const offset = (pageSize * (pageIndex - 1));
+            const [data, count] = await this.limit(pageSize).offset(offset).getManyAndCount();
+            const pageCount = Math.floor(count / pageSize);
+            return {
+                data,
+                pageInfo: {
+                    pageIndex, pageSize, count, pageCount
+                }
+            };
         };
+        return builder;
     }
 
     async query(sql: string, params: any = {}): Promise<any[]> {

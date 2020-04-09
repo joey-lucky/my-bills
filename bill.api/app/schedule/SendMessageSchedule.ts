@@ -37,14 +37,14 @@ export default class SendMessageSchedule extends Subscription {
         try {
             const tokenEntity: BcToken = await dbManager.findOne(BcToken, tokenId);
             const user = await dbManager.findOne(BcUser, userId);
-            const {bussWX} = user;
-            Assert.hasText(bussWX, "企业微信号不存在");
+            const {bussWx} = user;
+            Assert.hasText(bussWx, "企业微信号不存在");
             const {data} = await ctx.curl("https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + tokenEntity.accessToken, {
                 method: "POST",
                 contentType: "json",
                 data: {
                     // "access_token": tokenEntity.accessToken,
-                    touser: bussWX,
+                    touser: bussWx,
                     // "toparty" : "PartyID1|PartyID2",
                     // "totag" : "TagID1 | TagID2",
                     msgtype: "text",

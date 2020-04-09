@@ -1,9 +1,8 @@
 import * as moment from "moment";
-import {Column} from "typeorm";
+import {Column} from "./Column";
 
-export function DateTimeColumn(options: DateTimeColumnOptions) {
+export function DateTimeColumn() {
     return Column({
-        name: options.name,
         type: "datetime",
         nullable: true,
         transformer: {
@@ -16,8 +15,4 @@ export function DateTimeColumn(options: DateTimeColumnOptions) {
             },
         },
     });
-}
-
-export interface DateTimeColumnOptions {
-    name: string;
 }

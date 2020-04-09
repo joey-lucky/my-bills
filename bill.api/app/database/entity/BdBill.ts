@@ -1,29 +1,29 @@
-import {BeforeInsert, Column, Entity} from "typeorm";
+import {BeforeInsert} from "typeorm";
 import Assert from "../../utils/Assert";
-import {DateTimeColumn} from "../annotation/DateTimeColumn";
+import {Column, DateTimeColumn, Entity} from "../decorator";
 import {BaseEntity} from "../BaseEntity";
 
 @Entity()
 export class BdBill extends BaseEntity {
-    @Column({name: "money", type: "double"})
+    @Column({type: "double"})
     money: number;
 
-    @Column({name: "bill_desc"})
+    @Column()
     billDesc: string;
 
-    @DateTimeColumn({name: "date_time"})
+    @DateTimeColumn()
     dateTime: Date;
 
-    @Column({name: "bill_type_id", length: 36})
+    @Column({length: 36})
     billTypeId: string | null;
 
-    @Column({name: "user_id", length: 36})
+    @Column({length: 36})
     userId: string | null;
 
-    @Column({name: "card_id", length: 36})
+    @Column({length: 36})
     cardId: string | null;
 
-    @Column({name: "target_card_id", length: 36, nullable: true})
+    @Column({length: 36, nullable: true})
     targetCardId: string;
 
     @BeforeInsert()

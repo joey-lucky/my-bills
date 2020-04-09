@@ -1,24 +1,24 @@
-import {Column, Entity} from "typeorm";
-import {DateTimeColumn} from "../annotation/DateTimeColumn";
+import {DateTimeColumn} from "../decorator";
 import {BaseEntity} from "../BaseEntity";
+import {Column,Entity} from "../decorator";
 
 @Entity()
 export class BdSendMessage extends BaseEntity {
-    @Column({name: "user_id"})
+    @Column()
     userId: string;
 
-    @Column({name: "send_status"})
+    @Column()
     sendStatus: string;
 
-    @Column({name: "msg_content", length: 2000})
+    @Column({ length: 2000})
     msgContent: string;
 
-    @Column({name: "error_code", nullable: true})
+    @Column({nullable: true})
     errorCode: string;
 
-    @DateTimeColumn({name: "send_time"})
+    @DateTimeColumn()
     sendTime: Date;
 
-    @Column({name: "token_id"})
+    @Column()
     tokenId: string;
 }
