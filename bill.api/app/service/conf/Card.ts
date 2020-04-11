@@ -31,17 +31,17 @@ export default class Card extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         let whereCondition = await this.toWhereCondition(params);
-        return await dbManager.createQueryBuilder(BdBillView, "t")
+        return await database.createQueryBuilder(BdBillView, "t")
             .where(whereCondition.where, whereCondition.params)
             .getMany();
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         let whereCondition = await this.toWhereCondition(params);
-        return await dbManager.createPageQueryBuilder(BcCardView, "t")
+        return await database.createPageQueryBuilder(BcCardView, "t")
             .where(whereCondition.where, whereCondition.params)
             .getPageData(pageInfo);
     }

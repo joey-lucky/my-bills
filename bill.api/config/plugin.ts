@@ -1,6 +1,8 @@
+import * as path from 'path';
 export default {
-    // redis: {
-    //     enable: true,
-    //     package: 'egg-redis',
-    // },
+    database:{
+        enable: true,
+        path: path.join(__dirname, '../lib/plugin/egg-database'),
+    }
 };
+

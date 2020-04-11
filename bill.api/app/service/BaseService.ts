@@ -5,7 +5,7 @@ import Assert from "../utils/Assert";
 
 export default class BaseService extends Service {
     protected async assertEntityIdExist<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, id: string): Promise<Entity> {
-        let entity: Entity = await this.app.dbManager.findOne(entityClass, id);
+        let entity: Entity = await this.app.database.findOne(entityClass, id);
         Assert.isTrue(!!entity, `id=${id} not exist`);
         return entity;
     }
@@ -15,13 +15,13 @@ export default class BaseService extends Service {
     }
 
     protected parseToEntity<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, plainObject?: DeepPartial<Entity>): Entity {
-        return this.app.dbManager.create(entityClass, plainObject);
+        return this.app.database.create(entityClass, plainObject);
     }
 
     protected parseToEntities<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, plainObject?: Array<DeepPartial<Entity>>): Entity[] {
         const entities = [];
         for (const obj of plainObject) {
-            entities.push(this.app.dbManager.create(entityClass, obj));
+            entities.push(this.app.database.create(entityClass, obj));
         }
         return entities;
     }
@@ -31,17 +31,17 @@ export default class BaseService extends Service {
         entity.updateBy = this.getCtxUserId();
         entity.createTime = new Date();
         entity.updateTime = new Date();
-        await this.app.dbManager.save(entity.constructor, entity);
+        await this.app.database.save(entity.constructor, entity);
     }
 
     protected async updateEntity<Entity extends BaseEntity>(entity: Entity) {
         entity.updateBy = this.getCtxUserId();
         entity.updateTime = new Date();
-        await this.app.dbManager.save(entity.constructor, entity);
+        await this.app.database.save(entity.constructor, entity);
     }
 
     protected async deleteEntity<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, id: string) {
-        await this.app.dbManager.delete(entityClass, id);
+        await this.app.database.delete(entityClass, id);
     }
 
     protected async findPageData<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, options?: FindManyOptions<Entity>, pageInfo = this.getPageInfo()): Promise<[Entity[], PageInfo]> {
@@ -49,7 +49,7 @@ export default class BaseService extends Service {
         const start = (pageSize * (pageIndex - 1));
         options.take = pageSize;
         options.skip = start;
-        const [data, count] = await this.app.dbManager.findAndCount(entityClass, options);
+        const [data, count] = await this.app.database.findAndCount(entityClass, options);
         const newPageInfo: PageInfo = {
             pageIndex,
             pageSize,

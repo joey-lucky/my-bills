@@ -30,10 +30,10 @@ export default class CardType extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        return await this.app.dbManager.find(BcCardType);
+        return await this.app.database.find(BcCardType);
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        return await this.app.dbManager.findPage(BcCardType,pageInfo);
+        return await this.app.database.findPage(BcCardType,pageInfo);
     }
 }

@@ -1,10 +1,7 @@
 import {Application} from "egg";
-import * as typeorm from "./app/myplugins/typeorm";
+import typeOrm from "./app/myplugins/typeorm";
 
 export default (app: Application) => {
-    app.beforeStart(async ()=>{
-        await typeorm.beforeStart(app);
-    });
     app.once("server", async (server) => {
         app.loggers.logger.info("[app-recycle]", "once");
     });

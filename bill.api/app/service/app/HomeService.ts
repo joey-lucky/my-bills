@@ -20,7 +20,7 @@ export default class HomeService extends Service {
             "where t.date_time >= str_to_date(?,'%Y-%m-%d %H:%i:%s')\n" +
             " and t.date_time <= str_to_date(?,'%Y-%m-%d %H:%i:%s')\n" +
             "group by t2.type\n";
-        const data = (await this.app.db.query(sql, dateRange)) || [];
+        const data = (await this.app.database.query(sql, dateRange)) || [];
         const result: any = {
             startDate: dateRange[0],
             endDate: dateRange[1],

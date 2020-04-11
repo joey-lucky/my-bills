@@ -3,24 +3,24 @@ import {ExtendApplication} from "../app/extend/application";
 import {ExtendRequest} from "../app/extend/request";
 import {Connection} from "typeorm";
 import {BcUser, DbManager} from "../app/database";
+import {Application as EggApplication} from 'egg';
+import {DataBase} from "../lib/plugin/egg-database/database";
+
+interface ApplicationType extends ExtendApplication {
+    database:DataBase
+}
 
 declare module 'egg' {
-
-
     interface Request extends ExtendRequest {
 
     }
-
-    interface Context{
+    interface Context {
         body: RequestResult;
         user: BcUser;
-        db:Connection,
-        dbManager:DbManager,
+        db: Connection,
     }
 
-    interface Application extends ExtendApplication {
-        db:Connection,
-        dbManager:DbManager,
+    interface Application extends ApplicationType {
     }
 
     interface PageInfo {
@@ -34,7 +34,7 @@ declare module 'egg' {
         status?: string;
         message: string;
         code: "0" | "1";
-        pageInfo:PageInfo,
+        pageInfo: PageInfo,
         data: any[]
     }
 
@@ -70,7 +70,12 @@ declare module 'egg' {
     }
 
     interface PageResult {
-        pageInfo:PageInfo,
-        rows:any[],
+        pageInfo: PageInfo,
+        rows: any[],
     }
+}
+
+declare module 'egg-mock/bootstrap' {
+    // @ts-ignore
+    const app: ApplicationType;
 }

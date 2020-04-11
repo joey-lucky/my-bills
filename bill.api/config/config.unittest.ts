@@ -9,12 +9,8 @@ export default (appInfo: EggAppInfo) => {
             port: '3306',
             user: 'root',
             password: '123456',
-            database: 'bill',
-            synchronize: false,
-            entities: [
-                "app/database/entity/*.js",
-                "app/database/view/*.js"
-            ],
+            database: 'bill_test',
+            synchronize: true,
         },
         app: true,
         agent: false,

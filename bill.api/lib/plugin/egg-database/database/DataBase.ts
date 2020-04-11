@@ -1,35 +1,17 @@
 import {
     BaseEntity,
-    DeepPartial,
-    DeleteResult,
-    EntityManager,
-    EntitySchema,
-    FindManyOptions,
-    ObjectID,
+    DeepPartial, DeleteResult,
+    EntityManager, EntitySchema,
+    FindManyOptions, ObjectID,
     ObjectType,
-    QueryRunner,
-    SaveOptions,
+    QueryRunner, SaveOptions,
     SelectQueryBuilder
 } from "typeorm";
 import {Application} from "egg";
+import PageQuerySelectQueryBuilder from "./PageQuerySelectQueryBuilder";
+import PageInfo from "./PageInfo";
 
-export interface PageInfo {
-    pageIndex?: number;
-    pageSize?: number;
-    pageCount?: number;
-    count?: number;
-}
-
-interface ColumnOption {
-    alias?: string;
-    ignore?: string[];
-}
-
-interface PageQuerySelectQueryBuilder<Entity> extends SelectQueryBuilder<Entity> {
-    getPageData(pageInfo: PageInfo): Promise<{ data: Entity[], pageInfo: PageInfo }>;
-}
-
-export class DbManager {
+export default class DataBase {
     private readonly manager: EntityManager;
     private app: Application;
 

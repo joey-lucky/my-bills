@@ -11,14 +11,13 @@ export default class TokenSchedule extends Subscription {
             interval: "60s", // 60 分钟间隔
             type: "worker", // 指定所有的 worker 都需要执行
             immediate: false,
-            disable: true,
         };
     }
 
     async subscribe() {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         try {
-            const tokenEntityList = await dbManager.find(BcToken, {
+            const tokenEntityList = await database.find(BcToken, {
                 where: {
                     expiresIn: LessThanOrEqual(new Date(Date.now() - TokenSchedule.EXPIRES_THRESHOLD)),
                 },

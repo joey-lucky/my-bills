@@ -30,10 +30,10 @@ export default class User extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        return await this.app.dbManager.find(BcUser);
+        return await this.app.database.find(BcUser);
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        return await this.app.dbManager.findPage(BcUser,pageInfo);
+        return await this.app.database.findPage(BcUser,pageInfo);
     }
 }

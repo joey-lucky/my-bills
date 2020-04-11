@@ -46,7 +46,7 @@ export class BaseEntity extends orm.BaseEntity {
     }
 
     @AfterLoad()
-    async deleteUselessColumn(){
+    deleteUselessColumn(){
         delete this.createBy;
         delete this.updateBy;
         delete this.createTime;

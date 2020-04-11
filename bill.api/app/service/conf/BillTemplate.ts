@@ -33,19 +33,19 @@ export default class BillTemplate extends BaseService implements RestFullService
     }
 
     public async index(params: any): Promise<any[]> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         const where = await this.toFindConditions(params);
-        return await dbManager.find(BcBillTemplate, {where});
+        return await database.find(BcBillTemplate, {where});
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         const where = await this.toFindConditions(params);
-        return await dbManager.findPage(BcBillTemplate, pageInfo,{where});
+        return await database.findPage(BcBillTemplate, pageInfo,{where});
     }
 
     private async toFindConditions(params = this.getQueryObjects()): Promise<FindConditions<BcBillTemplateView> | Array<FindConditions<BcBillTemplateView>>> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         const where: FindConditions<BcBillTemplate> = {};
         if (params.id) {
             where.id = params.id;
@@ -60,7 +60,7 @@ export default class BillTemplate extends BaseService implements RestFullService
             where.targetCardId = params.targetCardId;
         }
         if (params.billTypeType) {
-            const billTypeList = await dbManager.find(BcBillType, {where: {type: params.billTypeType}});
+            const billTypeList = await database.find(BcBillType, {where: {type: params.billTypeType}});
             const billTypeIdList: string[] = billTypeList.map((item) => item.id);
             where.billTypeId = In(billTypeIdList);
         }

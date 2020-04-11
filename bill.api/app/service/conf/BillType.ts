@@ -30,10 +30,10 @@ export default class BillType extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        return await this.app.dbManager.find(BcBillType);
+        return await this.app.database.find(BcBillType);
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        return await this.app.dbManager.findPage(BcBillType,pageInfo);
+        return await this.app.database.findPage(BcBillType,pageInfo);
     }
 }

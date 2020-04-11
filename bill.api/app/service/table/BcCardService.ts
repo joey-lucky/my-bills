@@ -24,15 +24,15 @@ export default class BcCardService extends BaseService {
     }
 
     public async getList():Promise<BcCardView[]> {
-        const {dbManager} = this.app;
-        return await dbManager.find(BcCardView, {where: this.toFindConditions(), order: {userId: "DESC"}});
+        const {database} = this.app;
+        return await database.find(BcCardView, {where: this.toFindConditions(), order: {userId: "DESC"}});
     }
 
     public async getAssetList() {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         type Asset = { pic?: string } & BcCardView;
         const list: Asset[] = await this.getList();
-        const userList: BcUser[] = await dbManager.find(BcUser, {});
+        const userList: BcUser[] = await database.find(BcUser, {});
         const userMap = userList.reduce((pre, curr) => {
             pre[curr.id] = curr;
             return pre;

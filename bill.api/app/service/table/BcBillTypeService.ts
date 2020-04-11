@@ -20,13 +20,13 @@ export default class BcBillTypeService extends BaseService {
     }
 
     public async getList(): Promise<BcBillType[]> {
-        const {dbManager} = this.app;
-        return await dbManager.find(BcBillType, {where: this.toFindConditions(), order: {sort: "DESC"}});
+        const {database} = this.app;
+        return await database.find(BcBillType, {where: this.toFindConditions(), order: {sort: "DESC"}});
     }
 
     public async getConsumerList(): Promise<BcBillType[]> {
-        const {dbManager} = this.app;
-        return await dbManager.find(BcBillType, {where: this.toFindConditions({type: "-1"}), order: {sort: "DESC"}});
+        const {database} = this.app;
+        return await database.find(BcBillType, {where: this.toFindConditions({type: "-1"}), order: {sort: "DESC"}});
     }
 
     private toFindConditions(params = this.getQueryObjects()): FindConditions<BcBillType> {

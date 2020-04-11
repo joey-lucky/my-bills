@@ -32,17 +32,17 @@ export default class Bill extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         let whereCondition = await this.toWhereCondition(params);
-        return await dbManager.createQueryBuilder(BdBillView, "t")
+        return await database.createQueryBuilder(BdBillView, "t")
             .where(whereCondition.where, whereCondition.params)
             .getMany();
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        const {dbManager} = this.app;
+        const {database} = this.app;
         let whereCondition = await this.toWhereCondition(params);
-        return await dbManager.createPageQueryBuilder(BdBillView, "t")
+        return await database.createPageQueryBuilder(BdBillView, "t")
             .where(whereCondition.where, whereCondition.params)
             .getPageData(pageInfo);
     }
