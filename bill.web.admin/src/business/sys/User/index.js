@@ -5,6 +5,7 @@ import {RemoteTable} from "@components";
 import {userAPI} from "@services";
 import EditDialog from "./EditDialog";
 import {observer} from "mobx-react";
+import {SearchOutlined} from "@ant-design/icons";
 
 @observer
 export default class User extends React.Component {
@@ -31,8 +32,8 @@ export default class User extends React.Component {
         },
         {
             title: "企业微信",
-            dataIndex: "bussWX",
-            key: "bussWX"
+            dataIndex: "bussWx",
+            key: "bussWx"
         },
         {
             title: "操作",
@@ -67,11 +68,16 @@ export default class User extends React.Component {
 
     onSearch = (value) => {
         store.keyword = value;
+        store.loadData();
     };
 
     onCreateClick = () => {
         this._createRef.current.show({});
     };
+
+    onCreateOrUpdateSuccess = ()=>{
+        store.loadData();
+    }
 
     render() {
         return (
@@ -80,16 +86,20 @@ export default class User extends React.Component {
                     ref={this._createRef}
                     title={"新增用户"}
                     loadData={userAPI.create}
+                    onFinish={this.onCreateOrUpdateSuccess}
                 />
                 <EditDialog
                     ref={this._updateRef}
                     title={"新增用户"}
                     loadData={userAPI.update}
+                    onFinish={this.onCreateOrUpdateSuccess}
                 />
                 <Row style={{padding: 12}} gutter={12}>
                     <Col span={6}>
                         <Input.Search
-                            onSearch={this.onSearch}/>
+                            onSearch={this.onSearch}
+                            enterButton={<SearchOutlined/>}
+                        />
                     </Col>
                     <Col span={4}>
                         <Button
@@ -102,6 +112,7 @@ export default class User extends React.Component {
                     lastModifyDate={store.lastModifyDate}
                     loadData={userAPI.index}
                     columns={this._columns}
+                    params={store.queryParams}
                 />
             </div>
         );

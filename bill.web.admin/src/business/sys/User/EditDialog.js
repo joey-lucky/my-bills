@@ -13,6 +13,13 @@ export default class EditDialog extends FormDialog {
         wrapperCol: {span: 18}
     };
 
+    beforeShow(values = {}) {
+        if (!values.pic) {
+            values.pic = "无";
+        }
+        return values;
+    }
+
     renderForm() {
         return (
             <React.Fragment>
@@ -41,7 +48,7 @@ export default class EditDialog extends FormDialog {
                     <Col span={12}>
                         <Form.Item
                             label="企业微信"
-                            name={"bussWX"}
+                            name={"bussWx"}
                         >
                             <Input style={{width: 200}}/>
                         </Form.Item>

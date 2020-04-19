@@ -1,5 +1,4 @@
 import {Application} from "egg";
-import typeOrm from "./app/myplugins/typeorm";
 
 export default (app: Application) => {
     app.once("server", async (server) => {

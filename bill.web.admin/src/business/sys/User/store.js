@@ -7,18 +7,21 @@ class Store {
 
     @computed get queryParams(){
         return {
-            "name%": this.keyword
+            "keyword": this.keyword
         };
     }
 
+    @action
+    loadData(){
+        this.lastModifyDate = Date.now();
+    }
 
     @action
     asyncDeleteData(record){
         userAPI.destroy(record.id).then(()=>{
-            this.lastModifyDate = Date.now();
+            this.loadData();
         });
     }
-
 }
 
 export default new Store();

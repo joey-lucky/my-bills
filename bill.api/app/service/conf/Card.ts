@@ -33,7 +33,7 @@ export default class Card extends BaseService implements RestFullService {
     public async index(params: any): Promise<any[]> {
         const {database} = this.app;
         let whereCondition = await this.toWhereCondition(params);
-        return await database.createQueryBuilder(BdBillView, "t")
+        return await database.createQueryBuilder(BcCardView, "t")
             .where(whereCondition.where, whereCondition.params)
             .getMany();
     }
@@ -53,13 +53,13 @@ export default class Card extends BaseService implements RestFullService {
             where += " and t.id = :id ";
         }
         if (params.name) {
-            where += " and t.name = @name ";
+            where += " and t.name = :name ";
         }
         if (params.balance) {
-            where += " and t.balance = @balance ";
+            where += " and t.balance = :balance ";
         }
         if (params.userId) {
-            where += " and t.id = @userId ";
+            where += " and t.user_id = :userId ";
         }
         if (params.keyword) {
             params.keyword = "%" + params.keyword + "%";

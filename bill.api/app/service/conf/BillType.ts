@@ -1,6 +1,7 @@
-import {BcBillType, PageInfo} from "../../database/index";
+import {BcBillType, PageInfo} from "../../database";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
+import {BcBillTypeView} from "../../database/view/BcBillTypeView";
 
 export default class BillType extends BaseService implements RestFullService {
     public async create(data: any): Promise<any> {
@@ -30,10 +31,37 @@ export default class BillType extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        return await this.app.database.find(BcBillType);
+        const {database} = this.app;
+        let whereCondition = await this.toWhereCondition(params);
+        let data= await database.createQueryBuilder(BcBillTypeView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .orderBy({type:"ASC"})
+            .getMany();
+        return database.buildTrees(data);
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        return await this.app.database.findPage(BcBillType,pageInfo);
+        throw new Error("不支持分页");
     }
+
+    private async toWhereCondition(queryParam:any = {}): Promise<{ where: string, params: any }> {
+        let where = " 1=1 ";
+        const params: BcBillTypeView & QueryParams = {...queryParam};
+        if (params.id) {
+            where += " and t.id = :id ";
+        }
+        if (params.name) {
+            where += " and t.name = :name ";
+        }
+        if (params.keyword) {
+            params.keyword = "%" + params.keyword + "%";
+            let likeSql = " t.name like :keyword ";
+            where += ` and (${likeSql})`;
+        }
+        return {where, params};
+    }
+}
+
+interface QueryParams {
+    keyword?: string;
 }

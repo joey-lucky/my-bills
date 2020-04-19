@@ -57,7 +57,6 @@ export default class NavItem extends React.Component {
     render() {
         let {name} = this.props;
         let {path: parentPath} = this.props.match;
-        console.log("render parentPath", parentPath);
         let icon = this._icon[name] || icHome;
         return (
             <div

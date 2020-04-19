@@ -1,29 +1,26 @@
 import React from "react";
-import {observable, toJS, action} from "mobx";
+import {action, observable, toJS} from "mobx";
 import * as PropTypes from "prop-types";
 import {observer} from "mobx-react";
 import Assert from "@utils/Assert";
 import {Form, Modal} from "antd";
-import {Ajax} from "@utils/ajax";
-import FormUtils from "@utils/FormUtils";
-import Dialog from "./Dialog/index";
-
-function checkRelationDataType(data) {
-    if (data !== null && data.relationModelMap !== null) {
-        Object.keys(data.relationModelMap || {})
-            .forEach((item) => {
-                let relation = data.relationModelMap[item];
-                if (!(relation instanceof Array)) {
-                    throw new Error("relationModelMap:" + relation + ",必须为数组");
-                }
-                if (relation.length <= 0) {
-                    data.relationModelMap[item] = "null-value";
-                }
-            });
-    }
-}
+import Dialog from "./Dialog";
 
 let formNameIndex = 0;
+
+// 去除字符串两侧的空格
+function trimAroundSpace(obj = {}) {
+    let result = {};
+    Object.entries(obj).forEach((item) => {
+        let key = item[0];
+        let value = item[1];
+        if (typeof value === "string") {// 去除所有的空格
+            value = value.replace(/(^\s+)|(\s+$)/g, "");
+        }
+        result[key] = value;
+    });
+    return result;
+}
 
 @observer
 export default class FormDialog extends React.Component {
@@ -53,7 +50,6 @@ export default class FormDialog extends React.Component {
         width: 520,
         okText: "确定",
         cancelText: "取消",
-        loadData: "",
         labelCol: null,
         wrapperCol: null,
         layout: null,
@@ -109,24 +105,23 @@ export default class FormDialog extends React.Component {
     }
 
     onOkClick = async () => {
-        const {onFinish, onFinishFailed, successMessage,loadData} = this.props;
+        const {onFinish, onFinishFailed, loadData, successMessage} = this.props;
         //不捕捉异常，托管给Form页面捕捉
         this.formRef.current.validateFields().then(async (values) => {
             this.showConfirmLoading();
             try {
-                Assert.notNull(loadData, "loadData 为空");
-                values = {...values};
+                Assert.notNull(loadData, "actionURL 为空");
                 values = Object.assign({}, this.record, values);
+                values = trimAroundSpace(values);
                 values = this.beforeSubmit(values);
-                values = FormUtils.trimAroundSpace(values);
-                checkRelationDataType(values);
                 let d = await loadData(values);
                 this.hideConfirmLoading();
                 this.hide();
-                if (d.message) {
+                const message = successMessage || d.message;
+                if (message) {
                     Modal.success({
                         title: "提示",
-                        content: successMessage || d.message,
+                        content: message,
                         okText: "确定"
                     });
                 }
@@ -134,7 +129,7 @@ export default class FormDialog extends React.Component {
             } catch (e) {
                 this.hideConfirmLoading();
                 Modal.error({
-                    title: "提示",
+                    title: "错误",
                     content: e.message,
                     okText: "确定"
                 });

@@ -12,7 +12,7 @@ export class BdBill extends BaseEntity {
     billDesc: string;
 
     @DateTimeColumn()
-    dateTime: Date;
+    dateTime: string|Date;
 
     @Column({length: 36})
     billTypeId: string | null;

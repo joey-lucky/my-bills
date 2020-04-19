@@ -7,3 +7,7 @@ export function getCurrFilePath(path= "") {
         .replace(".test.ts", "")
         .replace(/\\/g, "/");
 }
+
+export function getToken() {
+
+}

@@ -9,7 +9,7 @@ export default async function createOneClient(config, app:Application) {
     const start = Date.now();
     const needParams = config.host && config.port && config.user && config.database && config.type;
     const needParamsStr = `'host: ${config.host}', 'port: ${config.port}', 'user: ${config.user}', 'database: ${config.database}' are required on config`;
-    const jdbc = `${config.type}://${config.host}:${config.port}/${config.user}`;
+    const jdbc = `${config.type}://${config.host}:${config.port}/${config.database}`;
     assert(needParams, needParamsStr);
     app.loggers.logger.info('[egg-database] connecting ', jdbc);
     const connectConfig: any = {
@@ -23,7 +23,7 @@ export default async function createOneClient(config, app:Application) {
     };
     const connection: Connection = await createConnection({
         ...connectConfig,
-        logger: new DataBaseLogger(app.loggers.logger),
+        logger: new DataBaseLogger(app),
     });
     const index = count++;
     await app.loggers.logger.info(`[egg-database] ${jdbc} instance[${index}] connect success(${Date.now() - start}ms)`);

@@ -1,4 +1,4 @@
-import {BcUser, PageInfo} from "../../database/index";
+import {BcUser, BdBillView, PageInfo} from "../../database";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
 
@@ -30,10 +30,43 @@ export default class User extends BaseService implements RestFullService {
     }
 
     public async index(params: any): Promise<any[]> {
-        return await this.app.database.find(BcUser);
+        const {database} = this.app;
+        let whereCondition = await this.toWhereCondition(params);
+        return await database.createQueryBuilder(BcUser, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getMany();
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
-        return await this.app.database.findPage(BcUser,pageInfo);
+        const {database} = this.app;
+        let whereCondition = await this.toWhereCondition(params);
+        return await database.createPageQueryBuilder(BcUser, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getPageData(pageInfo);
     }
+
+    private async toWhereCondition(queryParam:any = {}): Promise<{ where: string, params: any }> {
+        let where = " 1=1 ";
+        const params: BcUser & QueryParams = {...queryParam};
+        if (params.id) {
+            where += " and t.id = :id ";
+        }
+        if (params.name) {
+            where += " and t.name = :name ";
+        }
+        if (params.loginName) {
+            where += " and t.loginName = :loginName ";
+        }
+        if (params.keyword) {
+            params.keyword = "%" + params.keyword + "%";
+            let likeSql = " t.name like :keyword ";
+            likeSql += " or t.loginName like :keyword ";
+            where += ` and (${likeSql})`;
+        }
+        return {where, params};
+    }
+}
+
+interface QueryParams {
+    keyword?: string;
 }

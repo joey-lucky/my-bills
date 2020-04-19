@@ -1,4 +1,4 @@
-import {BcBillTemplate, BcBillTemplateView, BcBillType, PageInfo} from "../../database";
+import {BcBillTemplate, BcBillTemplateView, BcBillType, BdBillView, PageInfo} from "../../database";
 import {RestFullService} from "../../typings/rest";
 import BaseService from "../BaseService";
 import {FindConditions, In, Like} from "typeorm";
@@ -34,52 +34,61 @@ export default class BillTemplate extends BaseService implements RestFullService
 
     public async index(params: any): Promise<any[]> {
         const {database} = this.app;
-        const where = await this.toFindConditions(params);
-        return await database.find(BcBillTemplate, {where});
+        let whereCondition = await this.toWhereCondition(params);
+        return await database.createQueryBuilder(BcBillTemplateView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getMany();
     }
 
     public async pageIndex(pageInfo: PageInfo, params: any): Promise<{ data: any[]; pageInfo: PageInfo }> {
         const {database} = this.app;
-        const where = await this.toFindConditions(params);
-        return await database.findPage(BcBillTemplate, pageInfo,{where});
+        let whereCondition = await this.toWhereCondition(params);
+        return await database.createPageQueryBuilder(BcBillTemplateView, "t")
+            .where(whereCondition.where, whereCondition.params)
+            .getPageData(pageInfo);
     }
 
-    private async toFindConditions(params = this.getQueryObjects()): Promise<FindConditions<BcBillTemplateView> | Array<FindConditions<BcBillTemplateView>>> {
-        const {database} = this.app;
-        const where: FindConditions<BcBillTemplate> = {};
+    private async toWhereCondition(queryParam:any = {}): Promise<{ where: string, params: any }> {
+        let where = " 1=1 ";
+        const params: BcBillTemplateView & QueryParams = {...queryParam};
         if (params.id) {
-            where.id = params.id;
+            where += " and t.id = :id ";
         }
         if (params.userId) {
-            where.userId = params.userId;
+            where += " and t.user_id = @userId ";
         }
         if (params.billTypeId) {
-            where.billTypeId = params.billTypeId;
+            where += " and t.bill_type_id = @billTypeId ";
         }
         if (params.targetCardId) {
-            where.targetCardId = params.targetCardId;
-        }
-        if (params.billTypeType) {
-            const billTypeList = await database.find(BcBillType, {where: {type: params.billTypeType}});
-            const billTypeIdList: string[] = billTypeList.map((item) => item.id);
-            where.billTypeId = In(billTypeIdList);
-        }
-        if (params.billDesc) {
-            where.billDesc = Like(`%${params.billDesc}%`);
+            where += " and t.target_card_id = @targetCardId ";
         }
         if (params.cardId) {
-            return [
-                {
-                    ...where,
-                    cardId: params.cardId,
-                },
-                {
-                    ...where,
-                    targetCardId: params.cardId,
-                },
-            ];
+            where += " and t.card_id = @cardId ";
         }
-        return where;
-
+        if (params.billDesc) {
+            where += " and t.bill_desc = @billDesc ";
+        }
+        if (params.billTypeType) {
+            where += " and t.bill_type_type = @billTypeType ";
+        }
+        if (params.cardIdOrTargetCardId) {
+            where += " and (t.card_id = :cardIdOrTargetCardId or t.target_card_id = :cardIdOrTargetCardId)";
+        }
+        if (params.keyword) {
+            params.keyword = "%" + params.keyword + "%";
+            let likeSql = " t.bill_desc like :keyword ";
+            likeSql += " or t.name like :keyword ";
+            likeSql += " or t.user_name like :keyword ";
+            likeSql += " or t.bill_type_name like :keyword ";
+            where += ` and (${likeSql})`;
+        }
+        return {where, params};
     }
+}
+
+interface QueryParams {
+    keyword?: string;
+    cardIdOrTargetCardId: string;
+    dateTime: string | [string, string],
 }

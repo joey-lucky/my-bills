@@ -39,7 +39,7 @@ class App extends React.Component {
                                 />
                             )
                         }
-                        <Redirect to={"/login"}/>
+                        <Redirect to={"/home"}/>
                     </Switch>
                 </div>
             </Router>

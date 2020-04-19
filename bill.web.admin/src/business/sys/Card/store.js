@@ -6,18 +6,18 @@ class Store {
     @observable lastModifyDate=Date.now();
 
     @action
-    asyncLoadData(){
+    loadData(){
         this.lastModifyDate = Date.now();
     }
 
     @action
     changeQueryParams(values={}){
         this.queryParams = {...this.queryParams, ...values};
-        this.asyncLoadData();
+        this.loadData();
     }
 
     @action
-    asyncDeleteData(record){
+    deleteData(record){
         cardAPI.destroy(record.id).then(()=>{
             this.lastModifyDate = Date.now();
         });

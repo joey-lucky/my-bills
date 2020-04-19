@@ -1,5 +1,6 @@
 import {Column, DateTimeColumn, Entity} from "../decorator";
 import {BaseEntity} from "../BaseEntity";
+import * as moment from "moment";
 
 @Entity()
 export class BcToken extends BaseEntity {
@@ -19,5 +20,5 @@ export class BcToken extends BaseEntity {
     accessToken: string;
 
     @DateTimeColumn()
-    expiresIn: Date;
+    expiresIn: string|Date;
 }

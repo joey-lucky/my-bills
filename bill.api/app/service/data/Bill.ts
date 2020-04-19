@@ -54,7 +54,7 @@ export default class Bill extends BaseService implements RestFullService {
             where += " and t.id = :id ";
         }
         if (params.userId) {
-            where += " and t.id = @userId ";
+            where += " and t.user_id = @userId ";
         }
         if (params.billTypeId) {
             where += " and t.bill_type_id = @billTypeId ";

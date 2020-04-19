@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import {TreeSelect} from "antd";
-import useRemoteFormState from "./useRemoteFormState";
+import {useRemoteFormState} from "./useRemoteFormState";
 
 function parseTreeData(data = []) {
     return data.map(item => {
@@ -32,16 +32,21 @@ export default function RemoteTreeSelect(props) {
     if (data.length > 0) {
         valueProps = {
             value: value,
+            treeData: parseTreeData(data),
         };
+    } else {
+        valueProps = {
+            treeData:[],
+            value:""
+        }
     }
-
+    console.log("valueProps", valueProps);
     return (
         <TreeSelect
             {...restProps}
             {...valueProps}
             treeNodeFilterProp={"title"}
             showSearch={true}
-            treeData={parseTreeData(data)}
             onChange={onChange}
         />
     );
@@ -50,7 +55,7 @@ export default function RemoteTreeSelect(props) {
 RemoteTreeSelect.propTypes = {
     value: PropTypes.string,
     defaultValue: PropTypes.string,
-    url: PropTypes.string,
+    loadData: PropTypes.func,
     parse: PropTypes.oneOfType([
         PropTypes.shape({
             id: PropTypes.string,
@@ -76,7 +81,6 @@ RemoteTreeSelect.propTypes = {
     maxTagTextLength: PropTypes.number,
     maxTagCount: PropTypes.number,
     maxTagPlaceholder:PropTypes.func,
-    loadData:PropTypes.func,
     treeNodeFilterProp: PropTypes.string,
     treeNodeLabelProp: PropTypes.string,
     treeDataSimpleMode: PropTypes.bool ,

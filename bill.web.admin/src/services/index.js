@@ -46,6 +46,9 @@ export const userAPI = new RestFullApi(getApiPath() + "/conf/users");
 export const billTypeAPI = new RestFullApi(getApiPath() + "/conf/bill-types");
 export const cardAPI = new RestFullApi(getApiPath() + "/conf/cards");
 export const cardTypeAPI = new RestFullApi(getApiPath() + "/conf/card-types");
+export const dictTypeAPI = new RestFullApi(getApiPath() + "/conf/dict-types");
+export const dictDataAPI = new RestFullApi(getApiPath() + "/conf/dict-datas");
+export const billTemplateAPI = new RestFullApi(getApiPath() + "/conf/bill-templates");
 
 // data
 export const billAPI = new RestFullApi(getApiPath() + "/data/bills");

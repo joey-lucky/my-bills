@@ -17,7 +17,7 @@ export class BdSendMessage extends BaseEntity {
     errorCode: string;
 
     @DateTimeColumn()
-    sendTime: Date;
+    sendTime: string|Date;
 
     @Column()
     tokenId: string;

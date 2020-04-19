@@ -17,7 +17,6 @@ export function useRemotePageDataState(props) {
 
     const pageSize = pagination.pageSize || pagination.defaultPageSize || 15;
     const loadData = async (current) => {
-        console.log("loadData", current);
         setLoading(true);
         try {
             Assert.notNull(propLoadData, "prop loadData is null");
@@ -40,7 +39,6 @@ export function useRemotePageDataState(props) {
 
     useEffect(
         () => {
-            console.log("pageSize params ", pageSize, params);
             setCurrent(1);
             loadData(1).then();
         },
@@ -53,7 +51,6 @@ export function useRemotePageDataState(props) {
     useEffect(
          () => {
             loadData(current).then();
-             console.log("lastModifyDate ",lastModifyDate);
          },
         [
             lastModifyDate,
@@ -61,7 +58,6 @@ export function useRemotePageDataState(props) {
     );
 
     const changeCurrent = (current) => {
-        console.log("changeCurrent ", current);
         setCurrent(current);
         loadData(current).then();
     };

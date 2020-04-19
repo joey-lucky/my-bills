@@ -1,10 +1,10 @@
 import {getCurrFilePath} from "../../../utils";
-import {Basic, entityTest} from "./entityTest";
 import {BcBillTemplate} from "../../../../app/database";
+import {assertCreate, assertDelete, assertFind, assertFindOne, assertUpdate} from "./entityUtils";
 
 const unique = "" + Date.now();
 // @ts-ignore
-let user: BcBillTemplate = {
+let entity: BcBillTemplate = {
     id:"test",
     name: "test",
     billDesc: unique,
@@ -14,13 +14,26 @@ let user: BcBillTemplate = {
     targetCardId:"test",
 };
 
-const basic:Basic = {
-    model:user,
-    updateModel:{id:user.id, name: user.name + "1"},
-    findOptions:{billDesc:unique}
-};
+const updateModel = {id:entity.id, billDesc: entity.billDesc + "1"};
+const expectUpdateModel = {...entity, ...updateModel};
+const uniqueFindOptions ={billDesc: unique};//为了只返回一个model,方便校验
 
-describe(getCurrFilePath(__filename), entityTest({
-    entityClass:BcBillTemplate,
-    basic,
-}));
+describe(getCurrFilePath(__filename), () => {
+    describe("basic", () => {
+        it("create", async () => {
+            await assertCreate(BcBillTemplate, entity);
+        });
+        it("findOne", async () => {
+            await assertFindOne(BcBillTemplate, entity.id,entity);
+        });
+        it("find", async () => {
+            await assertFind(BcBillTemplate, uniqueFindOptions,[entity]);
+        });
+        it("update", async () => {
+            await assertUpdate(BcBillTemplate, updateModel,expectUpdateModel);
+        });
+        it("update", async () => {
+            await assertDelete(BcBillTemplate, entity.id);
+        });
+    });
+});

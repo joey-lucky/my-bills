@@ -55,7 +55,7 @@ export default class Card extends React.Component {
     }
 
     onDeleteClick = (record) => () => {
-        store.asyncDeleteData(record);
+        store.deleteData(record);
     };
 
     onUpdateClick = (record) => () => {
@@ -71,7 +71,7 @@ export default class Card extends React.Component {
     };
 
     onCreateOrUpdateSuccess = () => {
-        store.asyncLoadData();
+        store.loadData();
     };
 
     render() {

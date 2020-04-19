@@ -1,10 +1,14 @@
 import {
     BaseEntity,
-    DeepPartial, DeleteResult,
-    EntityManager, EntitySchema,
-    FindManyOptions, ObjectID,
+    DeepPartial,
+    DeleteResult,
+    EntityManager,
+    EntitySchema,
+    FindManyOptions,
+    ObjectID,
     ObjectType,
-    QueryRunner, SaveOptions,
+    QueryRunner,
+    SaveOptions,
     SelectQueryBuilder
 } from "typeorm";
 import {Application} from "egg";
@@ -38,7 +42,7 @@ export default class DataBase {
             const [data, count] = await this.limit(pageSize).offset(offset).getManyAndCount();
             const pageCount = Math.floor(count / pageSize);
             return {
-                data:data,
+                data: data,
                 pageInfo: {
                     pageIndex, pageSize, count, pageCount
                 }
@@ -65,6 +69,27 @@ export default class DataBase {
     async find<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, options?: FindManyOptions<Entity>): Promise<Entity[]> {
         let data = await this.manager.find(entityClass, options);
         return data;
+    }
+
+    buildTrees(data = [], treeId: string = "parentId"): any[] {
+        let parentMap: Map<string, any[]> = new Map<string, any[]>();
+        for (let entity of data) {
+            let parentId = entity[treeId]||"";
+            if (!parentMap.has(parentId)) {
+                parentMap.set(parentId, []);
+            }
+            parentMap.get(parentId).push(entity);
+        }
+        function completeChildren(data= []){
+            for (let entity of data) {
+                let id =  entity.id;
+                let list = parentMap.get(id)||[];
+                entity.children = completeChildren(list);
+            }
+            return data;
+        }
+        let rootData = parentMap.get("")||[];
+        return completeChildren(rootData);
     }
 
     async findPage<Entity extends BaseEntity>(entityClass: ObjectType<Entity>, pageInfo: PageInfo, options: FindManyOptions<Entity> = {}): Promise<{ data: Entity[], pageInfo: PageInfo }> {

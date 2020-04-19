@@ -13,7 +13,7 @@ export default function (options) {
             const secret = ctx.app.config.secret;
             // @ts-ignore
             const playLoad: TokenPlayLoad = jwt.verify(token, secret);
-            ctx.user = await ctx.dbManager.findOne(BcUser, playLoad.userId);
+            ctx.user = await ctx.app.database.findOne(BcUser, playLoad.userId);
         }
         await next();
     };
