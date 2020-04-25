@@ -54,4 +54,5 @@ RemoteSelect.propTypes = {
     choiceTransitionName: PropTypes.string,
     id: PropTypes.string,
     disabled: PropTypes.bool,
+    allowClear: PropTypes.bool,
 };

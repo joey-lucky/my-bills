@@ -44,6 +44,7 @@ export default class Bill extends BaseService implements RestFullService {
         let whereCondition = await this.toWhereCondition(params);
         return await database.createPageQueryBuilder(BdBillView, "t")
             .where(whereCondition.where, whereCondition.params)
+            .orderBy("t.date_time","DESC")
             .getPageData(pageInfo);
     }
 
@@ -54,22 +55,22 @@ export default class Bill extends BaseService implements RestFullService {
             where += " and t.id = :id ";
         }
         if (params.userId) {
-            where += " and t.user_id = @userId ";
+            where += " and t.user_id = :userId ";
         }
         if (params.billTypeId) {
-            where += " and t.bill_type_id = @billTypeId ";
+            where += " and t.bill_type_id = :billTypeId ";
         }
         if (params.targetCardId) {
-            where += " and t.target_card_id = @targetCardId ";
+            where += " and t.target_card_id = :targetCardId ";
         }
         if (params.cardId) {
-            where += " and t.card_id = @cardId ";
+            where += " and t.card_id = :cardId ";
         }
         if (params.billDesc) {
-            where += " and t.bill_desc = @billDesc ";
+            where += " and t.bill_desc = :billDesc ";
         }
         if (params.billTypeType) {
-            where += " and t.bill_type_type = @billTypeType ";
+            where += " and t.bill_type_type = :billTypeType ";
         }
         if (params.cardIdOrTargetCardId) {
             where += " and (t.card_id = :cardIdOrTargetCardId or t.target_card_id = :cardIdOrTargetCardId)";
@@ -81,20 +82,20 @@ export default class Bill extends BaseService implements RestFullService {
             } else if (Array.isArray(params.dateTime)) {
                 const [start, end] = params.dateTime;
                 if (start) {
-                    params["dateTime>="] = start;
+                    params["dateTimeMoreThanOrEqual"] = start;
                 }
                 if (end) {
-                    params["dateTime<="] = end;
+                    params["dateTimeLessThanOrEqual"] = end;
                 }
                 delete params.dateTime;
             }
             delete params.dateTime;
         }
-        if (params["dateTime>="]) {
-            where += ` and t.date_time >= str_to_date(:dateTime>=,'%Y-%m-%d %H:%i:%s') `;
+        if (params["dateTimeMoreThanOrEqual"]) {
+            where += ` and t.date_time >= str_to_date(:dateTimeMoreThanOrEqual,'%Y-%m-%d %H:%i:%s') `;
         }
-        if (params["dateTime<="]) {
-            where += ` and t.date_time <= str_to_date(:dateTime<=,'%Y-%m-%d %H:%i:%s') `;
+        if (params["dateTimeLessThanOrEqual"]) {
+            where += ` and t.date_time <= str_to_date(:dateTimeLessThanOrEqual,'%Y-%m-%d %H:%i:%s') `;
         }
         if (params.keyword) {
             params.keyword = "%" + params.keyword + "%";
@@ -110,5 +111,7 @@ export default class Bill extends BaseService implements RestFullService {
 interface QueryParams {
     keyword?: string;
     cardIdOrTargetCardId: string;
+    dateTimeMoreThanOrEqual:string,
+    dateTimeLessThanOrEqual:string,
     dateTime: string | [string, string],
 }

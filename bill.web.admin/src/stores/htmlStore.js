@@ -1,8 +1,8 @@
 import {observable} from "mobx";
 
 class Store {
-    @observable pageName = "深圳市污染源在线监测平台-safa包";
-    @observable projectName = "深圳市污染源在线监测平台-safa包";
+    @observable pageName = "账单管理后台配置";
+    @observable projectName = "账单管理后台配置";
     @observable version = "v2.5 beta";
 }
 

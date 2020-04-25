@@ -1,28 +1,26 @@
 import {useEffect, useState} from "react";
+import {deleteAllEmptyChildren} from "@utils/treeDataUtils";
 
 function parseData(rows = [], parse = {}) {
     const {id = "id", name = "name"} = parse;
-    return rows.map((item) => {
-        if (item) {
-            if (typeof parse === "function") {
-                item = parse(item);
-                if (item.children) {
-                    item.children = parseData(item.children, parse);
-                }
-            } else {
-                item.id = item[id];
-                item.name = item[name];
-                if (item.children) {
-                    item.children = parseData(item.children, parse);
-                }
-            }
+    return rows.map((item = {}) => {
+        if (typeof parse === "function") {
+            return {
+                ...parse(item),
+                children: parseData(item.children, parse)
+            };
+        } else {
+            return {
+                id: item[id],
+                name: item[name],
+                children: parseData(item.children, parse)
+            };
         }
-        return item;
     });
 }
 
 export function useRemoteFormState(props) {
-    const {loadData, parse, params={}, extraOptions = [], value:propValue, defaultValue,...restProps} = props;
+    const {loadData, parse, params = {}, extraOptions = [], value: propValue, defaultValue, ...restProps} = props;
 
     const [data, setData] = useState(extraOptions || []);
     const [value, setValue] = useState(propValue || defaultValue);
@@ -32,11 +30,12 @@ export function useRemoteFormState(props) {
     }, [propValue]);
 
     useEffect(
-         () => {
-            loadData(params).then(d=>{
+        () => {
+            loadData(params).then(d => {
                 const data = d.data || [];
-                const parsedData = parseData(data,parse);
-                setData([...extraOptions,...parsedData]);
+                const parsedData = parseData(data, parse);
+                deleteAllEmptyChildren(parsedData);
+                setData([...extraOptions, ...parsedData]);
             });
         },
         [
@@ -49,7 +48,7 @@ export function useRemoteFormState(props) {
         data,
         value,
         setValue,
-        restProps:restProps
+        restProps: restProps
     };
 }
 

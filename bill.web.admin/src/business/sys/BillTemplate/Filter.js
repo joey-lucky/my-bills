@@ -1,7 +1,7 @@
 import {Button, Form, Input, Row, Space} from "antd";
 import React from "react";
-import {RemoteSelect} from "@components";
-import {billTypeAPI, cardAPI} from "@services";
+import {RemoteSelect, RemoteTreeSelect} from "@components";
+import {billTypeAPI, cardAPI, userAPI} from "@services";
 
 const cardLoadData = (...args) => {
     return cardAPI.index(...args).then(d=>{
@@ -32,20 +32,19 @@ export default function Filter({onFinish,onCreateClick}) {
                     label={"账单类型"}
                     name={"billTypeId"}
                 >
-                    <RemoteSelect
-                        extraOptions={[{id: "", name: "全部"}]}
+                    <RemoteTreeSelect
                         loadData={billTypeAPI.index}
+                        allowClear={true}
                     />
                 </Form.Item>
                 <Form.Item
                     style={{width: 350}}
-                    label={"银行卡"}
-                    name={"cardId"}
+                    label={"用户"}
+                    name={"userId"}
                 >
                     <RemoteSelect
-                        extraOptions={[{id: "", name: "全部"}]}
-                        loadData={cardLoadData}
-                        parse={(item) => ({id: item.id, name: item.userName + " - " + item.name})}
+                        loadData={userAPI.index}
+                        allowClear={true}
                     />
                 </Form.Item>
                 <Space>

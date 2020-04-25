@@ -3,17 +3,19 @@ import * as PropTypes from "prop-types";
 import {TreeSelect} from "antd";
 import {useRemoteFormState} from "./useRemoteFormState";
 
-function parseTreeData(data = []) {
-    return data.map(item => {
-        let result = {
-            value: item.id,
-            title: item.name,
-        };
-        if (item.children && item.children.length > 0) {
-            result.children = parseTreeData(item.children);
-        }
-        return result;
-    });
+const {TreeNode} = TreeSelect;
+
+function renderTreeNode(data = []) {
+    return data.map(item =>
+        <TreeNode
+            key={"TreeNodeKey_"+item.id}
+            value={item.id}
+            title={item.name}
+            isLeaf={!item.children || item.children.length === 0 || true}
+        >
+            {item.children && item.children.length > 0 && renderTreeNode(item.children)}
+        </TreeNode>
+    );
 }
 
 export default function RemoteTreeSelect(props) {
@@ -32,15 +34,12 @@ export default function RemoteTreeSelect(props) {
     if (data.length > 0) {
         valueProps = {
             value: value,
-            treeData: parseTreeData(data),
         };
     } else {
         valueProps = {
-            treeData:[],
-            value:""
+            value: ""
         }
     }
-    console.log("valueProps", valueProps);
     return (
         <TreeSelect
             {...restProps}
@@ -48,7 +47,9 @@ export default function RemoteTreeSelect(props) {
             treeNodeFilterProp={"title"}
             showSearch={true}
             onChange={onChange}
-        />
+        >
+            {renderTreeNode(data)}
+        </TreeSelect>
     );
 }
 
@@ -80,10 +81,10 @@ RemoteTreeSelect.propTypes = {
     autoClearSearchValue: PropTypes.bool,
     maxTagTextLength: PropTypes.number,
     maxTagCount: PropTypes.number,
-    maxTagPlaceholder:PropTypes.func,
+    maxTagPlaceholder: PropTypes.func,
     treeNodeFilterProp: PropTypes.string,
     treeNodeLabelProp: PropTypes.string,
-    treeDataSimpleMode: PropTypes.bool ,
+    treeDataSimpleMode: PropTypes.bool,
     treeExpandedKeys: PropTypes.array,
     treeDefaultExpandedKeys: PropTypes.array,
     treeLoadedKeys: PropTypes.array,
@@ -98,9 +99,9 @@ RemoteTreeSelect.propTypes = {
     switcherIcon: PropTypes.node,
     treeMotion: PropTypes.any,
     children: React.ReactNode,
-    filterTreeNode: PropTypes.bool ,
+    filterTreeNode: PropTypes.bool,
     dropdownPopupAlign: PropTypes.any,
     onSearch: PropTypes.func,
-    onTreeExpand:  PropTypes.func,
-    onTreeLoad:  PropTypes.func,
+    onTreeExpand: PropTypes.func,
+    onTreeLoad: PropTypes.func,
 };

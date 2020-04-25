@@ -1,5 +1,6 @@
 import {action, observable} from "mobx";
 import {billTypeAPI} from "@services";
+import {deleteAllEmptyChildren} from "@utils/treeDataUtils";
 
 class Store {
     @observable data = [];
@@ -15,11 +16,7 @@ class Store {
     loadData() {
         billTypeAPI.index(this.queryParams).then((d) => {
            let data  = d.data || [];
-            data.forEach(item => {
-                if (item.children && item.children.length === 0) {
-                    delete item.children;
-                }
-            });
+            deleteAllEmptyChildren(data)
             this.data = data;
         });
     }

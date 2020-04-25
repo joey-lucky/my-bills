@@ -1,7 +1,7 @@
-import {Button, Form, Input, Space} from "antd";
+import {Button, DatePicker, Form, Input, Row, Space} from "antd";
 import React from "react";
-import {RemoteSelect} from "@components";
-import {billTypeAPI, cardAPI} from "@services";
+import {RemoteSelect, RemoteTreeSelect} from "@components";
+import {billTypeAPI, cardAPI, dictDataAPI, userAPI} from "@services";
 
 const cardLoadData = (...args) => {
     return cardAPI.index(...args).then(d=>{
@@ -11,47 +11,81 @@ const cardLoadData = (...args) => {
     });
 };
 
-export default function Filter(props) {
+export default function Filter({onFinish,onCreateClick}) {
     return (
         <Form
-            {...props}
-            style={{width: "100%"}}
             labelCol={{span: 6}}
             wrapperCol={{span: 18}}
             layout={"inline"}
+            onFinish={onFinish}
         >
-            <Form.Item
-                style={{width: 250}}
-                label={"关键字"}
-                name={"keyword"}
-            >
-                <Input/>
-            </Form.Item>
-            <Form.Item
-                style={{width: 250}}
-                label={"账单类型"}
-                name={"billTypeId"}
-            >
-                <RemoteSelect
-                    extraOptions={[{id: "", name: "全部"}]}
-                    loadData={billTypeAPI.index}
-                />
-            </Form.Item>
-            <Form.Item
-                style={{width: 250}}
-                label={"银行卡"}
-                name={"cardId"}
-            >
-                <RemoteSelect
-                    extraOptions={[{id: "", name: "全部"}]}
-                    loadData={cardLoadData}
-                    parse={(item) => ({id: item.id, name: item.userName + " - " + item.name})}
-                />
-            </Form.Item>
-            <Space>
-                <Button type={"primary"} htmlType={"submit"}>查询</Button>
-                <Button type={"primary"} onClick={props.onCreateClick}>新增</Button>
-            </Space>
+            <Row style={{width: "100%",paddingTop:"12px"}}>
+                <Form.Item
+                    style={{width: 350}}
+                    label={"关键字"}
+                    name={"keyword"}
+                >
+                    <Input/>
+                </Form.Item>
+                <Form.Item
+                    style={{width: 350}}
+                    label={"账单类型"}
+                    name={"billTypeId"}
+                >
+                    <RemoteTreeSelect
+                        loadData={billTypeAPI.index}
+                        allowClear={true}
+                    />
+                </Form.Item>
+                <Form.Item
+                    style={{width: 350}}
+                    label={"用户"}
+                    name={"userId"}
+                >
+                    <RemoteSelect
+                        loadData={userAPI.index}
+                        allowClear={true}
+                    />
+                </Form.Item>
+                <Form.Item
+                    style={{width: 350}}
+                    label={"类型"}
+                    name={"billTypeType"}
+                >
+                    <RemoteSelect
+                        loadData={dictDataAPI.index}
+                        parse={{id:"code",name:"value"}}
+                        params={{typeCode:"bill_type"}}
+                        allowClear={true}
+                    />
+                </Form.Item>
+                <Space>
+                    <Button type={"primary"} htmlType={"submit"}>查询</Button>
+                    <Button type={"primary"} onClick={onCreateClick}>新增</Button>
+                </Space>
+            </Row>
+            <Row style={{width: "100%",padding:"12px 0"}}>
+                <Form.Item
+                    style={{width: 350}}
+                    label={"开始时间"}
+                    name={"dateTimeMoreThanOrEqual"}
+                >
+                    <DatePicker
+                        style={{width:"100%"}}
+                        mode={"date"}
+                    />
+                </Form.Item>
+                <Form.Item
+                    style={{width: 350}}
+                    label={"截止时间"}
+                    name={"dateTimeLessThanOrEqual"}
+                >
+                    <DatePicker
+                        style={{width:"100%"}}
+                        mode={"date"}
+                    />
+                </Form.Item>
+            </Row>
         </Form>
     );
 }

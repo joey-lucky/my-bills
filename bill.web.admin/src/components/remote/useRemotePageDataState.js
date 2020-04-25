@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import Assert from "@utils/Assert";
+import {deleteAllEmptyChildren} from "@utils/treeDataUtils";
 
 function mergeParams(params = {}, current, pageSize) {
     let mergeParams = {...params};
@@ -28,6 +29,7 @@ export function useRemotePageDataState(props) {
             if (parse) {
                 data = data.map((item, index, data) => parse(item, index, data))
             }
+            deleteAllEmptyChildren(data);
             setTotal(pageInfo && pageInfo.count || 0);
             setLoading(false);
             setData(data);

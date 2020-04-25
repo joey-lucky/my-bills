@@ -1,6 +1,6 @@
 import * as React from "react";
 import ReactDOM from "react-dom";
-import {ConfigProvider} from "antd";
+import {ConfigProvider, Spin} from "antd";
 import zhCN from "antd/lib/locale-provider/zh_CN";
 import {observer} from "mobx-react";
 import {createBrowserHistory} from "history";
@@ -25,23 +25,23 @@ class App extends React.Component {
         let {clientHeight, clientWidth} = toJS(screenState);
         return (
             <Router history={history}>
-                <div style={{height: clientHeight, width: clientWidth}}>
-                    <Switch>
-                        {
-                            routes.map(item =>
-                                <Route
-                                    key={item.path}
-                                    path={item.path}
-                                    component={(props) => {
-                                        let Comp = item.component;
-                                        return <Comp {...props} childRouteData={item.children}/>;
-                                    }}
-                                />
-                            )
-                        }
-                        <Redirect to={"/home"}/>
-                    </Switch>
-                </div>
+                    <div style={{height: clientHeight, width: clientWidth}}>
+                        <Switch>
+                            {
+                                routes.map(item =>
+                                    <Route
+                                        key={item.path}
+                                        path={item.path}
+                                        component={(props) => {
+                                            let Comp = item.component;
+                                            return <Comp {...props} childRouteData={item.children}/>;
+                                        }}
+                                    />
+                                )
+                            }
+                            <Redirect to={"/home"}/>
+                        </Switch>
+                    </div>
             </Router>
         );
     }

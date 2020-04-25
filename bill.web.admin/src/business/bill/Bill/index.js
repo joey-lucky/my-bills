@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Divider, Popconfirm, Row} from "antd";
+import {Divider, Popconfirm} from "antd";
 import store from "./store";
 import {RemoteTable} from "@components";
 import {billAPI} from "@services";
@@ -7,7 +7,7 @@ import EditDialog from "./EditDialog";
 import {observer} from "mobx-react";
 import moment from "moment";
 import Filter from "./Filter";
-import {toJS,action} from "mobx";
+import {action, toJS} from "mobx";
 
 @observer
 export default class Bill extends React.Component {
@@ -31,6 +31,12 @@ export default class Bill extends React.Component {
             title: "银行卡",
             dataIndex: "cardName",
             key: "cardName",
+            render: (text, record) => record.cardUserName + " - " + record.cardName
+        },
+        {
+            title: "目标账户",
+            dataIndex: "targetCardName",
+            key: "targetCardName",
             render: (text, record) => record.cardUserName + " - " + record.cardName
         },
         {
@@ -60,10 +66,11 @@ export default class Bill extends React.Component {
     _createRef = React.createRef();
 
     componentDidMount() {
+        store.loadData().then();
     }
 
-    onDeleteClick = (record) => () => {
-        store.asyncDeleteData(record);
+    onDeleteClick = (record) => async () => {
+        await store.deleteData(record);
     };
 
     onUpdateClick = (record) => () => {
@@ -71,21 +78,21 @@ export default class Bill extends React.Component {
     };
 
     @action
-    onSearch = (values) => {
-        store.queryParams = values;
-        console.log(values);
+    onSearch = async (values) => {
+        store.filterValues = values;
+        await store.loadData();
     };
 
     onCreateClick = () => {
         this._createRef.current.show({});
     };
 
-    onCreateOrUpdateSuccess = () => {
-        store.lastModifyDate = Date.now();
+    onCreateOrUpdateSuccess = async () => {
+        await store.loadData();
     };
 
     render() {
-        const {queryParams, lastModifyDate} = toJS(store);
+        const { lastModifyDate} = toJS(store);
         return (
             <div className={"fill-parent"}>
                 <EditDialog
@@ -100,17 +107,15 @@ export default class Bill extends React.Component {
                     loadData={billAPI.update}
                     onFinish={this.onCreateOrUpdateSuccess}
                 />
-                <Row style={{padding: 12}} gutter={12}>
-                    <Filter
-                        onFinish={this.onSearch}
-                        onCreateClick={this.onCreateClick}
-                    />
-                </Row>
+                <Filter
+                    onFinish={this.onSearch}
+                    onCreateClick={this.onCreateClick}
+                />
                 <RemoteTable
                     lastModifyDate={lastModifyDate}
                     loadData={billAPI.index}
                     columns={this._columns}
-                    params={queryParams}
+                    params={store.queryParams}
                     pagination={{pageSize: 9}}
                 />
             </div>
