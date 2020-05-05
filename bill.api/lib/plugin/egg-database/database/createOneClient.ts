@@ -23,7 +23,7 @@ export default async function createOneClient(config, app:Application) {
     };
     const connection: Connection = await createConnection({
         ...connectConfig,
-        logger: new DataBaseLogger(app),
+        // logger: new DataBaseLogger(app),
     });
     const index = count++;
     await app.loggers.logger.info(`[egg-database] ${jdbc} instance[${index}] connect success(${Date.now() - start}ms)`);

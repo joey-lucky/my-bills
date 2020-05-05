@@ -59,7 +59,7 @@ export default class Home extends React.Component {
                 <Header
                     title={htmlStore.projectName}
                     version={htmlStore.version}
-                    userName={userInfo.USER_NAME}
+                    userName={userInfo.name}
                     data={this.routeData}
                     onChangPasswordClick={this.onChangPassWordClick}
                     onLoginOutClick={this.onLoginOutClick}

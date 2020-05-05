@@ -6,7 +6,7 @@ import {Column, ViewEntity} from "../decorator";
        user.name           as user_name,
        billType.name       as bill_type_name,
        billType.type       as bill_type_type,
-       billType.type_value as bill_type_value,
+       billTypeDict.value  as bill_type_value,
        card.name           as card_name,
        card.user_id        as card_user_id,
        cardUser.name       as card_user_name,
@@ -14,12 +14,14 @@ import {Column, ViewEntity} from "../decorator";
        targetCard.user_id  as target_card_user_id,
        targetCardUser.name as target_card_user_name
 from bc_bill_template billTemplate
-         left join bc_bill_type_view billType on billType.id = billTemplate.bill_type_id
+         left join bc_bill_type billType on billType.id = billTemplate.bill_type_id
+         left join bc_dict_data billTypeDict
+                   on billTypeDict.type_code = billType.type and billTypeDict.type_code = 'BILL_TYPE'
          left join bc_user user on user.id = billTemplate.user_id
          left join bc_card card on card.id = billTemplate.card_id
          left join bc_user cardUser on cardUser.id = card.user_id
          left join bc_card targetCard on targetCard.id = billTemplate.target_card_id
-         left join bc_user targetCardUser on targetCardUser.id = targetCard.user_id `,
+         left join bc_user targetCardUser on targetCardUser.id = targetCard.user_id  `,
 })
 export class BcBillTemplateView extends BcBillTemplate {
     @Column()
