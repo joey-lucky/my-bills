@@ -42,15 +42,14 @@ export async function getPublicKey() {
 }
 
 // conf
-export const userAPI = new RestFullApi(getApiPath() + "/conf/users");
-export const billTypeAPI = new RestFullApi(getApiPath() + "/conf/bill-types");
-export const cardAPI = new RestFullApi(getApiPath() + "/conf/cards");
-export const cardTypeAPI = new RestFullApi(getApiPath() + "/conf/card-types");
-export const dictTypeAPI = new RestFullApi(getApiPath() + "/conf/dict-types");
-export const dictDataAPI = new RestFullApi(getApiPath() + "/conf/dict-datas");
-export const billTemplateAPI = new RestFullApi(getApiPath() + "/conf/bill-templates");
-
+export const userAPI = new RestFullApi(getApiPath() + "/user");
+export const billTypeAPI = new RestFullApi(getApiPath() + "/bill-type");
+export const cardAPI = new RestFullApi(getApiPath() + "/card");
+export const cardTypeAPI = new RestFullApi(getApiPath() + "/card-type");
+export const dictTypeAPI = new RestFullApi(getApiPath() + "/dict-type");
+export const dictDataAPI = new RestFullApi(getApiPath() + "/dict-data");
+export const billTemplateAPI = new RestFullApi(getApiPath() + "/bill-template");
 // data
-export const billAPI = new RestFullApi(getApiPath() + "/data/bills");
+export const billAPI = new RestFullApi(getApiPath() + "/bill");
 
 
