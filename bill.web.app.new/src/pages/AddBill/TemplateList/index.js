@@ -1,17 +1,17 @@
 import * as React from "react";
 import {observable, toJS} from "mobx";
-import {addBillApi} from "../../../services/api";
 import {Flex} from "antd-mobile";
 import TemplateHeader from "./TemplateHeader";
 import TemplateItem from "./TemplateItem";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
+import {billTemplateAPI} from "../../../services";
 
 class AppState {
     @observable data = [];
 
     asyncLoadData() {
-        addBillApi.getBillTemplateList().then(d => {
+        billTemplateAPI.index(undefined).then(d => {
             let data = d.data || [];
             let currType = null;
             data.forEach((item) => {

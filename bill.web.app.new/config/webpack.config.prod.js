@@ -33,18 +33,6 @@ let config = {
                 include: resolveApp("src"),
                 options: {
                     cacheDirectory: true,
-                    presets: ["es2015", "react", "stage-1", "babel-polyfill"],
-                    plugins: [
-                        "transform-decorators-legacy",
-                        "transform-runtime",
-                        ["import", [
-                            {
-                                "libraryName": "antd-mobile",
-                                "libraryDirectory": "es",
-                                "style": "less"
-                            }
-                        ]],
-                    ]
                 }
             },
             {

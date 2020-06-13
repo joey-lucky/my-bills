@@ -1,10 +1,9 @@
 import {BcDictData, PageInfo} from "../../database";
 import {Assert} from "../../utils/Assert";
-import {Injectable} from "@nestjs/common";
+import {Injectable, Scope} from "@nestjs/common";
 import {BaseService} from "../base.service";
 import {RestService} from "../base-rest.controller";
 
-@Injectable()
 export class DictDataService extends BaseService implements RestService {
     public async create(data: any): Promise<any> {
         const entity: BcDictData = this.parseToEntity(BcDictData, data);

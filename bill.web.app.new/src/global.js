@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
+
 const useMock = process.env.USE_MOCK || false;
-export const publicPath = process.env.PUBLIC_PATH ;
-export const apiPath =useMock?"/mock": process.env.API_PATH;
+export const publicPath = process.env.PUBLIC_PATH;
+export const apiPath = useMock ? "/mock" : process.env.API_PATH;
 export const filePath = process.env.FILE_PATH || "";
 export const projectName = process.env.PROJECT_NAME || "";
 export const getUploadPath = () => "/omip/api/upload";
@@ -19,6 +20,13 @@ export const propTypes = {
 };
 
 const globalData = {};
+
+export function getApiPath() {
+    return apiPath;
+}
+export function getPublicPath() {
+    return publicPath;
+}
 
 /**
  * 保存全局变量

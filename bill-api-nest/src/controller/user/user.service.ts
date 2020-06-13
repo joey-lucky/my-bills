@@ -1,10 +1,9 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, Scope} from "@nestjs/common";
 import {BcUser} from "../../database";
 import {PageInfo} from "../../service/response";
 import {BaseService} from "../base.service";
 import {RestService} from "../base-rest.controller";
 
-@Injectable()
 export class UserService extends BaseService implements RestService {
     public async create(data: any): Promise<any> {
         const entity: BcUser = this.parseToEntity(BcUser, data);

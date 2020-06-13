@@ -5,8 +5,10 @@ import SlideShow from "@components/SlideShow";
 import {Divider} from "@components/Divider";
 import {observable, toJS} from "mobx";
 import CardList from "./CardList";
-import {assetApi} from "../../services/api";
+import {assetApi} from "@services/api";
 import {observer} from "mobx-react";
+import {cardAPI} from "@services/index";
+import {strip, round} from "number-precision";
 
 class AppState {
     @observable data = [];
@@ -16,27 +18,43 @@ class AppState {
         credit: "0",//信用卡
     };
 
-    asyncLoadData() {
-        assetApi.groupByTypeList({}).then(d => {
-            let data = d.data || [];
-            let total = 0;
-            let asset = 0;
-            let credit = 0;
-            for (let item of data) {
-                total += item.balance;
-                if (item.balance >= 0) {
-                    asset += item.balance;
-                } else {
-                    credit += Math.abs(item.balance);
-                }
-            }
-            this.total = {
-                total: total.toFixed(2),
-                asset: asset.toFixed(2),
-                credit: credit.toFixed(2)
-            };
-            this.data = data;
-        });
+   async loadData() {
+       let d =  await cardAPI.index();
+       let data = d.data || [];
+       let groupByType = {};
+       let balanceByType = {};
+       let total ={
+           total: 0,
+           asset: 0,
+           credit: 0
+       }
+       for (let item of data) {
+           let cardTypeName = item.cardTypeName;
+           if (!groupByType[cardTypeName]) {
+               groupByType[cardTypeName] = [];
+               balanceByType[cardTypeName] = 0;
+           }
+           groupByType[cardTypeName].push(item);
+           balanceByType[cardTypeName] += item.balance;
+           if (item.balance >= 0) {
+               total.asset += item.balance;
+           } else {
+               total.credit += item.balance;
+           }
+       }
+       total.asset = strip(total.asset)
+       total.credit = strip(total.credit)
+       total.total = strip(total.asset + total.credit);
+       this.total = total;
+       let groupData = [];
+       for (let key of Object.keys(groupByType)) {
+           let value = groupByType[key];
+           groupData.push({
+              ...value[0],
+               children:value
+           });
+       }
+       this.data = groupData;
     }
 }
 
@@ -45,7 +63,7 @@ export default class Assert extends React.Component {
     _appState = new AppState();
 
     componentDidMount() {
-        this._appState.asyncLoadData();
+        this._appState.loadData();
     }
 
     onAddClick = (event) => {

@@ -1,16 +1,15 @@
 import * as React from "react";
 import {ActivityIndicator, Flex, ListView, SearchBar} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
-import SlideShow from "@components/SlideShow";
 import DayItem from "./DayItem";
 import {observer} from "mobx-react";
 import {observable, toJS} from "mobx";
-import {subBillListApi} from "../../services/api";
 import moment from "moment";
 import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
 import colors from "@res/colors";
 import BillItem from "@pages/SubList/BillItem";
+import {billAPI} from "../../services";
 
 const VIEW_TYPE = ["header", "item"];
 
@@ -42,7 +41,7 @@ class AppState {
                 ...this.params,
                 pageInfo: JSON.stringify(this.pageInfo)
             };
-            let d = await subBillListApi.getBillPageData(params);
+            let d = await billAPI.index(params);
             let data = d.data || [];
             this.billRows = [...this.billRows, ...data];
             let result = [];
@@ -88,18 +87,17 @@ export default class SubList extends React.Component {
         super(props, context);
         let {name="账单列表", ...params} = RouteUtils.getQueryObject(props.location);
         this._appState.toolBarName = name;
+        if (params.dateTime) {
+            params["dateTime>="] = params.dateTime[0];
+            params["dateTime<="] = params.dateTime[1];
+            delete params.dateTime;
+        }
         this._appState.params = params;
     }
 
     componentDidMount() {
         this._appState.loadData().then();
     }
-
-    onAddClick = (event) => {
-        event.stopPropagation();
-        let path = this.props.match.path + "/add-bill";
-        this.props.history.push(path);
-    };
 
     renderItem = (rowData, sectionID, rowID, highlightRow) => {
         if (rowData.viewType === VIEW_TYPE[1]) {

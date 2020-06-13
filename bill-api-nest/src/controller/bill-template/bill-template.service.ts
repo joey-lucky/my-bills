@@ -1,6 +1,7 @@
 import {BcBillTemplate, BcBillTemplateView, PageInfo} from "../../database";
 import {BaseService} from "../base.service";
 import {RestService} from "../base-rest.controller";
+import {Injectable, Scope} from "@nestjs/common";
 
 export  class BillTemplateService extends BaseService implements RestService {
     public async create(data: any): Promise<any> {

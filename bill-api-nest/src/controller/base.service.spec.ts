@@ -42,6 +42,7 @@ const model = {
     },
 };
 
+// @ts-ignore
 const mockDbService: DbService = {
     buildTrees(data?: any[], treeId?: string): any[] {
         return [];
@@ -76,10 +77,11 @@ const mockDbService: DbService = {
     async query(sql: string, params?: any): Promise<any[]> {
         return Promise.resolve([]);
     },
+
+    // @ts-ignore
     save<Entity, T extends DeepPartial<Entity>>(targetOrEntity: ObjectType<Entity> | EntitySchema<Entity>, entity: T, options?: SaveOptions): Promise<T> {
         return Promise.resolve(undefined);
     }
-
 };
 
 describe('BaseService', () => {

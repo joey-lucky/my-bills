@@ -1,6 +1,6 @@
 import React from "react";
 import {Redirect, Route, Router} from "react-router-dom";
-import {Flex, LocaleProvider, Toast} from "antd-mobile";
+import {ActivityIndicator, Flex, LocaleProvider, Toast} from "antd-mobile";
 // import {publicPath} from "./global";
 import routes from "./routes";
 import {createHashHistory} from "history";
@@ -9,6 +9,8 @@ import {Switch} from "@components/routes";
 import * as styles from "./App.css";
 import {observer} from "mobx-react";
 import {observable} from "mobx";
+import {waitDialogStore} from "./stores";
+import GlobalComponent from "./GlobalComponent";
 
 let history = createHashHistory({
     // forceRefresh:false,
@@ -50,6 +52,7 @@ export default class App extends React.Component {
             <LocaleProvider>
                 <Router history={history}>
                     <div className={styles.container}>
+                        <GlobalComponent/>
                         <div className={styles.contentContainer}>
                             <Switch>
                                 {
@@ -64,19 +67,6 @@ export default class App extends React.Component {
                                 <Redirect to={"/home"}/>
                             </Switch>
                         </div>
-                        {/*<Flex*/}
-                            {/*onClick={() => {*/}
-                                {/*this.hideGoFullScreen = true;*/}
-                                {/*fullScreen();*/}
-                            {/*}}*/}
-                            {/*className={`${styles.fullScreenContainer} ${this.hideGoFullScreen && globalStyles.hide}`}*/}
-                            {/*justify={"center"}*/}
-                            {/*align={"center"}*/}
-                        {/*>*/}
-                            {/*<div className={styles.goFullScreen}>*/}
-                                {/*进入全屏*/}
-                            {/*</div>*/}
-                        {/*</Flex>*/}
                     </div>
                 </Router>
             </LocaleProvider>

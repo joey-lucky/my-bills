@@ -2,7 +2,7 @@ import React from "react";
 import {observer} from "mobx-react";
 import {Col, Form, Input, Row} from "antd";
 import {FormDialog, RemoteSelect, RemoteTreeSelect} from "@components";
-import {billTypeAPI, dictTypeAPI} from "@services/index";
+import {billTypeAPI, dictDataAPI} from "@services/index";
 
 @observer
 export default class EditDialog extends FormDialog {
@@ -41,8 +41,9 @@ export default class EditDialog extends FormDialog {
                             rules={[{required: true}]}
                         >
                             <RemoteSelect
-                                loadData={dictTypeAPI.index}
+                                loadData={dictDataAPI.index}
                                 params={{typeCode: "bill_type"}}
+                                parse={{id:"code",name:"value"}}
                             />
                         </Form.Item>
                     </Col>

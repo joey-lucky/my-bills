@@ -22,7 +22,7 @@ export default class MonthItem extends React.Component {
         return {
             month: dateMoment.format("M月"),
             year: dateMoment.format("YYYY年"),
-            surplus: (income - outgoing).toFixed(2)
+            money: (income - outgoing).toFixed(2)
         };
     }
 
@@ -31,7 +31,7 @@ export default class MonthItem extends React.Component {
         this.state = {
             month: "",
             year: "",
-            surplus: "",
+            money: "",
             expand: this.props.defaultExpand || false
         };
     }
@@ -44,7 +44,7 @@ export default class MonthItem extends React.Component {
     };
 
     render() {
-        let {surplus, month, year, expand} = this.state;
+        let {money, month, year, expand} = this.state;
         return (
             <Flex
                 style={styles.container}
@@ -71,8 +71,8 @@ export default class MonthItem extends React.Component {
                         direction={"row"}
                         align={"baseline"}
                     >
-                        <div style={commonStyles.title}>{surplus}</div>
-                        <div style={styles.surplus}>结余</div>
+                        <div style={commonStyles.title}>{money}</div>
+                        <div style={styles.money}>结余</div>
                     </Flex>
                     <Flex
                         direction={"row"}
@@ -121,7 +121,7 @@ const styles = {
         width: 0,
         flex: 1,
     },
-    surplus: {
+    money: {
         paddingLeft: "0.1rem",
         ...commonStyles.tooltip
     },

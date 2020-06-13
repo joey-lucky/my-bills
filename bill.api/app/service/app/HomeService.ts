@@ -24,7 +24,6 @@ export default class HomeService extends Service {
         const result: any = {
             startDate: dateRange[0],
             endDate: dateRange[1],
-
         };
         data.forEach((item) => {
             if (item.type === "1") {

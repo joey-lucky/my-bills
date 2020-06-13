@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Button, Col, Divider, Input, Popconfirm, Row, Table} from "antd";
+import {Button, Col, Divider, Input, Popconfirm, Row, Table, Tabs} from "antd";
 import store from "./store";
 import {billTypeAPI} from "@services";
 import EditDialog from "./EditDialog";
@@ -100,11 +100,29 @@ export default class BillType extends React.Component {
                         >新增</Button>
                     </Col>
                 </Row>
-                <Table
-                    rowKey={(record) => record.id || ""}
-                    columns={this._columns}
-                    dataSource={toJS(store.data)}
-                />
+                <Tabs style={{padding:12}}>
+                    <Tabs.TabPane key={"-1"} tab={"支出"}>
+                        <Table
+                            rowKey={(record) => record.id || ""}
+                            columns={this._columns}
+                            dataSource={toJS(store.data)}
+                        />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane key={"1"} tab={"收入"}>
+                        <Table
+                            rowKey={(record) => record.id || ""}
+                            columns={this._columns}
+                            dataSource={toJS(store.data)}
+                        />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane key={"0"} tab={"其它"}>
+                        <Table
+                            rowKey={(record) => record.id || ""}
+                            columns={this._columns}
+                            dataSource={toJS(store.data)}
+                        />
+                    </Tabs.TabPane>
+                </Tabs>
             </div>
         );
     }

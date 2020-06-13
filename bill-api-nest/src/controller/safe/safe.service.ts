@@ -1,9 +1,10 @@
 import {BcUser} from "../../database";
 import {Assert} from "../../utils/Assert";
 import {BaseService} from "../base.service";
+import {Inject, Injectable, Query, Scope} from "@nestjs/common";
 
 export  class SafeService extends BaseService {
-    public async login(userName:string,password:string) {
+    public async login(userName:string,password:string,@Query() params?) {
         type LoginEntity = { token?: string } & BcUser;
         Assert.hasText(userName, "用户名为空");
         Assert.hasText(password, "密码为空");

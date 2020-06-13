@@ -3,10 +3,10 @@ import {ActivityIndicator, Flex, ListView} from "antd-mobile";
 import ToolBar from "@components/ToolBar";
 import {observer} from "mobx-react";
 import {observable, toJS} from "mobx";
-import {billTypeListApi} from "../../services/api";
 import "./index.less"
 import colors from "@res/colors";
 import BillTypeItem from "@pages/BillTypeList/BillTypeItem";
+import {billTypeAPI} from "../../services";
 
 const VIEW_TYPE = ["header", "item"];
 
@@ -22,7 +22,7 @@ class AppState {
     async loadData() {
         try {
             this.activityIndicatorState.animating = true;
-            let d = await billTypeListApi.getList({});
+            let d = await billTypeAPI.index({});
             let data = d.data || [];
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);
             this.activityIndicatorState.animating = false;

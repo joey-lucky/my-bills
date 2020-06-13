@@ -9,3 +9,4 @@ package-lock.json
 /build
 /node_modules
 *.log
+/.run

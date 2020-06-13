@@ -1,115 +1,153 @@
 import * as React from "react";
-import {Flex} from "antd-mobile";
+import {useEffect, useState} from "react";
 import moment from "moment";
-import * as PropTypes from "prop-types";
 import colors from "@res/colors";
 import strings from "@res/strings";
-import {baseBillEditApi} from "../../services/api";
 import DateItem from "./DateItem";
-import PickerItem from "./PickerItem";
+import PickerFormItem from "./PickerFormItem";
 import InputItem from "./InputItem";
 import MoneyInput from "./MoneyInput";
 import * as styles from "./index.css";
+import {billTypeAPI, cardAPI} from "@services/index";
+import {RemoteTreePicker} from "@components/remote";
+import icons from "@res/icons";
+import FormItem from "@components/BaseBillEdit/FormItem";
 
-export default class BaseBillEdit extends React.Component {
-    static propTypes = {
-        value: PropTypes.object,
-        onChange: PropTypes.func,
-        style: PropTypes.object,
-        form: PropTypes.any,
-        typeName: PropTypes.string,
-    };
-
-    static typeCodeMap = {
+function useLoadData(props) {
+    const [cardList, setCardList] = useState([]);
+    const [billTypeList, setBillTypeList] = useState([]);
+    const typeCodeMap = {
         [strings.income]: "1",
         [strings.outgoing]: "-1",
         [strings.other]: "0",
     };
+    const buildCardTree = (cardList = []) => {
+        let groupByUser = {};
+        for (let card of cardList) {
+            let userName = card.userName;
+            if (!(userName in groupByUser)) {
+                groupByUser[userName] = [];
+            }
+            groupByUser[userName].push(card);
+        }
+        return Object.keys(groupByUser).map(userName => {
+            return {
+                id: userName,
+                name: userName,
+                children: groupByUser[userName]
+            }
+        })
+    }
 
-    getFieldProps = (id, opt = {}) => {
-        let {value = {}} = this.props;
+    useEffect(
+        () => {
+            const billTypeType = typeCodeMap[props.typeName];
+            const loadData = async () => {
+                let {data: cardList} = await cardAPI.index();
+                let {data: billTypeList} = await billTypeAPI.index({type: billTypeType})
+                setCardList(buildCardTree(cardList));
+                setBillTypeList(billTypeList);
+            };
+            loadData().then();
+        },
+        [props.typeName]
+    );
+    return {cardList, billTypeList}
+}
+
+export default function BaseBillEdit(props) {
+    const {typeName,value = {}} = props;
+    const {cardList, billTypeList} = useLoadData(props);
+    const getFieldProps = (id, opt = {}) => {
         opt.initialValue = value[id] || "";
-        return this.props.form.getFieldProps(id, opt);
+        return props.form.getFieldProps(id, opt);
     };
-
-    render() {
-        const {typeName} = this.props;
-        let needTarget = typeName === strings.other;
-        let cardParams = {};
-        let targetCardParams = {};
-        return (
-            <div className={styles.container}>
-                <MoneyInput
-                    {...this.getFieldProps("money", {
-                        rules: [{
-                            required: true,
-                            message: "请输入金额"
-                        }],
-                    })}
-                    color={colors.getMoneyColor(typeName)}
-                />
-                <div className={styles.itemContainer}>
-                    <PickerItem
-                        {...this.getFieldProps("billTypeId", {
+    let needTarget = typeName === strings.other;
+    return (
+        <div className={styles.container}>
+            <MoneyInput
+                {...getFieldProps("money", {
+                    rules: [{
+                        required: true,
+                        message: "请输入金额"
+                    }],
+                })}
+                color={colors.getMoneyColor(typeName)}
+            />
+            <div className={styles.itemContainer}>
+                <FormItem
+                    style={{width: "100%", height: "100%"}}
+                    align={"center"}
+                    label={"类型"}
+                    icon={icons.xe321}
+                    color={"#8880EF"}
+                >
+                    <RemoteTreePicker
+                        {...getFieldProps("billTypeId", {
                             rules: [{
                                 required: true,
                                 message: "请选择账单类型"
                             }],
                             initialValue: "51585e30-2cfb-11e9-b803-2fb0ad7f2291"
                         })}
-                        url={baseBillEditApi.getBillTypeListUrl}
-                        params={{type: BaseBillEdit.typeCodeMap[typeName]}}
-                        parse={{id: "typeName", name: "typeName", children: {id: "id", name: "name"}}}
-                        cols={2}
-                        label={"类型"}
+                        style={{width: "100%", height: "100%"}}
+                        extra={billTypeList}
+                        cols={3}
                     />
-                    <PickerItem
-                        {...this.getFieldProps("cardId", {
+                </FormItem>
+                <PickerFormItem label={needTarget ? "转出" : "账户"}>
+                    <RemoteTreePicker
+                        style={{width: "100%", height: "100%"}}
+                        {...getFieldProps("cardId", {
                             rules: [{
                                 required: true,
                                 message: "请选择账户"
                             }],
-                            initialValue: "f486edf0-2c75-11e9-ad9d-8b0a6420bc1c"
+                            initialValue: "8e5591e0-312e-11e9-b743-2574d7883c40"
                         })}
                         cols={2}
-                        parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
-                        label={needTarget ? "转出" : "账户"}
-                        url={baseBillEditApi.getCardListUrl}
-                        params={cardParams}
+                        extra={cardList}
+                        arrow={true}
                     />
-                    {
-                        needTarget &&
-                        <PickerItem
-                            {...this.getFieldProps("targetCardId")}
+                </PickerFormItem>
+                {
+                    needTarget &&
+                    <PickerFormItem label={"转入"}>
+                        <RemoteTreePicker
+                            style={{width: "100%", height: "100%"}}
+                            {...getFieldProps("targetCardId", {
+                                rules: [{
+                                    required: true,
+                                    message: "请选择账户"
+                                }],
+                            })}
                             cols={2}
-                            parse={{id: "userName", name: "userName", children: {id: "id", name: "name"}}}
-                            label={"转入"}
-                            url={baseBillEditApi.getCardListUrl}
-                            params={targetCardParams}
+                            extra={cardList}
+                            arrow={true}
                         />
-                    }
-                    <DateItem
-                        {...this.getFieldProps("dateTime", {
-                            rules: [{
-                                required: true,
-                                message: "请选择账单类型"
-                            }],
-                            initialValue: moment("2019-06-25").toDate()
-                        })}
-                        label={"日期"}
-                        mode={"date"}
-                    />
-                    <InputItem
-                        {...this.getFieldProps("billDesc", {
-                            rules: [{
-                                required: true,
-                                message: "请输入账单明细"
-                            }],
-                        })}
-                        label={"明细"}
-                    />
-                </div>
+                    </PickerFormItem>
+                }
+                <DateItem
+                    {...getFieldProps("dateTime", {
+                        rules: [{
+                            required: true,
+                            message: "请选择账单类型"
+                        }],
+                        initialValue: moment("2019-06-25").toDate()
+                    })}
+                    label={"日期"}
+                    mode={"date"}
+                />
+                <InputItem
+                    {...getFieldProps("billDesc", {
+                        rules: [{
+                            required: true,
+                            message: "请输入账单明细"
+                        }],
+                    })}
+                    label={"明细"}
+                />
             </div>
-        );
-    }
+        </div>
+    );
 }

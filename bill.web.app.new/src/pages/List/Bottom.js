@@ -3,18 +3,10 @@ import {Flex} from "antd-mobile";
 import fontSizes from "@res/fontSizes";
 import colors from "@res/colors";
 import * as PropTypes from "prop-types";
-import {billListApi} from "../../services/api";
-import RemoteDataPicker from "@components/RemoteDataPicker";
-import FontIcon from "@components/FontIcon";
-import icons from "@res/icons";
 import createForm from "rc-form/es/createForm";
+import {RemotePicker} from "@components/remote";
+import {dictDataAPI, userAPI} from "@services/index";
 
-const billTypeTypeData = [
-    {id:"",name:"全部"},
-    {id:"-1",name:"支出"},
-    {id:"1",name:"收入"},
-    {id:"0",name:"转账"},
-];
 @createForm({
     onValuesChange:(props,changeValues,allValues)=>{
         props.onChange(allValues);
@@ -38,26 +30,23 @@ export default class Bottom extends React.Component {
                     justify={"center"}
                     align={"center"}
                 >
-                    <RemoteDataPicker
+                    <RemotePicker
                         {...this.props.form.getFieldProps("userId",{initialValue:""})}
-                        style={{width:"2.2rem",height:"100%"}}
-                        defaultValue={""}
+                        style={{width:"2.5rem",height:"100%"}}
                         extra={[{id:"",name:"全部"}]}
-                        cols={1}
-                        url={billListApi.getUserListUrl}
+                        loadData={userAPI.index}
                         justify={"center"}
                         align={"center"}
                     />
-                    <RemoteDataPicker
+                    <RemotePicker
                         {...this.props.form.getFieldProps("billTypeType",{initialValue:""})}
-                        style={{width:"2.2rem",height:"100%",marginLeft:"0.12rem"}}
-                        extra={billTypeTypeData}
-                        cols={1}
+                        style={{width:"2.5rem",height:"100%"}}
+                        loadData={dictDataAPI.index}
+                        params={{typeCode:"bill_type"}}
+                        extra={[{id:"",name:"全部"}]}
+                        parse={{id:"code",name:"value"}}
                         justify={"center"}
                         align={"center"}
-                    />
-                    <FontIcon
-                        unicode={icons.xe502}
                     />
                 </Flex>
             </Flex>

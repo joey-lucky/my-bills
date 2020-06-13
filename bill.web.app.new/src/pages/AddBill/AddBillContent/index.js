@@ -1,13 +1,13 @@
 import * as React from "react";
-import {ActivityIndicator, Flex, Toast,Modal} from "antd-mobile";
+import {ActivityIndicator, Flex, Modal, Toast} from "antd-mobile";
 import {action, computed, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import BaseBillEdit from "@components/BaseBillEdit";
-import {addBillApi} from "../../../services/api";
 import moment from "moment";
 import Bottom from "@pages/AddBill/Bottom";
 import * as PropTypes from "prop-types";
 import createForm from "rc-form/es/createForm";
+import {billAPI, billTemplateAPI} from "@services/index";
 
 class AppState {
     @observable activityIndicatorState = {
@@ -27,10 +27,7 @@ class AppState {
     asyncSaveTemplate(values) {
         this.activityIndicatorState.text = "保存模板...";
         this.activityIndicatorState.animating = true;
-        let params = {
-            data: JSON.stringify([values])
-        };
-        return addBillApi.createBillTemplate(params).then(() => {
+        return billTemplateAPI.create(values).then(() => {
             this.activityIndicatorState.animating = false;
         });
     }
@@ -50,7 +47,7 @@ class AppState {
                 }
                 this.activityIndicatorState.text = "保存中";
                 this.activityIndicatorState.animating = true;
-                await addBillApi.createBill({"data": [saveData]});
+                await billAPI.create(saveData);
                 this.activityIndicatorState.animating = false;
                 Toast.success("保存成功", Toast.SHORT);
             }

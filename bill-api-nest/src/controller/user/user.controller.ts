@@ -1,4 +1,4 @@
-import {Controller, Inject} from "@nestjs/common";
+import {Controller, Inject, Scope} from "@nestjs/common";
 import {UserService} from "./user.service";
 import {BaseRestController} from "../base-rest.controller";
 

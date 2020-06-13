@@ -1,71 +1,45 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 import {Flex} from "antd-mobile";
 import fontSizes from "@res/fontSizes";
+import {useFormState} from "@components/useFormState";
 
-export default class MoneyInput extends React.Component {
-    static propTypes = {
-        onChange: PropTypes.any,
-        value: PropTypes.number,
-        defaultValue: PropTypes.number,
-        color: PropTypes.string,
-    };
+export default function MoneyInput(props) {
+    /*
+    state
+     */
+    const [value, setValue] = useFormState(props);
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if ("value" in nextProps && nextProps.value !== prevState.value) {//value存在。
-            return {
-                value: nextProps.value
-            };
-        }
-        return null;
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: "",
-        };
-    }
-
-    onChange = (event) => {
-        let value = event.target.value || "";
-        if (value !== this.state.value) {
-            if (/^(([0]?)|(0\.[0-9]*)|([1-9][0-9]*[\.]?[0-9]*))$/.test(value)) {
-                if ("value" in this.props) {
-                    this.setState({
-                        value: value
-                    });
-                }
-                this.props.onChange && this.props.onChange(value);
-            } else {
-                this.setState({
-                    value: this.state.value
-                });
+    /*
+    事件
+     */
+    const onChange = (event) => {
+        let targetValue = event.target.value || "";
+        if (/^(([0]?)|(0\.[0-9]*)|([1-9][0-9]*[\.]?[0-9]*))$/.test(targetValue)) {
+            if (!("value" in props)) {
+                setValue(targetValue);
             }
+            props.onChange && props.onChange(targetValue);
+        } else {
+            setValue(value);
         }
     };
 
-    render() {
-        const {value} = this.state;
-        let style = {
-            ...styles.money,
-            color: this.props.color,
-            borderBottom: "0.04rem solid " + this.props.color
-        };
+    let style = {
+        ...styles.money,
+        color: props.color,
+        borderBottom: "0.04rem solid " + props.color
+    };
 
-        return (
-            <Flex style={styles.container}>
-                <input
-                    value={value}
-                    onChange={this.onChange}
-                    style={style}
-                    placeholder={""}
-                    // type={"number"}
-                    // min={0}
-                />
-            </Flex>
-        );
-    }
+    return (
+        <Flex style={styles.container}>
+            <input
+                value={value}
+                onChange={onChange}
+                style={style}
+                placeholder={""}
+            />
+        </Flex>
+    );
 }
 
 const styles = {

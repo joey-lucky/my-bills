@@ -16,7 +16,6 @@ export default class FormItem extends React.Component {
         onClick: PropTypes.func,
     };
 
-
     render() {
         return (
             <Flex

@@ -1,11 +1,12 @@
 import {getConnection} from "typeorm";
 import {BaseService} from "../base.service";
 
-interface QueryParams{
+interface QueryParams {
     dateTime?: string[];
     cardId?: string;
     userId?: string;
     billTypeId?: string;
+    billTypeType?: string;
 }
 
 interface GroupByMonthView {
@@ -19,18 +20,22 @@ function formatPointValue(value: number) {
     return Math.round(value * 100) / 100;
 }
 
-export  class StatBillMService extends BaseService  {
+export class StatBillMService extends BaseService {
     public async getGroupByMonthList(params): Promise<GroupByMonthView[]> {
         const where = this.parseToWhereString(params);
         //language=MySQL
-        const sql = "select date_format(t.date_time, '%Y-%m-%d %H:%i:%s') as dateTime,\n" +
-            "       sum(t.outgoing) as outgoing,\n" +
-            "       sum(t.income) as income,\n" +
-            "       sum(t.surplus) as surplus\n" +
-            "from bd_stat_bill_m_view t\n " +
-            where +
-            "group by t.date_time\n" +
-            "order by t.date_time desc";
+        const sql = `
+            select date_format(t.date_time, '%Y-%m-%d %H:%i:%s')                        as dateTime,
+                   sum(case when t.billTypeType = '1' then t.money else 0 end)          as income,
+                   sum(case when t.billTypeType = '-1' then t.money else 0 end)         as outgoing,
+                   sum(case when t.billTypeType in ('1', '-1') then t.money else 0 end) as surplus
+            from bd_stat_bill_m_view t
+          `
+            + where +
+            `
+            group by t.date_time
+            order by t.date_time desc
+            `;
         const data = await getConnection().query(sql);
         for (const item of data) {
             item.outgoing = formatPointValue(item.outgoing);
@@ -43,10 +48,12 @@ export  class StatBillMService extends BaseService  {
     public async getSumData(params): Promise<GroupByMonthView[]> {
         const where = this.parseToWhereString(params);
         //language=MySQL
-        const sql = "select  sum(t.outgoing) as outgoing,\n" +
-            "       sum(t.income) as income,\n" +
-            "       sum(t.surplus) as surplus\n" +
-            "from bd_stat_bill_m_view t\n " + where;
+        const sql = `
+            select sum(case when t.billTypeType = '1' then t.money else 0 end)          as income,
+                   sum(case when t.billTypeType = '-1' then t.money else 0 end)         as outgoing,
+                   sum(case when t.billTypeType in ('1', '-1') then t.money else 0 end) as surplus
+            from bd_stat_bill_m_view t
+        ` + where;
         const data = await getConnection().query(sql);
         for (const item of data) {
             item.outgoing = formatPointValue(item.outgoing);
@@ -56,9 +63,9 @@ export  class StatBillMService extends BaseService  {
         return data;
     }
 
-    private parseToWhereString(params: QueryParams= {}){
+    private parseToWhereString(params: QueryParams = {}) {
         let where = "where 1 = 1 ";
-        const {dateTime, cardId, billTypeId, userId} = params;
+        const {dateTime, cardId, billTypeId, userId, billTypeType} = params;
         if (dateTime) {
             const [start, end] = dateTime;
             if (start) {
@@ -70,6 +77,9 @@ export  class StatBillMService extends BaseService  {
         }
         if (cardId) {
             where += ` and t.card_id = '${cardId}'`;
+        }
+        if (billTypeType) {
+            where += ` and t.billTypeType = '${billTypeType}'`;
         }
         if (billTypeId) {
             where += ` and t.bill_type_id = '${billTypeId}'`;

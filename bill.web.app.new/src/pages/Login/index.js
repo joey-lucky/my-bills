@@ -8,8 +8,8 @@ import icons from "@res/icons";
 import fontSizes from "@res/fontSizes";
 import colors from "@res/colors";
 import {createForm} from 'rc-form';
-import {safeController} from "../../services/api";
 import {setToken} from "@utils/request";
+import {login} from "../../services";
 
 @createForm()
 export default class Login extends React.Component {
@@ -20,7 +20,7 @@ export default class Login extends React.Component {
     };
 
     asyncLogin = (params) => {
-        return safeController.login(params)
+        return login(params.userName,params.password)
             .then((d) => {
                 setToken(d.data[0].token);
                 this.props.history.push("/home");

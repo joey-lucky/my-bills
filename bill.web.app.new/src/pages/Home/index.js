@@ -5,17 +5,17 @@ import Content from "./Content";
 import BottomBar from "./BottomBar";
 import {Flex} from "antd-mobile";
 import icons from "@res/icons";
-import {homeApi} from "../../services/api";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
 import ContentItem from "@pages/Home/Content/ContentItem";
 import moment from "moment";
+import {homeAPI} from "../../services";
 
 class AppState {
     @observable data = [];
 
     asyncLoadData() {
-        homeApi.getCurrTotal().then((d) => {
+        homeAPI.getCurrTotal().then((d) => {
             let data = d.data && d.data[0] || {};
             let {today = {}, toWeek = {}, toMonth = {}, preMonth = {}} = data;
             let list = [];
@@ -59,6 +59,12 @@ export default class Home extends React.Component {
         this._appState.asyncLoadData();
     }
 
+    onItemClick = (item) => (e) => {
+        e.stopPropagation();
+        let params = `?dateTime=['${item.startDate}','${item.endDate}']`;
+        this.props.history.push(this.props.match.path + "/sub-list" + params);
+    };
+
     render() {
         return (
             <Flex
@@ -75,6 +81,7 @@ export default class Home extends React.Component {
                                 outgoing={item.outgoing||"0.00"}
                                 income={item.income||"0.00"}
                                 dateText={moment(item.startDate).format("MM月DD日 - ")+moment(item.endDate).format("MM月DD日")}
+                                onClick={this.onItemClick(item)}
                             />
                         )
                     }

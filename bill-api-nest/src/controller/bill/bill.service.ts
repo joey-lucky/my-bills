@@ -6,9 +6,7 @@ export  class BillService extends BaseService implements RestService {
     public async create(data: any): Promise<any> {
         const entity: BdBill = this.parseToEntity(BdBill, data);
         entity.userId = this.getCtxUserId();
-        await this.createEntity(entity);
-        await entity.reload();
-        return entity;
+        return await this.createEntity(entity);
     }
 
     public async destroy(id: string): Promise<any> {
@@ -35,6 +33,7 @@ export  class BillService extends BaseService implements RestService {
         let whereCondition = await this.toWhereCondition(params);
         return await this.dbService.createQueryBuilder(BdBillView, "t")
             .where(whereCondition.where, whereCondition.params)
+            .orderBy("t.date_time","DESC")
             .getMany();
     }
 
@@ -74,26 +73,17 @@ export  class BillService extends BaseService implements RestService {
             where += " and (t.card_id = :cardIdOrTargetCardId or t.target_card_id = :cardIdOrTargetCardId)";
         }
         if (params.dateTime) {
-            // @ts-ignore
-            if (typeof params.dateTime) {
-                where += ` and t.date_time = str_to_date(:dateTime,'%Y-%m-%d %H:%i:%s') `;
-            } else if (Array.isArray(params.dateTime)) {
-                const [start, end] = params.dateTime;
-                if (start) {
-                    params["dateTimeMoreThanOrEqual"] = start;
-                }
-                if (end) {
-                    params["dateTimeLessThanOrEqual"] = end;
-                }
-                delete params.dateTime;
-            }
-            delete params.dateTime;
+            where += ` and t.date_time = str_to_date(:dateTime,'%Y-%m-%d %H:%i:%s') `;
         }
-        if (params["dateTimeMoreThanOrEqual"]) {
-            where += ` and t.date_time >= str_to_date(:dateTimeMoreThanOrEqual,'%Y-%m-%d %H:%i:%s') `;
+        if (params["dateTime>="]) {
+            where += ` and t.date_time >= str_to_date(:dateTime1,'%Y-%m-%d %H:%i:%s') `;
+            params["dateTime1"] = params["dateTime>="];
+            delete params["dateTime>="];
         }
-        if (params["dateTimeLessThanOrEqual"]) {
-            where += ` and t.date_time <= str_to_date(:dateTimeLessThanOrEqual,'%Y-%m-%d %H:%i:%s') `;
+        if (params["dateTime<="]) {
+            where += ` and t.date_time <= str_to_date(:dateTime2,'%Y-%m-%d %H:%i:%s') `;
+            params["dateTime2"] = params["dateTime<="];
+            delete params["dateTime<="];
         }
         if (params.keyword) {
             params.keyword = "%" + params.keyword + "%";

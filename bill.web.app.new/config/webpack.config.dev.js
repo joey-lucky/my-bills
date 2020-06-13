@@ -29,11 +29,6 @@ let config = {
                 include: resolveApp("src"),
                 options: {
                     cacheDirectory: true,
-                    presets: ["es2015", "react", "stage-1", "babel-polyfill"],
-                    plugins: [
-                        "transform-decorators-legacy",
-                        "transform-runtime"
-                    ]
                 }
             },
             {
@@ -65,6 +60,36 @@ let config = {
     optimization: {
         namedModules: true,
         minimize: false,
+        splitChunks: {
+            chunks: 'all',
+            maxSize: 250000,
+            cacheGroups: {
+                react: {
+                    test: /[\\/]node_modules[\\/]react/,
+                    name: 'react',
+                    chunks: 'all',
+                    enforce: true
+                },
+                mobx: {
+                    test: /[\\/]node_modules[\\/]mobx/,
+                    name: 'mobx',
+                    chunks: 'all',
+                    enforce: true
+                },
+                ant: {
+                    test: /[\\/]node_modules[\\/]@?ant/,
+                    name: 'ant',
+                    chunks: 'all',
+                    enforce: true
+                },
+                src: {
+                    test: /[\\/]src[\\/]/,
+                    name: 'src',
+                    chunks: 'all',
+                    enforce: true
+                }
+            }
+        },
     },
     plugins: [
         new CleanWebpackPlugin([paths.resolveApp(buildPath)]),

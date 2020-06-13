@@ -10,18 +10,15 @@ import BaseBillEdit from "@components/BaseBillEdit";
 import Blank from "@components/Blank";
 import Bottom from "./Bottom";
 import {createForm} from "rc-form";
-import {editBillApi} from "../../services/api";
 import moment from "moment";
 import {RouteUtils} from "@utils/RouteUtils";
 import strings from "@res/strings";
+import {billAPI} from "../../services";
+import {waitDialogStore} from "../../stores";
 
 class AppState {
     @observable entity = {};
     @observable billType = strings.income;
-    @observable activityIndicatorState = {
-        text: "",
-        animating: false,
-    };
 
     @computed
     get isTransferBill() {
@@ -34,7 +31,7 @@ class AppState {
     }
 
     asyncLoadEntity(id = "") {
-        editBillApi.getBillList({id: id}).then(d => {
+        billAPI.index({id: id}).then(d => {
             let entity = d.data && d.data[0] || {};
             //翻译datetime
             if (entity.dateTime) {
@@ -61,23 +58,21 @@ class AppState {
                 if (this.billTypeTypeName !== "收入") {
                     saveData["money"] = 0 - saveData["money"];
                 }
-                this.activityIndicatorState.text = "保存账单...";
-                this.activityIndicatorState.animating = true;
-                await editBillApi.updateBill({"data": [saveData]});
-                this.activityIndicatorState.animating = false;
+                waitDialogStore.show("保存账单...");
+                await billAPI.update(saveData);
+                waitDialogStore.hide();
                 Toast.success("更新成功", Toast.SHORT);
             }
         } catch (e) {
-            this.activityIndicatorState.animating = false;
+            waitDialogStore.hide();
             throw e;
         }
     }
 
     asyncDeleteBill() {
-        this.activityIndicatorState.text = "更新账单...";
-        this.activityIndicatorState.animating = true;
-        return editBillApi.deleteBill({id: this.entity.id}).then((d) => {
-            this.activityIndicatorState.animating = false;
+        waitDialogStore.show("更新账单...");
+        return billAPI.destroy({id: this.entity.id}.id).then((d) => {
+            waitDialogStore.hide();
             return d;
         });
     }
@@ -123,17 +118,11 @@ export default class EditBill extends React.Component {
     };
 
     render() {
-        let {activityIndicatorState} = this._appState;
         return (
             <Flex
                 style={styles.container}
                 direction={"column"}
             >
-                <ActivityIndicator
-                    {...toJS(activityIndicatorState)}
-                    toast={true}
-                    size={"large"}
-                />
                 <ToolBar
                     title={"编辑"}
                     rightExtra={(
@@ -159,7 +148,7 @@ export default class EditBill extends React.Component {
                     <BaseBillEdit
                         value={this._appState.entity}
                         form={this.props.form}
-                        typeName={this._appState.entity.billTypeTypeName}
+                        typeName={this._appState.entity.billTypeTypeValue}
                     />
                 </div>
                 <Bottom

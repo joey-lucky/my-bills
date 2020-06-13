@@ -10,7 +10,7 @@ export class TokenMiddleware implements NestMiddleware {
     }
 
     async use(req: Request|any, res: Response, next: Function) {
-        if (req.url.indexOf("/safe/login") === -1) {
+        if (req.originalUrl.indexOf("/safe/login") === -1) {
             const authorization: string = req.headers.authorization;
             Assert.hasText(authorization, "header authorization is null");
             const token = authorization.replace("Bearer ", "");

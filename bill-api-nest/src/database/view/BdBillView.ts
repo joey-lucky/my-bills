@@ -1,5 +1,6 @@
-import {Column, ViewEntity} from "typeorm";
+import {ViewEntity} from "typeorm";
 import {BaseView} from "../base";
+import {Column} from "../decorator";
 
 @ViewEntity({
     name: "bd_bill_view",
@@ -7,6 +8,7 @@ import {BaseView} from "../base";
        user.name           as user_name,
        billType.name       as bill_type_name,
        billType.type       as bill_type_type,
+       dictData.value      as bill_type_type_value,
        card.name           as card_name,
        card.user_id        as card_user_id,
        cardUser.name       as card_user_name,
@@ -14,59 +16,63 @@ import {BaseView} from "../base";
        targetCard.user_id  as target_card_user_id,
        targetCardUser.name as target_card_user_name
 from bd_bill bill
-       left join bc_bill_type billType on billType.id = bill.bill_type_id
-       left join bc_user user on user.id = bill.user_id
-       left join bc_card card on card.id = bill.card_id
-       left join bc_user cardUser on cardUser.id = card.user_id
-       left join bc_card targetCard on targetCard.id = bill.target_card_id
-       left join bc_user targetCardUser on targetCardUser.id = targetCard.user_id`,
+         left join bc_bill_type billType on billType.id = bill.bill_type_id
+         left join bc_user user on user.id = bill.user_id
+         left join bc_card card on card.id = bill.card_id
+         left join bc_user cardUser on cardUser.id = card.user_id
+         left join bc_card targetCard on targetCard.id = bill.target_card_id
+         left join bc_user targetCardUser on targetCardUser.id = targetCard.user_id
+         left join bc_dict_data dictData on dictData.code = billType.type and dictData.type_code = 'bill_type'`,
 })
 export class BdBillView extends BaseView {
-    @Column({name: "money"})
+    @Column()
     money: number;
 
-    @Column({name: "bill_desc"})
+    @Column()
     billDesc: string;
 
-    @Column({name: "date_time"})
+    @Column()
     dateTime: Date;
 
-    @Column({name: "bill_type_id"})
+    @Column()
     billTypeId: string | null;
 
-    @Column({name: "user_id"})
+    @Column()
     userId: string | null;
 
-    @Column({name: "card_id"})
+    @Column()
     cardId: string | null;
 
-    @Column({name: "target_card_id"})
+    @Column()
     targetCardId: string;
 
-    @Column({name: "user_name"})
+    @Column()
     userName: string;
 
-    @Column({name: "bill_type_name"})
+    @Column()
     billTypeName: string;
 
-    @Column({name: "card_name"})
+    @Column()
     cardName: string;
 
-    @Column({name: "card_user_id"})
+    @Column()
     cardUserId: string;
 
-    @Column({name: "card_user_name"})
+    @Column()
     cardUserName: string;
 
-    @Column({name: "target_card_name"})
+    @Column()
     targetCardName: string;
 
-    @Column({name: "target_card_user_id"})
+    @Column()
     targetCardUserId: string;
 
-    @Column({name: "target_card_user_name"})
+    @Column()
     targetCardUserName: string;
 
-    @Column({name: "bill_type_type"})
+    @Column()
     billTypeType: string;
+
+    @Column()
+    billTypeTypeValue: string;
 }

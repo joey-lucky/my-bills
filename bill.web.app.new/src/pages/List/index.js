@@ -6,11 +6,11 @@ import MonthItem from "@pages/List/MonthItem";
 import DayItem from "@pages/List/DayItem";
 import {observer} from "mobx-react";
 import {action, observable, toJS} from "mobx";
-import {billListApi} from "../../services/api";
 import Bottom from "./Bottom";
 import moment from "moment";
 import "./index.less"
 import {RouteUtils} from "@utils/RouteUtils";
+import {billAPI, statBillMAPI} from "../../services";
 
 const VIEW_TYPE = ["MONTH", "BILL"];
 
@@ -39,8 +39,8 @@ class AppState {
     async loadMonthStatList() {
         try {
             this.activityIndicatorState.animating = true;
-            let result = await billListApi.getMonthStatList(this.queryParams);
-            let sumResult = await billListApi.getSumStatList(this.queryParams);
+            let result = await statBillMAPI.getMonthStatList(this.queryParams);
+            let sumResult = await statBillMAPI.getSumStatList(this.queryParams);
             let data = result.data || [];
             let billRows = [];
             data.forEach((item, index) => {
@@ -76,9 +76,10 @@ class AppState {
                 let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
                 let params = {
                     ...toJS(this.queryParams),
-                    dateTime: [startMonth, endMonth],
+                    "dateTime>=":startMonth,
+                    "dateTime<=":endMonth,
                 };
-                let d = await billListApi.getBillList(params);
+                let d = await billAPI.index(params);
                 billList = d.data || [];
                 this.billRows[index] = this.completeBillListField(billList);
             }
@@ -101,22 +102,23 @@ class AppState {
             let endMonth = moment(month).add(1, "M").add(-1, "s").format("YYYY-MM-DD HH:mm:ss");
             let params = {
                 ...this.queryParams,
-                dateTime: [startMonth, endMonth],
+                "dateTime>=":startMonth,
+                "dateTime<=":endMonth,
             };
 
             //更新月数据
-            let monthItem = (await billListApi.getMonthStatList(params)).data[0];
+            let monthItem = (await statBillMAPI.getMonthStatList(params)).data[0];
             this.completeMonthField(monthItem);
             monthItem.expand = true;
             this.monthRows[index] = monthItem;
-            let sumResult = await billListApi.getSumStatList(this.queryParams);
+            let sumResult = await statBillMAPI.getSumStatList(this.queryParams);
             let sumData = sumResult.data && sumResult.data[0] || {};
             this.totalData = {
                 outgoing: sumData.outgoing,
                 income: sumData.income,
                 surplus: sumData.surplus,
             };
-            let billList = (await billListApi.getBillList(params)).data || [];
+            let billList = (await billAPI.index(params)).data || [];
             this.billRows[index] = this.completeBillListField(billList);
             let data = this.calculateListViewData();
             this.listViewDataSource = this.listViewDataSource.cloneWithRows(data);

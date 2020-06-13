@@ -1,6 +1,7 @@
 import {BcBillType, BcBillTypeView, PageInfo} from "../../database";
 import {BaseService} from "../base.service";
 import {RestService} from "../base-rest.controller";
+import {Injectable, Scope} from "@nestjs/common";
 
 export  class BillTypeService extends BaseService implements RestService {
     public async create(data: any): Promise<any> {
@@ -50,6 +51,9 @@ export  class BillTypeService extends BaseService implements RestService {
         }
         if (params.name) {
             where += " and t.name = :name ";
+        }
+        if (params.type) {
+            where += " and t.type = :type ";
         }
         if (params.keyword) {
             params.keyword = "%" + params.keyword + "%";

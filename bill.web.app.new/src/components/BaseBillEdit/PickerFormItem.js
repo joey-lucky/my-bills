@@ -1,23 +1,18 @@
 import * as React from "react";
 import FormItem from "./FormItem";
 import icons from "@res/icons";
-import RemoteDataPicker from "@components/RemoteDataPicker";
 
-export default function PickerItem(props) {
-    const {label,...pickerProps} = props;
+export default function PickerFormItem(props) {
+    const {label,children} = props;
     return (
         <FormItem
             style={{width: "100%", height: "100%"}}
             align={"center"}
-            label={label  }
+            label={label}
             icon={icons.xe321}
             color={"#8880EF"}
         >
-           <RemoteDataPicker
-               {...pickerProps}
-               style={{width: "100%", height: "100%"}}
-           />
+            {children}
         </FormItem>
     );
-
 }

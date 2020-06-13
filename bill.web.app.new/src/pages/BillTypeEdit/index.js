@@ -6,16 +6,15 @@ import {observer} from "mobx-react";
 import Text from "@components/Text";
 import FontIcon from "@components/FontIcon";
 import icons from "@res/icons";
-import BaseBillEdit from "@components/BaseBillEdit";
 import Blank from "@components/Blank";
 import Bottom from "./Bottom";
 import {createForm} from "rc-form";
-import {baseBillEditApi, editBillApi} from "../../services/api";
 import moment from "moment";
 import {RouteUtils} from "@utils/RouteUtils";
 import strings from "@res/strings";
 import InputItem from "@components/BaseBillEdit/InputItem";
-import PickerItem from "@components/BaseBillEdit/PickerItem";
+import PickerFormItem from "@components/BaseBillEdit/PickerFormItem";
+import {billAPI} from "../../services";
 
 class AppState {
     @observable entity = {};
@@ -36,7 +35,7 @@ class AppState {
     }
 
     asyncLoadEntity(id = "") {
-        editBillApi.getBillList({id: id}).then(d => {
+        billAPI.index({id: id}).then(d => {
             let entity = d.data && d.data[0] || {};
             //翻译datetime
             if (entity.dateTime) {
@@ -65,7 +64,7 @@ class AppState {
                 }
                 this.activityIndicatorState.text = "保存账单...";
                 this.activityIndicatorState.animating = true;
-                await editBillApi.updateBill({"data": [saveData]});
+                await billAPI.update({"data": [saveData]});
                 this.activityIndicatorState.animating = false;
                 Toast.success("更新成功", Toast.SHORT);
             }
@@ -78,7 +77,7 @@ class AppState {
     asyncDeleteBill() {
         this.activityIndicatorState.text = "更新账单...";
         this.activityIndicatorState.animating = true;
-        return editBillApi.deleteBill({id: this.entity.id}).then((d) => {
+        return billAPI.destroy({id: this.entity.id}.id).then((d) => {
             this.activityIndicatorState.animating = false;
             return d;
         });
@@ -170,7 +169,7 @@ export default class BillTypeEdit extends React.Component {
                         })}
                         label={"名称"}
                     />
-                    <PickerItem
+                    <PickerFormItem
                         {...this.getFieldProps("type", {
                             rules: [{
                                 required: true,
