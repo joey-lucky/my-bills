@@ -19,6 +19,6 @@ export class BcUser extends BaseEntity {
     @Column()
     pic: string;
 
-    @Column()
+    @Column({nullable:true})
     bussWx: string;
 }

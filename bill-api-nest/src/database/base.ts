@@ -1,4 +1,3 @@
-import * as orm from "typeorm";
 import {
     AfterLoad,
     BeforeInsert,
@@ -22,10 +21,10 @@ export class BaseEntity extends OrmBaseEntity {
     @UpdateDateColumn({name: "update_time", nullable: true, type: "datetime"})
     updateTime: Date;
 
-    @Column({name: "create_by", length: 36, nullable: true})
+    @Column({name: "create_by", length: 36})
     createBy: string;
 
-    @Column({name: "update_by", length: 36, nullable: true})
+    @Column({name: "update_by", length: 36})
     updateBy: string | null;
 
     @BeforeInsert()
@@ -63,7 +62,7 @@ export class BaseView extends OrmBaseEntity {
 }
 
 export class BaseTreeEntity extends BaseEntity {
-    @Column({nullable: true})
+    @Column()
     parentId: string;
 
     @BeforeInsert()

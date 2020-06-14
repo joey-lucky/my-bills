@@ -30,6 +30,18 @@ class RestFullApi {
     };
 }
 
+export const safeAPI = {
+    async login(account, password) {
+        let params = {
+            userName: account,
+            password: password
+        };
+        return request.apiGet(getApiPath() + '/safe/login', params);
+    },
+    async getUserInfo(){
+        return request.apiGet(getApiPath() + '/safe/get-user-info');
+    }
+};
 export async function login(account, password) {
     let params = {
         userName: account,

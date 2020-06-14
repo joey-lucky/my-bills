@@ -1,7 +1,6 @@
 import {BcBillTemplate, BcBillTemplateView, PageInfo} from "../../database";
 import {BaseService} from "../base.service";
 import {RestService} from "../base-rest.controller";
-import {Injectable, Scope} from "@nestjs/common";
 
 export  class BillTemplateService extends BaseService implements RestService {
     public async create(data: any): Promise<any> {
@@ -53,22 +52,22 @@ export  class BillTemplateService extends BaseService implements RestService {
             where += " and t.id = :id ";
         }
         if (params.userId) {
-            where += " and t.user_id = @userId ";
+            where += " and t.user_id = :userId ";
         }
         if (params.billTypeId) {
-            where += " and t.bill_type_id = @billTypeId ";
+            where += " and t.bill_type_id = :billTypeId ";
         }
         if (params.targetCardId) {
-            where += " and t.target_card_id = @targetCardId ";
+            where += " and t.target_card_id = :targetCardId ";
         }
         if (params.cardId) {
-            where += " and t.card_id = @cardId ";
+            where += " and t.card_id = :cardId ";
         }
         if (params.billDesc) {
-            where += " and t.bill_desc = @billDesc ";
+            where += " and t.bill_desc = :billDesc ";
         }
         if (params.billTypeType) {
-            where += " and t.bill_type_type = @billTypeType ";
+            where += " and t.bill_type_type = :billTypeType ";
         }
         if (params.cardIdOrTargetCardId) {
             where += " and (t.card_id = :cardIdOrTargetCardId or t.target_card_id = :cardIdOrTargetCardId)";

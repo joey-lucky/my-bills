@@ -26,4 +26,10 @@ export class SafeController extends BaseRestController {
         user.token = jwt.sign(playLoad, secret);
         return this.responseService.success([user], "")
     }
+
+    @Get("get-user-info")
+    async getUserInfo(@Query("userName") userName, @Query("password") password) {
+        let info = await this.service.getUserInfo();
+        return this.responseService.success([info], "");
+    }
 }

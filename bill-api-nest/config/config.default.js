@@ -8,5 +8,12 @@ module.exports = {
         password: '123456',
         database: 'bill_dev',
         synchronize: true,
+        logging: [
+            "query",
+            "error",
+            "warn",
+            "info",
+            "log"
+        ],
     }
 };

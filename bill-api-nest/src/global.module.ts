@@ -7,6 +7,7 @@ import {LoggerService} from "./service/logger";
 import {APP_INTERCEPTOR} from "@nestjs/core";
 import {LoggerInterceptor} from "./interceptor/logger.interceptor";
 import {ExceptionInterceptor} from "./interceptor/exception.interceptor";
+import {TokenInterceptor} from "./interceptor/token.interceptor";
 
 @Global()
 @Module({
@@ -19,11 +20,15 @@ import {ExceptionInterceptor} from "./interceptor/exception.interceptor";
         LoggerService,
         {
             provide: APP_INTERCEPTOR,
-            useClass: LoggerInterceptor,
+            useClass: ExceptionInterceptor,
         },
         {
             provide: APP_INTERCEPTOR,
-            useClass: ExceptionInterceptor,
+            useClass: TokenInterceptor,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: LoggerInterceptor,
         },
     ],
     exports: [

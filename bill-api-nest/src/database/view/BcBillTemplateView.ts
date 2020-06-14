@@ -16,7 +16,7 @@ import {Column, ViewEntity} from "../decorator";
 from bc_bill_template billTemplate
          left join bc_bill_type billType on billType.id = billTemplate.bill_type_id
          left join bc_dict_data billTypeDict
-                   on billTypeDict.type_code = billType.type and billTypeDict.type_code = 'BILL_TYPE'
+                   on billTypeDict.code = billType.type and billTypeDict.type_code = 'bill_type'
          left join bc_user user on user.id = billTemplate.user_id
          left join bc_card card on card.id = billTemplate.card_id
          left join bc_user cardUser on cardUser.id = card.user_id

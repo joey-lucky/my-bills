@@ -10,6 +10,7 @@ import {observer} from "mobx-react";
 import ContentItem from "@pages/Home/Content/ContentItem";
 import moment from "moment";
 import {homeAPI} from "../../services";
+import {authStore} from "@stores/index";
 
 class AppState {
     @observable data = [];
@@ -56,12 +57,15 @@ export default class Home extends React.Component {
     ];
 
     componentDidMount() {
+        (async () => {
+            await authStore.loadUserInfo();
+        })();
         this._appState.asyncLoadData();
     }
 
     onItemClick = (item) => (e) => {
         e.stopPropagation();
-        let params = `?dateTime=['${item.startDate}','${item.endDate}']`;
+        let params = `?dateTime=["${item.startDate}","${item.endDate}"]`;
         this.props.history.push(this.props.match.path + "/sub-list" + params);
     };
 

@@ -106,5 +106,5 @@
   "license": "ISC",
   "useMock": false,
   "apiHost": "http://localhost:3000/bill/api",
-  "homePage": "http://localhost:8081/app"
+  "homePage": "http://localhost:8081/bill/app"
 }

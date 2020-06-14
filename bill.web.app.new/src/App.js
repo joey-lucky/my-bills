@@ -1,15 +1,14 @@
 import React from "react";
 import {Redirect, Route, Router} from "react-router-dom";
-import {ActivityIndicator, Flex, LocaleProvider, Toast} from "antd-mobile";
-// import {publicPath} from "./global";
+import {LocaleProvider, Toast} from "antd-mobile";
 import routes from "./routes";
 import {createHashHistory} from "history";
-import {setErrorHander} from "@utils/request";
+import {setErrorHandler} from "@utils/request";
 import {Switch} from "@components/routes";
 import * as styles from "./App.css";
 import {observer} from "mobx-react";
 import {observable} from "mobx";
-import {waitDialogStore} from "./stores";
+import {authStore} from "./stores";
 import GlobalComponent from "./GlobalComponent";
 
 let history = createHashHistory({
@@ -39,11 +38,15 @@ export default class App extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        setErrorHander((e) => {
-            if (e.message.indexOf("token") !== -1) {
-                history.push("/login");
+        setErrorHandler((status) => {
+            if (status === 401) {
+                history.replace("/login");
             }
         });
+    }
+
+    componentDidMount() {
+
     }
 
     render() {

@@ -20,21 +20,15 @@ const codeMessage = {
     504: '网关超时。',
 };
 
-export const request = extend({
-    useCache:false,
-});
+const requestConfig = {
+    errorHandler: (status) => {
 
-const errorHandler = (error) => {
-    const {response} = error;
-    if (response && response.status) {
-        const errorText = codeMessage[response.status] || response.statusText;
-        const {status, url} = response;
-        Toast.fail(errorText, Toast.SHORT);
-    } else if (!response) {
-        Toast.fail(error.message || '您的网络发生异常，无法连接服务器', Toast.SHORT);
     }
-    return response;
 };
+
+export const request = extend({
+    useCache: false,
+});
 
 function getHeaders() {
     return {
@@ -51,7 +45,7 @@ export function setToken(token = "") {
     setItem(getPublicPath() + "_token", token);
 }
 
-export async function commonFetch(url, params = {}, method) {
+async function commonFetch(url, params = {}, method) {
     try {
         params = {
             ...params,
@@ -72,9 +66,16 @@ export async function commonFetch(url, params = {}, method) {
             let message = data.message || "";
             throw new Error(message);
         }
-    } catch (e) {
-        errorHandler(e);
-        throw e;
+    } catch (error) {
+        const {data, response} = error;
+        if (response && response.status) {
+            const errorText = response.status + " " + (data.message || "");
+            Toast.fail(errorText, Toast.SHORT);
+            requestConfig.errorHandler && requestConfig.errorHandler(response.status);
+        } else if (!response) {
+            Toast.fail(error.message || '您的网络发生异常，无法连接服务器', Toast.SHORT);
+        }
+        throw error;
     }
 }
 
@@ -102,8 +103,8 @@ export async function apiGet(url, params) {
     return await commonFetch(url, params, "GET");
 }
 
-export function setErrorHander() {
-
+export function setErrorHandler(func) {
+    requestConfig.errorHandler = func;
 }
 
 export default {

@@ -1,4 +1,3 @@
-import {Controller, Inject} from "@nestjs/common";
 import {
     Column as TypeOrmColumn,
     ColumnOptions,
@@ -12,7 +11,10 @@ import {ViewEntityOptions} from "typeorm/decorator/options/ViewEntityOptions";
 export function Column(options: ColumnOptions = {}) {
     return function (object: Object, propertyName: string) {
         options.name = propertyName.replace(/([A-Z]|[0-9]+)/g, (str) => "_" + str.toLowerCase());
-        TypeOrmColumn(options)(object,propertyName);
+        let defOptions: ColumnOptions = {
+            nullable: true
+        };
+        TypeOrmColumn({...defOptions, ...options})(object, propertyName);
     };
 }
 

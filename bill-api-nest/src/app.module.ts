@@ -25,6 +25,6 @@ import {GlobalModule} from "./global.module";
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(TokenMiddleware).forRoutes("*");
+        // consumer.apply(TokenMiddleware).forRoutes("*");
     }
 }

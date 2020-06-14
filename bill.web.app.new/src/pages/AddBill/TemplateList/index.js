@@ -5,13 +5,14 @@ import TemplateHeader from "./TemplateHeader";
 import TemplateItem from "./TemplateItem";
 import {observer} from "mobx-react";
 import * as PropTypes from "prop-types";
-import {billTemplateAPI} from "../../../services";
+import {billTemplateAPI} from "@services/index";
+import {authStore} from "@stores";
 
 class AppState {
     @observable data = [];
 
     asyncLoadData() {
-        billTemplateAPI.index(undefined).then(d => {
+        billTemplateAPI.index({userId:authStore.userId}).then(d => {
             let data = d.data || [];
             let currType = null;
             data.forEach((item) => {
@@ -48,7 +49,7 @@ export default class TemplateList extends React.Component {
                         <React.Fragment key={item.id}>
                             {
                                 item.isFirst&&
-                                <TemplateHeader name={item.billTypeTypeName}/>
+                                <TemplateHeader name={item.billTypeValue}/>
                             }
                             <TemplateItem
                                 data={item}
